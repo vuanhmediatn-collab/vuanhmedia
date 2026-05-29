@@ -12,7 +12,14 @@ import {
   UploadCloud,
   Sparkles,
   Lock,
-  Unlock
+  Unlock,
+  Plus,
+  Trash2,
+  Edit3,
+  Save,
+  LogOut,
+  Home,
+  RotateCcw
 } from 'lucide-react';
 
 interface Project {
@@ -25,10 +32,153 @@ interface Project {
   link?: string; // Optional custom external product link
 }
 
+interface SiteContent {
+  heroTagline: string;
+  heroHeadlineLine1: string;
+  heroHeadlineHighlight1: string;
+  heroHeadlineLine2: string;
+  heroHeadlineHighlight2: string;
+  heroSubheadline: string;
+  heroCta1Text: string;
+  heroCta2Text: string;
+  
+  partnersIntro: string;
+  partnersList: string[];
+
+  aboutHeadline: string;
+  aboutDescription: string;
+  aboutPrinciples: {
+    num: string;
+    title: string;
+    desc: string;
+  }[];
+  founderTitle: string;
+  founderQuote: string;
+
+  servicesHeadline: string;
+  servicesDescription: string;
+  servicesList: {
+    tag: string;
+    title: string;
+    icon: 'film' | 'layers' | 'shield';
+    desc: string;
+    deliverablesLabel: string;
+    deliverables: string;
+    commitmentLabel: string;
+    commitment: string;
+  }[];
+
+  processHeadline: string;
+  processDescription: string;
+  processSteps: {
+    step: string;
+    title: string;
+    desc: string;
+  }[];
+
+  contactHeadline: string;
+  contactDescription: string;
+  contactEmail: string;
+  contactRegion: string;
+}
+
+// Default Site Content matching the exact B2B copywriting (no trailing periods on headline)
+const defaultSiteContent: SiteContent = {
+  heroTagline: "Media Production & Operations",
+  heroHeadlineLine1: "Sản xuất nội dung",
+  heroHeadlineHighlight1: "chuyên nghiệp",
+  heroHeadlineLine2: "Vận hành media",
+  heroHeadlineHighlight2: "bài bản",
+  heroSubheadline: "Vũ Anh Media đồng hành cùng các doanh nghiệp SME giải quyết triệt để khoảng trống về nhân sự và quy trình sản xuất. Chúng tôi không chỉ cung cấp những thước phim, bộ ảnh chuẩn mực mà còn thiết lập hệ thống vận hành để nội dung của bạn ra đều đặn, đúng định hướng và thực sự trở thành tài sản thương hiệu.",
+  heroCta1Text: "Yêu cầu tư vấn giải pháp",
+  heroCta2Text: "Xem năng lực thực chiến",
+  
+  partnersIntro: "Doanh nghiệp không cần những thử nghiệm cảm tính. Họ cần sự đảm bảo. Vũ Anh Media là đơn vị đứng sau các chiến dịch hình ảnh, chuỗi nội dung định kỳ và video quy chuẩn của các thương hiệu dẫn đầu:",
+  partnersList: [
+    "Học Viện Thẩm Mỹ Royal / Phòng khám Royal",
+    "Nha Khoa Việt Giáp / Nha Khoa Thuỳ Anh",
+    "Adam Eraton",
+    "Masan (Núi Pháo)",
+    "Sinshung Vina CT",
+    "Q-home / Ecocasa",
+    "Crescendo International Music Festival & Competition"
+  ],
+
+  aboutHeadline: "Định hình lại chuẩn mực Media cho doanh nghiệp",
+  aboutDescription: "Phần lớn doanh nghiệp SME tại Việt Nam đang gặp 3 sai lầm lớn khi đầu tư cho Media: Coi chi phí media là khoản tiêu sản dùng một lần, thuê freelancer thiếu tính cam kết dài hạn, hoặc chọn các Marketing Agency lớn với chi phí bị đội lên do các khâu trung gian. Vũ Anh Media thay đổi thực trạng đó bằng 3 nguyên tắc làm việc:",
+  aboutPrinciples: [
+    { 
+      num: '01', 
+      title: 'Kiểm soát rủi ro vận hành bằng quy trình', 
+      desc: 'Freelancer làm việc dựa trên năng lực cá nhân và không có đội ngũ backup. Vũ Anh Media vận hành theo team có cấu trúc, có cam kết deadline rõ ràng bằng hợp đồng và luôn chủ động hệ thống thiết bị quay dựng chuyên dụng (Sony A7S3, Blackmagic 6K Pro...).' 
+    },
+    { 
+      num: '02', 
+      title: 'Biến Media thành tài sản tích lũy', 
+      desc: 'Chúng tôi không chỉ giao file video rồi kết thúc hợp tác. Vũ Anh Media xây dựng hệ thống lưu trữ bài bản, giúp doanh nghiệp sở hữu trọn vẹn file gốc, file dự án để có thể tái sử dụng trong vòng 6 - 12 tháng, tối ưu hóa từng đồng chi phí sản xuất.' 
+    },
+    { 
+      num: '03', 
+      title: 'Chuyên sâu tối đa, không phân tán nguồn lực', 
+      desc: 'Chúng tôi nói KHÔNG với việc nhận chạy ads, booking KOL hay làm marketing tổng thể để tập trung 100% vào phần lõi: Sản xuất và Vận hành Media. Doanh nghiệp nhận được chất lượng sản xuất cao cấp nhất mà không phải gánh chi phí gián tiếp.' 
+    }
+  ],
+  founderTitle: "Kinh nghiệm đúc kết từ chi tiết nhỏ",
+  founderQuote: "Kinh nghiệm nằm ở việc chú ý tới brief, dữ liệu hiện trường và cách bàn giao sau cùng để giữ chuẩn lâu dài.",
+
+  servicesHeadline: "Hệ sinh thái dịch vụ Media toàn diện cho SME",
+  servicesDescription: "Mỗi doanh nghiệp cần một sự chuẩn bị và giải pháp khác nhau. Vũ Anh Media thiết kế 3 tầng trục năng lực dịch vụ bài bản để hỗ trợ sự phát triển liên tục của bạn:",
+  servicesList: [
+    {
+      tag: "TẦNG 01",
+      title: "Media Production — Sản xuất theo dự án",
+      icon: 'film',
+      desc: "Giải quyết bài toán tạo dấu ấn hình ảnh đột phá trong các chiến dịch ngắn hạn hoặc xây dựng nền tảng nhận diện cốt lõi cho thương hiệu.",
+      deliverablesLabel: "Sản phẩm cốt lõi",
+      deliverables: "Video TVC doanh nghiệp • Video Profile thương hiệu/sản phẩm • Video quảng cáo cửa hàng • Video ngắn đa nền tảng (TikTok, Reels, Shorts) • Nhiếp ảnh thương mại chuẩn mực.",
+      commitmentLabel: "Cam kết B2B",
+      commitment: "Quy trình trọn gói từ Brief, kịch bản, storyboard, shot list đến hậu kỳ chuyên sâu (Color Grading 4K, Sound, Motion)."
+    },
+    {
+      tag: "TẦNG 02",
+      title: "Monthly Media — Giải pháp nội dung định kỳ",
+      icon: 'layers',
+      desc: "Giải quyết bài toán đứt gãy mạch nội dung. Duy trì điểm chạm liên tục với khách hàng mục tiêu mà không làm tăng áp lực quản lý cho chủ doanh nghiệp.",
+      deliverablesLabel: "Sản phẩm cốt lõi",
+      deliverables: "Gói nội dung cam kết số lượng theo tháng cho Spa, Nha khoa, F&B, Doanh nghiệp SME (Video ngắn + Bộ ảnh sản phẩm/nhân vật + Tuyến nội dung viết tương ứng).",
+      commitmentLabel: "Cam kết B2B",
+      commitment: "Lịch sản xuất cố định, nhân sự phụ trách riêng biệt, output đầu ra đồng đều về mặt visual direction."
+    },
+    {
+      tag: "TẦNG 03",
+      title: "Media Operations — Tư vấn & Thiết lập bộ máy nội bộ",
+      icon: 'shield',
+      desc: "Dành cho các doanh nghiệp muốn tự chủ năng lực sản xuất nhưng đang thiếu quy trình quản trị, khiến tài nguyên bị thất thoát và nhân sự vận hành cảm tính.",
+      deliverablesLabel: "Sản phẩm cốt lõi",
+      deliverables: "Chuẩn hóa quy trình từ khâu Brief – Sản xuất – Duyệt – Đăng; Phân vai nhân sự media nội bộ; Thiết lập hệ thống lưu trữ và bàn giao tài sản số (file gốc, file dự án) để tái sử dụng dài hạn.",
+      commitmentLabel: "Cam kết B2B",
+      commitment: "Chỉ tập trung chuyên sâu vào vận hành sản xuất media, chuyển giao một hệ thống tự chạy ổn định sau 3 - 6 tháng."
+    }
+  ],
+
+  processHeadline: "Quy trình làm việc bài bản",
+  processDescription: "Doanh nghiệp rất sợ sự mập mờ và trễ hẹn. Một quy trình rõ ràng thể hiện Vũ Anh Media có năng lực quản trị, điều hành thực chiến và chuyên nghiệp nhất.",
+  processSteps: [
+    { step: '01', title: 'Nghiên cứu & Định vị', desc: 'Khảo sát thực tế bối cảnh thương hiệu, bóc tách "nỗi đau" truyền thông hiện tại và xác lập tệp khách hàng mục tiêu.' },
+    { step: '02', title: 'Kịch bản & Storyboard', desc: 'Lên ý tưởng chi tiết, xây dựng lời thoại đàm thoại tự nhiên (tránh sáo rỗng, công nghiệp), duyệt kỹ lưỡng trước khi bấm máy.' },
+    { step: '03', title: 'Sản xuất & Hậu kỳ', desc: 'Bấm máy trực tiếp với thiết bị chuyên dụng và đội ngũ sản xuất thực chiến. Xử lý màu sắc (Color Grading) và âm thanh chuẩn chỉ.' },
+    { step: '04', title: 'Bàn giao & Tối ưu', desc: 'Bàn giao sản phẩm đúng cam kết kỳ hạn. Hỗ trợ căn chỉnh định dạng để đạt hiệu quả hiển thị và giữ chân tốt nhất trên đa nền tảng.' }
+  ],
+
+  contactHeadline: "Chuẩn hóa tối ưu năng lực Media của bạn ngay hôm nay",
+  contactDescription: "Đừng để ngân sách marketing bị lãng phí chỉ vì những hình ảnh lệch chuẩn hoặc một hệ thống nội dung rời rạc. Hãy chia sẻ với Vũ Anh Media về bài toán hiện tại của doanh nghiệp bạn.",
+  contactEmail: "hello@vuanhmedia.vn",
+  contactRegion: "Thành phố Hồ Chí Minh | Hà Nội"
+};
+
 // Brand Logo Component - Fully optimized for premium Futuristic White-Blue Theme
 const VALogo: React.FC = () => (
   <div className="flex items-center gap-3">
-    {/* Monogram VA image - uncropped with a highly premium glowing cyber-blue drop shadow */}
     <div className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 flex items-center justify-center rounded-xl overflow-hidden bg-black border border-white/20 shadow-[0_0_15px_rgba(2,132,199,0.35)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_22px_rgba(2,132,199,0.55)]">
       <img 
         src="/assets/logo-main.png" 
@@ -36,8 +186,6 @@ const VALogo: React.FC = () => (
         alt="VŨ ANH MEDIA Logo" 
       />
     </div>
-    
-    {/* Elegant Single-Line Text Brand Signature with correct spelling "VŨ ANH" */}
     <div className="flex items-baseline pl-0.5 select-none pointer-events-none whitespace-nowrap">
       <span className="text-[14px] sm:text-[16px] font-black text-[#0284c7] tracking-[0.04em] leading-none uppercase">
         VŨ ANH
@@ -63,7 +211,34 @@ const App: React.FC = () => {
   const [message, setMessage] = useState('');
   const [formState, setFormState] = useState<'idle' | 'submitting' | 'success'>('idle');
 
-  // Hidden Admin Mode states
+  // Client-side CMS routing & session states
+  const [isAdminRoute, setIsAdminRoute] = useState<boolean>(() => {
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    const search = window.location.search.toLowerCase();
+    return path === '/admin' || hash === '#admin' || search.includes('admin=true') || search.includes('cms=true');
+  });
+
+  const [isCmsLoggedIn, setIsCmsLoggedIn] = useState<boolean>(() => {
+    return localStorage.getItem('vuanh_media_cms_session') === 'true';
+  });
+
+  const [cmsTab, setCmsTab] = useState<'hero' | 'about' | 'services' | 'process' | 'contact' | 'projects'>('hero');
+  const [cmsPasscodeInput, setCmsPasscodeInput] = useState('');
+  const [cmsLoginError, setCmsLoginError] = useState(false);
+  const [cmsShowToast, setCmsShowToast] = useState(false);
+  const [cmsToastMsg, setCmsToastMsg] = useState('');
+
+  // Project Editor State
+  const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editCategory, setEditCategory] = useState<'video' | 'image' | 'regular'>('video');
+  const [editDesc, setEditDesc] = useState('');
+  const [editImg, setEditImg] = useState('');
+  const [editVid, setEditVid] = useState('');
+  const [editLink, setEditLink] = useState('');
+
+  // Hidden Admin Mode states (For direct on-page widget creator)
   const [isAdmin, setIsAdmin] = useState<boolean>(() => {
     return localStorage.getItem('vuanh_media_admin') === 'true';
   });
@@ -84,17 +259,6 @@ const App: React.FC = () => {
   const [newDesc, setNewDesc] = useState('');
   const [newCategory, setNewCategory] = useState<'video' | 'image' | 'regular'>('video');
   const [uploadFeedback, setUploadFeedback] = useState<{ type: 'success' | 'error' | null, msg: string }>({ type: null, msg: '' });
-
-  // Partner data list for marquee scroll
-  const partnersList = [
-    "Học Viện Thẩm Mỹ Royal / Phòng khám Royal",
-    "Nha Khoa Việt Giáp / Nha Khoa Thuỳ Anh",
-    "Adam Eraton",
-    "Masan (Núi Pháo)",
-    "Sinshung Vina CT",
-    "Q-home / Ecocasa",
-    "Crescendo International Music Festival & Competition"
-  ];
 
   // Initial projects data from the original website
   const initialProjects: Project[] = [
@@ -159,6 +323,19 @@ const App: React.FC = () => {
     }
   ];
 
+  // Dynamic Site Content loaded from localStorage
+  const [siteContent, setSiteContent] = useState<SiteContent>(() => {
+    const saved = localStorage.getItem('vuanh_media_site_content');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Error loading saved site content:', e);
+      }
+    }
+    return defaultSiteContent;
+  });
+
   // Persistent projects state in localStorage
   const [projects, setProjects] = useState<Project[]>(() => {
     const saved = localStorage.getItem('vuanh_media_projects');
@@ -177,6 +354,31 @@ const App: React.FC = () => {
     localStorage.setItem('vuanh_media_projects', JSON.stringify(projects));
   }, [projects]);
 
+  // Client-side router effect to monitor pathname/hash changes
+  useEffect(() => {
+    const checkRoute = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      const search = window.location.search.toLowerCase();
+      setIsAdminRoute(path === '/admin' || hash === '#admin' || search.includes('admin=true') || search.includes('cms=true'));
+    };
+    
+    window.addEventListener('hashchange', checkRoute);
+    window.addEventListener('popstate', checkRoute);
+    
+    const originalPushState = window.history.pushState;
+    window.history.pushState = function(...args) {
+      originalPushState.apply(this, args);
+      checkRoute();
+    };
+
+    return () => {
+      window.removeEventListener('hashchange', checkRoute);
+      window.removeEventListener('popstate', checkRoute);
+      window.history.pushState = originalPushState;
+    };
+  }, []);
+
   // Check URL query parameters for ?admin=true secret entryway
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -184,24 +386,28 @@ const App: React.FC = () => {
       setIsAdmin(true);
       localStorage.setItem('vuanh_media_admin', 'true');
       
-      // Clean query parameter for seamless look & security
       const cleanUrl = window.location.pathname + window.location.hash;
       window.history.replaceState({}, document.title, cleanUrl);
     }
   }, []);
 
-  // Passcode verification
+  // On page Passcode verification
   const handleVerifyPasscode = (e: React.FormEvent) => {
     e.preventDefault();
     if (passcodeInput === 'vuanhmedia' || passcodeInput === '2026') {
       setIsAdmin(true);
       localStorage.setItem('vuanh_media_admin', 'true');
+      setIsCmsLoggedIn(true);
+      localStorage.setItem('vuanh_media_cms_session', 'true');
       setIsPasscodeModalOpen(false);
       setPasscodeInput('');
       setPasscodeError(false);
+      
+      // Auto transition to /admin interface
+      setIsAdminRoute(true);
+      window.history.pushState({}, '', '/admin');
     } else {
       setPasscodeError(true);
-      // Auto reset error after 600ms (matching the shake animation)
       setTimeout(() => setPasscodeError(false), 600);
     }
   };
@@ -209,6 +415,121 @@ const App: React.FC = () => {
   const handleLogoutAdmin = () => {
     setIsAdmin(false);
     localStorage.removeItem('vuanh_media_admin');
+  };
+
+  // CMS Login verification
+  const handleCmsLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (cmsPasscodeInput === 'vuanhmedia' || cmsPasscodeInput === '2026') {
+      setIsCmsLoggedIn(true);
+      localStorage.setItem('vuanh_media_cms_session', 'true');
+      setIsAdmin(true);
+      localStorage.setItem('vuanh_media_admin', 'true');
+      setCmsPasscodeInput('');
+      setCmsLoginError(false);
+    } else {
+      setCmsLoginError(true);
+      setTimeout(() => setCmsLoginError(false), 600);
+    }
+  };
+
+  const handleCmsLogout = () => {
+    setIsCmsLoggedIn(false);
+    localStorage.removeItem('vuanh_media_cms_session');
+    setIsAdminRoute(false);
+    window.history.pushState({}, '', '/');
+  };
+
+  const handleViewHome = () => {
+    setIsAdminRoute(false);
+    window.history.pushState({}, '', '/');
+  };
+
+  // Save all site content edits
+  const handleSaveCmsContent = () => {
+    localStorage.setItem('vuanh_media_site_content', JSON.stringify(siteContent));
+    triggerCmsToast('Đã lưu tất cả thay đổi nội dung trang web thành công!');
+  };
+
+  // Reset entire website to default content
+  const handleResetToDefault = () => {
+    if (window.confirm('Bạn có chắc chắn muốn khôi phục toàn bộ nội dung và danh sách dự án về cấu hình B2B mặc định ban đầu không?')) {
+      setSiteContent(defaultSiteContent);
+      setProjects(initialProjects);
+      localStorage.removeItem('vuanh_media_site_content');
+      localStorage.removeItem('vuanh_media_projects');
+      triggerCmsToast('Đã khôi phục dữ liệu mặc định thành công!');
+    }
+  };
+
+  const triggerCmsToast = (msg: string) => {
+    setCmsToastMsg(msg);
+    setCmsShowToast(true);
+    setTimeout(() => setCmsShowToast(false), 3000);
+  };
+
+  // Dynamic Content editing helper
+  const updateContentField = (field: keyof SiteContent, value: any) => {
+    setSiteContent(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const updatePrinciple = (index: number, key: 'title' | 'desc', value: string) => {
+    const updated = [...siteContent.aboutPrinciples];
+    updated[index] = { ...updated[index], [key]: value };
+    updateContentField('aboutPrinciples', updated);
+  };
+
+  const updateService = (index: number, key: string, value: string) => {
+    const updated = [...siteContent.servicesList];
+    updated[index] = { ...updated[index], [key]: value };
+    updateContentField('servicesList', updated);
+  };
+
+  const updateProcessStep = (index: number, key: 'title' | 'desc', value: string) => {
+    const updated = [...siteContent.processSteps];
+    updated[index] = { ...updated[index], [key]: value };
+    updateContentField('processSteps', updated);
+  };
+
+  // Project CMS Operations
+  const handleDeleteProject = (id: number) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa dự án này khỏi danh mục không?')) {
+      setProjects(prev => prev.filter(p => p.id !== id));
+      triggerCmsToast('Đã xóa dự án thành công!');
+    }
+  };
+
+  const handleStartEditProject = (p: Project) => {
+    setEditingProjectId(p.id);
+    setEditTitle(p.title);
+    setEditCategory(p.category);
+    setEditDesc(p.desc);
+    setEditImg(p.img);
+    setEditVid(p.vid || '');
+    setEditLink(p.link || '');
+  };
+
+  const handleSaveEditProject = (e: React.FormEvent) => {
+    e.preventDefault();
+    setProjects(prev => prev.map(p => {
+      if (p.id === editingProjectId) {
+        return {
+          ...p,
+          title: editTitle,
+          category: editCategory,
+          desc: editDesc,
+          img: editImg,
+          vid: editVid || undefined,
+          link: editLink || undefined
+        };
+      }
+      return p;
+    }));
+    setEditingProjectId(null);
+    triggerCmsToast('Đã cập nhật dự án thành công!');
   };
 
   // Helper to handle local files selected from uploader
@@ -227,7 +548,6 @@ const App: React.FC = () => {
     setSelectedFile(file);
     setFilePreviewUrl(objectUrl);
     
-    // Auto-detect and set appropriate category
     setNewCategory(isVideo ? 'video' : 'image');
     setUploadFeedback({ type: 'success', msg: `Đã chọn tệp: "${file.name}"` });
   };
@@ -327,7 +647,7 @@ const App: React.FC = () => {
     let category: 'video' | 'image' | 'regular' = 'regular';
     let title = `Liên Kết Mới ${timestamp}`;
     let desc = `Đường dẫn liên kết được kéo thả vào trang web (${formattedDate}).`;
-    let img = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'; // Product showcase visual
+    let img = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
     let vid: string | undefined = undefined;
 
     if (isVideo) {
@@ -408,21 +728,10 @@ const App: React.FC = () => {
     setFilePreviewUrl(null);
     setUploadFeedback({ type: 'success', msg: `Đã cập nhật dự án "${newTitle}" lên trang web thành công!` });
     
-    // Auto clear highlights after 3 seconds
     setTimeout(() => {
       setNewlyAddedProjectId(null);
       setUploadFeedback({ type: null, msg: '' });
     }, 3000);
-  };
-
-  // Restore defaults
-  const handleRestoreDefaults = () => {
-    if (window.confirm('Bạn có chắc chắn muốn khôi phục danh mục dự án về mặc định ban đầu không?')) {
-      setProjects(initialProjects);
-      localStorage.removeItem('vuanh_media_projects');
-      setUploadFeedback({ type: 'success', msg: 'Đã khôi phục danh mục dự án mặc định!' });
-      setTimeout(() => setUploadFeedback({ type: null, msg: '' }), 3000);
-    }
   };
 
   const filteredProjects = activeCategory === 'all' 
@@ -446,18 +755,848 @@ const App: React.FC = () => {
     }, 1000);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setActiveDrawer(null);
-        setIsVideoModalOpen(false);
-        setIsPasscodeModalOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  // RENDER DYNAMIC ADMIN CMS INTERFACE
+  if (isAdminRoute) {
+    if (!isCmsLoggedIn) {
+      return (
+        <div className="min-h-screen w-screen flex items-center justify-center bg-[#f3f6fb] font-sans antialiased text-[#0b1329] p-4 relative overflow-hidden">
+          {/* background orbs & grid */}
+          <div className="absolute top-[20%] left-[-10%] w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-sky-400/20 to-cyan-400/10 blur-[100px] pointer-events-none" />
+          <div className="absolute bottom-[15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-[#0284c7]/15 to-indigo-500/5 blur-[120px] pointer-events-none" />
+          <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(2,132,199,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(2,132,199,0.15)_1px,transparent_1px)] bg-[size:50px_50px]" />
+          
+          <div className={`relative w-full max-w-md rounded-3xl glass-panel p-8 sm:p-10 border border-white/80 shadow-2xl text-center space-y-6 animate-scale-up ${cmsLoginError ? 'animate-shake' : ''}`}>
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#0284c7]/10 text-[#0284c7] mb-1 animate-pulse">
+              <Lock className="w-6 h-6" />
+            </div>
+            
+            <div className="space-y-1.5">
+              <h3 className="font-extrabold text-[17px] text-[#0b1329] uppercase tracking-wider">CMS Quản Trị Nội Dung</h3>
+              <p className="text-[12.5px] text-slate-500 font-semibold leading-relaxed">
+                Vui lòng nhập mật mã quản trị của Vũ Anh Media để tự ý chỉnh sửa nội dung và tác phẩm.
+              </p>
+            </div>
+            
+            <form onSubmit={handleCmsLogin} className="space-y-4">
+              <input 
+                type="password" 
+                required
+                value={cmsPasscodeInput}
+                onChange={(e) => setCmsPasscodeInput(e.target.value)}
+                placeholder="Mật mã quản trị (vuanhmedia)" 
+                className={`w-full px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white text-[16px] font-bold text-center text-slate-800 focus:outline-none focus:ring-2 transition-all duration-300 ${cmsLoginError ? 'border-rose-400 focus:ring-rose-500/20' : 'border-slate-200 focus:ring-[#0284c7]/20 focus:border-[#0284c7]'}`}
+                autoFocus
+              />
+              
+              {cmsLoginError && (
+                <p className="text-[11px] font-bold text-rose-500">Mật mã chưa chính xác. Vui lòng nhập lại.</p>
+              )}
+              
+              <div className="flex gap-2.5 pt-2">
+                <button 
+                  type="button"
+                  onClick={handleViewHome}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-all cursor-pointer"
+                >
+                  <Home className="w-3.5 h-3.5" />
+                  Xem trang chủ
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-3 text-[11px] font-black uppercase tracking-wider text-white bg-[#0284c7] hover:bg-sky-500 rounded-xl shadow-lg shadow-sky-500/15 transition-all cursor-pointer"
+                >
+                  <Unlock className="w-3.5 h-3.5" />
+                  Mở khóa CMS
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
 
+    return (
+      <div className="min-h-screen w-screen bg-[#f3f6fb] font-sans antialiased text-[#0b1329] overflow-y-auto p-4 sm:p-8 relative pb-20">
+        
+        {/* Top Header Panel */}
+        <header className="max-w-6xl mx-auto glass-panel border border-white/90 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-3">
+            <VALogo />
+            <div className="h-6 w-px bg-slate-300 hidden sm:block" />
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-extrabold text-[10.5px] uppercase tracking-wider flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              CMS Đang hoạt động
+            </span>
+          </div>
+          
+          <div className="flex flex-wrap gap-2.5 justify-center">
+            <button 
+              onClick={handleSaveCmsContent}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] font-black uppercase tracking-wider shadow-sm transition-all cursor-pointer"
+            >
+              <Save className="w-3.5 h-3.5" />
+              Lưu thay đổi
+            </button>
+            <button 
+              onClick={handleViewHome}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer"
+            >
+              <Home className="w-3.5 h-3.5" />
+              Xem trang chủ
+            </button>
+            <button 
+              onClick={handleResetToDefault}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white hover:bg-rose-50 border border-slate-200 text-rose-500 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              Reset mặc định
+            </button>
+            <button 
+              onClick={handleCmsLogout}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-[11px] font-black uppercase tracking-wider shadow-sm transition-all cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              Đăng xuất
+            </button>
+          </div>
+        </header>
+
+        {/* CMS Main Content Area */}
+        <main className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+          
+          {/* Left Category Tabs Menu */}
+          <div className="lg:col-span-1 glass-panel border border-white/90 rounded-2xl p-4 sm:p-5 shadow-xs space-y-2">
+            <span className="text-[9.5px] font-black text-slate-400 uppercase tracking-widest block px-2 mb-2">Mục Biên Tập</span>
+            {[
+              { id: 'hero', label: '1. Khối đầu trang (Hero)' },
+              { id: 'about', label: '2. Khối giới thiệu (About)' },
+              { id: 'services', label: '3. Khối dịch vụ (Services)' },
+              { id: 'process', label: '4. Khối quy trình (Process)' },
+              { id: 'contact', label: '5. Khối liên hệ (Contact)' },
+              { id: 'projects', label: '6. Quản lý tác phẩm (Projects)' }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setCmsTab(tab.id as any)}
+                className={`w-full text-left px-3.5 py-3 rounded-lg text-[12px] font-bold uppercase transition-all cursor-pointer ${cmsTab === tab.id ? 'bg-[#0284c7] text-white' : 'hover:bg-slate-100 text-slate-700'}`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Right Editor Panels */}
+          <div className="lg:col-span-3 glass-panel border border-white/90 rounded-2xl p-6 sm:p-8 shadow-xs min-h-[500px]">
+            
+            {/* TAB: HERO */}
+            {cmsTab === 'hero' && (
+              <div className="space-y-6">
+                <h3 className="font-extrabold text-[15px] text-[#0b1329] uppercase border-b pb-2 tracking-wide flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#0284c7]" />
+                  Cấu hình Khối đầu trang (Hero) & Đối tác
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Tagline Hero</label>
+                    <input 
+                      type="text"
+                      value={siteContent.heroTagline}
+                      onChange={(e) => updateContentField('heroTagline', e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Headline dòng 1 (Chữ thường)</label>
+                    <input 
+                      type="text"
+                      value={siteContent.heroHeadlineLine1}
+                      onChange={(e) => updateContentField('heroHeadlineLine1', e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Headline dòng 1 (Từ nổi bật màu xanh)</label>
+                    <input 
+                      type="text"
+                      value={siteContent.heroHeadlineHighlight1}
+                      onChange={(e) => updateContentField('heroHeadlineHighlight1', e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Headline dòng 2 (Chữ thường)</label>
+                    <input 
+                      type="text"
+                      value={siteContent.heroHeadlineLine2}
+                      onChange={(e) => updateContentField('heroHeadlineLine2', e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Headline dòng 2 (Từ nổi bật màu xanh)</label>
+                    <input 
+                      type="text"
+                      value={siteContent.heroHeadlineHighlight2}
+                      onChange={(e) => updateContentField('heroHeadlineHighlight2', e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Đoạn mô tả chi tiết Hero (Sub-headline)</label>
+                  <textarea 
+                    rows={4}
+                    value={siteContent.heroSubheadline}
+                    onChange={(e) => updateContentField('heroSubheadline', e.target.value)}
+                    className="w-full px-3.5 py-3 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7] resize-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Chữ nút CTA 1 (Nổi bật - Yêu cầu tư vấn)</label>
+                    <input 
+                      type="text"
+                      value={siteContent.heroCta1Text}
+                      onChange={(e) => updateContentField('heroCta1Text', e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Chữ nút CTA 2 (Outline - Xem năng lực)</label>
+                    <input 
+                      type="text"
+                      value={siteContent.heroCta2Text}
+                      onChange={(e) => updateContentField('heroCta2Text', e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 pt-4 border-t">
+                  <label className="text-[10.5px] font-black text-slate-700 uppercase tracking-wider block">Cấu hình Khối đối tác thực chiến (Social Proof)</label>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Đoạn dẫn đối tác</label>
+                    <textarea 
+                      rows={3}
+                      value={siteContent.partnersIntro}
+                      onChange={(e) => updateContentField('partnersIntro', e.target.value)}
+                      className="w-full px-3.5 py-3 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7] resize-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Danh sách đối tác (Mỗi đối tác ghi trên 1 dòng)</label>
+                  <textarea 
+                    rows={6}
+                    value={siteContent.partnersList.join('\n')}
+                    onChange={(e) => updateContentField('partnersList', e.target.value.split('\n').filter(x => x.trim()))}
+                    className="w-full px-3.5 py-3 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7] resize-y"
+                    placeholder="Học Viện Thẩm Mỹ Royal&#10;Masam (Núi Pháo)..."
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* TAB: ABOUT */}
+            {cmsTab === 'about' && (
+              <div className="space-y-6">
+                <h3 className="font-extrabold text-[15px] text-[#0b1329] uppercase border-b pb-2 tracking-wide flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-[#0284c7]" />
+                  Cấu hình Khối giới thiệu (About) & Triết lý khác biệt
+                </h3>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Tiêu đề khối giới thiệu</label>
+                  <input 
+                    type="text"
+                    value={siteContent.aboutHeadline}
+                    onChange={(e) => updateContentField('aboutHeadline', e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Đoạn mô tả dẫn dắt</label>
+                  <textarea 
+                    rows={4}
+                    value={siteContent.aboutDescription}
+                    onChange={(e) => updateContentField('aboutDescription', e.target.value)}
+                    className="w-full px-3.5 py-3 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7] resize-none"
+                  />
+                </div>
+
+                {/* 3 Principles inputs */}
+                <div className="space-y-4 pt-4 border-t">
+                  <span className="text-[10.5px] font-black text-slate-700 uppercase tracking-wider block">Biên tập 3 Nguyên tắc làm việc khác biệt:</span>
+                  
+                  {siteContent.aboutPrinciples.map((pr, idx) => (
+                    <div key={idx} className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-3">
+                      <span className="text-[10.5px] font-black text-[#0284c7] uppercase">Nguyên tắc {pr.num}</span>
+                      <div className="grid grid-cols-1 gap-2">
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-400 uppercase">Tiêu đề nguyên tắc</label>
+                          <input 
+                            type="text"
+                            value={pr.title}
+                            onChange={(e) => updatePrinciple(idx, 'title', e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-400 uppercase">Mô tả nguyên tắc</label>
+                          <textarea 
+                            rows={3}
+                            value={pr.desc}
+                            onChange={(e) => updatePrinciple(idx, 'desc', e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7] resize-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Founder Info Section */}
+                <div className="space-y-4 pt-4 border-t">
+                  <span className="text-[10.5px] font-black text-slate-700 uppercase tracking-wider block">Biên tập Thông tin người sáng lập:</span>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Tiêu đề khối Founder</label>
+                      <input 
+                        type="text"
+                        value={siteContent.founderTitle}
+                        onChange={(e) => updateContentField('founderTitle', e.target.value)}
+                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Câu nói vàng của Founder</label>
+                      <input 
+                        type="text"
+                        value={siteContent.founderQuote}
+                        onChange={(e) => updateContentField('founderQuote', e.target.value)}
+                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* TAB: SERVICES */}
+            {cmsTab === 'services' && (
+              <div className="space-y-6">
+                <h3 className="font-extrabold text-[15px] text-[#0b1329] uppercase border-b pb-2 tracking-wide flex items-center gap-2">
+                  <Film className="w-4 h-4 text-[#0284c7]" />
+                  Cấu hình Hệ sinh thái dịch vụ 3 tầng
+                </h3>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Tiêu đề chính dịch vụ</label>
+                  <input 
+                    type="text"
+                    value={siteContent.servicesHeadline}
+                    onChange={(e) => updateContentField('servicesHeadline', e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Mô tả dẫn dịch vụ</label>
+                  <textarea 
+                    rows={3}
+                    value={siteContent.servicesDescription}
+                    onChange={(e) => updateContentField('servicesDescription', e.target.value)}
+                    className="w-full px-3.5 py-3 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7] resize-none"
+                  />
+                </div>
+
+                {/* 3 Services Cards */}
+                <div className="space-y-6 pt-4 border-t">
+                  {siteContent.servicesList.map((sv, idx) => (
+                    <div key={idx} className="p-4 sm:p-5 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-3">
+                      <span className="text-[10.5px] font-black text-white bg-[#0284c7] px-2.5 py-0.5 rounded-md w-fit block">{sv.tag}</span>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-400 uppercase">Tên dịch vụ</label>
+                          <input 
+                            type="text"
+                            value={sv.title}
+                            onChange={(e) => updateService(idx, 'title', e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-bold outline-none focus:border-[#0284c7]"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-400 uppercase">Mô tả ngắn dịch vụ</label>
+                          <input 
+                            type="text"
+                            value={sv.desc}
+                            onChange={(e) => updateService(idx, 'desc', e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-400 uppercase">Sản phẩm cung cấp cốt lõi</label>
+                          <textarea 
+                            rows={3}
+                            value={sv.deliverables}
+                            onChange={(e) => updateService(idx, 'deliverables', e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7] resize-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-400 uppercase">Cam kết dịch vụ</label>
+                          <textarea 
+                            rows={3}
+                            value={sv.commitment}
+                            onChange={(e) => updateService(idx, 'commitment', e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7] resize-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB: PROCESS */}
+            {cmsTab === 'process' && (
+              <div className="space-y-6">
+                <h3 className="font-extrabold text-[15px] text-[#0b1329] uppercase border-b pb-2 tracking-wide flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-[#0284c7]" />
+                  Cấu hình Lộ trình làm việc (4 Bước)
+                </h3>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Tiêu đề quy trình chính</label>
+                  <input 
+                    type="text"
+                    value={siteContent.processHeadline}
+                    onChange={(e) => updateContentField('processHeadline', e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Mô tả dẫn dắt</label>
+                  <textarea 
+                    rows={3}
+                    value={siteContent.processDescription}
+                    onChange={(e) => updateContentField('processDescription', e.target.value)}
+                    className="w-full px-3.5 py-3 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7] resize-none"
+                  />
+                </div>
+
+                {/* 4 steps */}
+                <div className="space-y-4 pt-4 border-t">
+                  <span className="text-[10.5px] font-black text-slate-700 uppercase tracking-wider block">Biên tập chi tiết 4 bước:</span>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {siteContent.processSteps.map((st, idx) => (
+                      <div key={idx} className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2">
+                        <span className="text-[10.5px] font-black text-[#0284c7] uppercase">Bước {st.step}</span>
+                        <div className="space-y-1.5">
+                          <input 
+                            type="text"
+                            value={st.title}
+                            onChange={(e) => updateProcessStep(idx, 'title', e.target.value)}
+                            className="w-full px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-[12px] font-bold outline-none focus:border-[#0284c7]"
+                            placeholder="Tiêu đề bước..."
+                          />
+                          <textarea 
+                            rows={3}
+                            value={st.desc}
+                            onChange={(e) => updateProcessStep(idx, 'desc', e.target.value)}
+                            className="w-full px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-[11.5px] font-semibold outline-none focus:border-[#0284c7] resize-none"
+                            placeholder="Mô tả bước..."
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: CONTACT */}
+            {cmsTab === 'contact' && (
+              <div className="space-y-6">
+                <h3 className="font-extrabold text-[15px] text-[#0b1329] uppercase border-b pb-2 tracking-wide flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-[#0284c7]" />
+                  Cấu hình Khối Liên Hệ (Contact & CTA Footer)
+                </h3>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Tiêu đề khối liên hệ</label>
+                  <input 
+                    type="text"
+                    value={siteContent.contactHeadline}
+                    onChange={(e) => updateContentField('contactHeadline', e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Mô tả khối liên hệ</label>
+                  <textarea 
+                    rows={4}
+                    value={siteContent.contactDescription}
+                    onChange={(e) => updateContentField('contactDescription', e.target.value)}
+                    className="w-full px-3.5 py-3 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7] resize-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Email liên hệ công việc</label>
+                    <input 
+                      type="email"
+                      value={siteContent.contactEmail}
+                      onChange={(e) => updateContentField('contactEmail', e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Khu vực hoạt động</label>
+                    <input 
+                      type="text"
+                      value={siteContent.contactRegion}
+                      onChange={(e) => updateContentField('contactRegion', e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: PROJECTS (FULL DYNAMIC PORTFOLIO CMS CRUD) */}
+            {cmsTab === 'projects' && (
+              <div className="space-y-8">
+                
+                {/* Section A: Edit Existing Project Form (Modal look) */}
+                {editingProjectId ? (
+                  <div className="p-5 rounded-2xl border border-amber-500/25 bg-amber-50/10 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11.5px] font-black text-amber-600 uppercase tracking-wider flex items-center gap-1.5">
+                        <Edit3 className="w-3.5 h-3.5" />
+                        Đang biên tập dự án (ID: {editingProjectId})
+                      </span>
+                      <button 
+                        onClick={() => setEditingProjectId(null)}
+                        className="text-[11.5px] font-bold text-slate-500 hover:text-slate-700 uppercase cursor-pointer"
+                      >
+                        Hủy
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleSaveEditProject} className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Tiêu đề dự án</label>
+                          <input 
+                            type="text"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-[12px] font-bold outline-none focus:border-[#0284c7]"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Danh mục</label>
+                          <select 
+                            value={editCategory}
+                            onChange={(e) => setEditCategory(e.target.value as any)}
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-[12px] font-extrabold text-slate-700 outline-none focus:border-[#0284c7]"
+                          >
+                            <option value="video">Video</option>
+                            <option value="image">Hình ảnh</option>
+                            <option value="regular">Định kỳ</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Đoạn mô tả ngắn (Chiến dịch B2B)</label>
+                        <input 
+                          type="text"
+                          value={editDesc}
+                          onChange={(e) => setEditDesc(e.target.value)}
+                          className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Đường dẫn ảnh nền (Thumbnail URL)</label>
+                          <input 
+                            type="text"
+                            value={editImg}
+                            onChange={(e) => setEditImg(e.target.value)}
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Đường dẫn Video phát thử (MP4 URL)</label>
+                          <input 
+                            type="text"
+                            value={editVid}
+                            onChange={(e) => setEditVid(e.target.value)}
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none"
+                            placeholder="Để trống nếu là hình ảnh"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Đường dẫn sản phẩm tùy chọn (External Link URL)</label>
+                        <input 
+                          type="text"
+                          value={editLink}
+                          onChange={(e) => setEditLink(e.target.value)}
+                          className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none"
+                          placeholder="Link ngoài (Shopee, Web, Facebook) nếu có"
+                        />
+                      </div>
+
+                      <button 
+                        type="submit"
+                        className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer"
+                      >
+                        Cập nhật thay đổi dự án
+                      </button>
+                    </form>
+                  </div>
+                ) : (
+                  
+                  /* Section B: Create New Project Block */
+                  <div className="p-5 rounded-2xl border border-white/80 bg-white/40 shadow-xs space-y-4">
+                    <span className="text-[11.5px] font-black text-[#0284c7] uppercase tracking-wider flex items-center gap-1.5">
+                      <Plus className="w-4 h-4" />
+                      Thêm dự án tác phẩm mới
+                    </span>
+                    
+                    <form onSubmit={handleAddProject} className="space-y-4">
+                      
+                      {/* Direct Computer File Selector Uploader */}
+                      <div className="space-y-1.5">
+                        <label className="text-[9.5px] font-extrabold text-slate-500 uppercase tracking-widest">Tệp sản phẩm từ máy tính (Ảnh / Video)</label>
+                        
+                        {!selectedFile ? (
+                          <div 
+                            onClick={() => document.getElementById('cms-file-input')?.click()}
+                            className="border-2 border-dashed border-slate-200 hover:border-[#0284c7]/40 rounded-xl p-5 bg-white/40 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center space-y-2"
+                          >
+                            <input 
+                              type="file" 
+                              id="cms-file-input" 
+                              className="hidden" 
+                              accept="image/*,video/*"
+                              onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                  handleFileSelect(e.target.files[0]);
+                                }
+                              }}
+                            />
+                            <UploadCloud className="w-7 h-7 text-[#0284c7] animate-pulse" />
+                            <p className="text-[12px] font-bold text-slate-700">Chọn ảnh hoặc video từ máy tính của bạn</p>
+                            <p className="text-[10.5px] text-slate-400 font-semibold">Tự động nhận diện và thiết lập xem thử</p>
+                          </div>
+                        ) : (
+                          <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-white/60 p-4 flex items-center gap-4 transition-all">
+                            <div className="w-14 h-14 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative flex items-center justify-center">
+                              {selectedFile.type.startsWith('video/') ? (
+                                <video 
+                                  src={filePreviewUrl!} 
+                                  autoPlay 
+                                  loop 
+                                  muted 
+                                  playsInline 
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <img 
+                                  src={filePreviewUrl!} 
+                                  className="w-full h-full object-cover" 
+                                  alt="Preview" 
+                                />
+                              )}
+                            </div>
+                            
+                            <div className="flex-1 min-w-0 text-left">
+                              <p className="text-[12px] font-bold text-slate-800 truncate" title={selectedFile.name}>
+                                {selectedFile.name}
+                              </p>
+                              <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
+                                {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • {selectedFile.type.startsWith('video/') ? 'Video' : 'Hình ảnh'}
+                              </p>
+                            </div>
+
+                            <button 
+                              type="button"
+                              onClick={() => {
+                                setSelectedFile(null);
+                                setFilePreviewUrl(null);
+                                setUploadFeedback({ type: null, msg: '' });
+                              }}
+                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-500 transition-colors cursor-pointer"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Tiêu đề tác phẩm</label>
+                          <input 
+                            type="text" 
+                            value={newTitle}
+                            onChange={(e) => setNewTitle(e.target.value)}
+                            placeholder="Phim TVC nha khoa..." 
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white/60 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Danh mục gợi ý</label>
+                          <select 
+                            value={newCategory}
+                            onChange={(e) => setNewCategory(e.target.value as any)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-bold text-slate-700 outline-none focus:border-[#0284c7]"
+                          >
+                            <option value="video">Video</option>
+                            <option value="image">Hình ảnh</option>
+                            <option value="regular">Định kỳ</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Đoạn mô tả ngắn</label>
+                        <input 
+                          type="text" 
+                          value={newDesc}
+                          onChange={(e) => setNewDesc(e.target.value)}
+                          placeholder="Chiến dịch định vị phân khúc cao cấp..." 
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white/60 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                        />
+                      </div>
+
+                      {uploadFeedback.type && (
+                        <div className={`p-3 rounded-lg text-[11.5px] font-semibold text-left ${uploadFeedback.type === 'success' ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-600 border border-rose-500/20'}`}>
+                          {uploadFeedback.msg}
+                        </div>
+                      )}
+
+                      <button 
+                        type="submit"
+                        className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#0284c7] hover:bg-sky-500 text-white rounded-lg text-[11px] font-black uppercase tracking-wider shadow-sm transition-all cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Thêm dự án này
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+                {/* Section C: Portfolio Table List */}
+                <div className="space-y-4">
+                  <span className="text-[11.5px] font-black text-slate-500 uppercase tracking-wider block">Danh sách dự án hiện có ({projects.length} dự án)</span>
+                  
+                  <div className="border border-slate-200 rounded-xl overflow-hidden bg-white/80">
+                    <table className="w-full text-[12px] text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-extrabold uppercase text-[10px] tracking-wider">
+                          <th className="p-3.5">Ảnh</th>
+                          <th className="p-3.5">Tiêu đề tác phẩm</th>
+                          <th className="p-3.5">Danh mục</th>
+                          <th className="p-3.5">Mô tả</th>
+                          <th className="p-3.5 text-center">Thao tác</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {projects.map(p => (
+                          <tr key={p.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                            <td className="p-3">
+                              <div className="w-12 h-9 rounded bg-slate-100 overflow-hidden border border-slate-200 relative flex items-center justify-center shrink-0">
+                                <img src={p.img} className="w-full h-full object-cover" alt="Thumbnail" />
+                                {p.vid && (
+                                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                                    <Play className="w-3.5 h-3.5 fill-white text-white" />
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                            <td className="p-3 font-extrabold text-[#0b1329] uppercase min-w-[150px]">{p.title}</td>
+                            <td className="p-3">
+                              <span className={`px-2 py-0.5 rounded text-[9.5px] font-extrabold uppercase ${p.category === 'video' ? 'bg-sky-50 text-[#0284c7] border border-sky-100' : p.category === 'image' ? 'bg-purple-50 text-purple-600 border border-purple-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'}`}>
+                                {p.category === 'video' ? 'Video' : p.category === 'image' ? 'Hình ảnh' : 'Định kỳ'}
+                              </span>
+                            </td>
+                            <td className="p-3 text-slate-500 font-semibold truncate max-w-[200px]" title={p.desc}>{p.desc}</td>
+                            <td className="p-3 text-center min-w-[120px]">
+                              <div className="inline-flex gap-1.5">
+                                <button 
+                                  onClick={() => handleStartEditProject(p)}
+                                  className="p-1.5 rounded bg-amber-50 hover:bg-amber-100 text-amber-600 hover:text-amber-700 border border-amber-200/40 cursor-pointer"
+                                  title="Sửa"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                </button>
+                                <button 
+                                  onClick={() => handleDeleteProject(p.id)}
+                                  className="p-1.5 rounded bg-rose-50 hover:bg-rose-100 text-rose-500 hover:text-rose-600 border border-rose-200/40 cursor-pointer"
+                                  title="Xóa"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+          </div>
+        </main>
+
+        {/* Global CMS Toast notification popup */}
+        {cmsShowToast && (
+          <div className="fixed bottom-6 right-6 z-[120] bg-slate-900 border border-white/10 text-white rounded-xl py-3 px-5 shadow-2xl flex items-center gap-2 animate-scale-up font-bold text-[12.5px]">
+            <CheckCircle2 className="w-4.5 h-4.5 text-emerald-400" />
+            {cmsToastMsg}
+          </div>
+        )}
+
+      </div>
+    );
+  }
+
+  // RENDER MAIN WEBSITE INTERFACE
   return (
     <div 
       onDragEnter={handleGlobalDragEnter}
@@ -543,26 +1682,26 @@ const App: React.FC = () => {
         </div>
       </nav>
 
-      {/* HERO CONTENT - BOTTOM-LEFT ALIGNED */}
+      {/* HERO CONTENT - BOTTOM-LEFT ALIGNED (READING DYNAMIC CONTENT) */}
       <main className="absolute top-[20%] sm:top-[22%] md:top-[24%] left-6 sm:left-12 lg:left-24 z-20 max-w-3xl text-left pointer-events-none px-4">
         <div className="space-y-6 sm:space-y-7 pointer-events-auto select-none animate-fade-in">
           
           {/* Tagline */}
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/70 border border-white/95 backdrop-blur-md rounded-full shadow-xs text-[10px] font-black tracking-widest text-[#0284c7] uppercase">
             <span className="w-1.5 h-1.5 bg-[#0284c7] rounded-full animate-pulse" />
-            Media Production & Operations
+            {siteContent.heroTagline}
           </div>
           
-          {/* Headline - High contrast, powerful typography with highlighted key terms */}
+          {/* Headline - Dynamic and custom styled to match original highlight structure */}
           <h1 className="text-3xl sm:text-4.5xl lg:text-[2.85rem] font-black text-[#0b1329] tracking-tight uppercase leading-[1.3] drop-shadow-xs">
-            Sản xuất nội dung <span className="text-[#0284c7]">chuyên nghiệp</span> <br />
-            Vận hành media <span className="text-[#0284c7]">bài bản</span>
+            {siteContent.heroHeadlineLine1} <span className="text-[#0284c7]">{siteContent.heroHeadlineHighlight1}</span> <br />
+            {siteContent.heroHeadlineLine2} <span className="text-[#0284c7]">{siteContent.heroHeadlineHighlight2}</span>
           </h1>
           
           {/* Sub-headline */}
           <div className="max-w-2xl">
-            <p className="text-slate-600 text-[13.5px] sm:text-[14.5px] leading-relaxed font-semibold">
-              Vũ Anh Media đồng hành cùng các doanh nghiệp <span className="text-slate-900 font-extrabold">SME</span> giải quyết triệt để khoảng trống về nhân sự và quy trình sản xuất. Chúng tôi không chỉ cung cấp những thước phim, bộ ảnh chuẩn mực mà còn thiết lập hệ thống vận hành để nội dung của bạn ra đều đặn, đúng định hướng và thực sự trở thành <span className="text-slate-900 font-extrabold">tài sản thương hiệu</span>.
+            <p className="text-slate-600 text-[13.5px] sm:text-[14.5px] leading-relaxed font-semibold animate-fade-in">
+              {siteContent.heroSubheadline}
             </p>
           </div>
 
@@ -571,34 +1710,34 @@ const App: React.FC = () => {
               onClick={() => setActiveDrawer('contact')}
               className="inline-flex items-center gap-2 px-7 py-4 text-[10.5px] font-extrabold uppercase tracking-widest text-white bg-[#0284c7] hover:bg-sky-500 rounded-full shadow-lg shadow-sky-500/20 transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer"
             >
-              Yêu cầu tư vấn giải pháp
+              {siteContent.heroCta1Text}
               <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
             <button 
               onClick={() => setActiveDrawer('projects')}
               className="inline-flex items-center gap-2 px-7 py-4 text-[10.5px] font-extrabold uppercase tracking-widest text-[#0b1329] bg-white/80 hover:bg-white border border-[#0b1329]/15 rounded-full transition-all duration-300 hover:shadow-lg cursor-pointer"
             >
-              Xem năng lực thực chiến
+              {siteContent.heroCta2Text}
             </button>
           </div>
         </div>
       </main>
 
-      {/* SOCIAL PROOF SECTION - PREMIUM MARQUEE INTEGRATION AT THE BOTTOM VIEWPORT */}
+      {/* SOCIAL PROOF SECTION - DYNAMIC VALUE READ */}
       <div className="absolute bottom-16 sm:bottom-20 left-6 sm:left-12 lg:left-24 right-6 sm:right-12 lg:right-24 z-20 pointer-events-auto select-none space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-t border-slate-200/50 pt-5">
           
           <div className="max-w-xl shrink-0">
             <span className="text-[10px] font-black tracking-widest text-[#0284c7] uppercase">Đối tác thực chiến</span>
             <p className="text-[11.5px] text-slate-500 font-bold leading-relaxed mt-1">
-              Doanh nghiệp không cần những thử nghiệm cảm tính. Họ cần sự đảm bảo. Vũ Anh Media là đơn vị đứng sau các chiến dịch hình ảnh, chuỗi nội dung định kỳ và video quy chuẩn của các thương hiệu dẫn đầu:
+              {siteContent.partnersIntro}
             </p>
           </div>
           
-          {/* Duplicated infinite sliding list with glow and fading edges */}
+          {/* Dynamic sliding partners marquee */}
           <div className="flex-1 overflow-hidden mask-gradient py-2">
             <div className="flex gap-6 whitespace-nowrap animate-marquee">
-              {partnersList.concat(partnersList).map((partner, idx) => (
+              {siteContent.partnersList.concat(siteContent.partnersList).map((partner, idx) => (
                 <div 
                   key={idx} 
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/70 border border-white/95 backdrop-blur-md text-[11px] font-extrabold text-slate-700 shadow-xs"
@@ -630,59 +1769,41 @@ const App: React.FC = () => {
         />
       )}
 
-      {/* LIQUID-GLASS DRAWER PANEL - PREMIUM LIGHT GLASS FUTURISTIC STYLE */}
+      {/* LIQUID-GLASS DRAWER PANEL */}
       <div 
         className={`fixed top-0 right-0 h-screen w-full md:w-[620px] lg:w-[680px] z-50 glass-panel border-l border-white/80 p-8 sm:p-12 overflow-y-auto transform transition-transform duration-500 ease-in-out ${activeDrawer ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        {/* CLOSE BUTTON - SLEEK LIGHT GLASS CIRCLE */}
+        {/* CLOSE BUTTON */}
         <button 
           onClick={() => setActiveDrawer(null)}
-          className="absolute top-6 right-6 p-2.5 rounded-full bg-slate-100/80 hover:bg-slate-200 hover:scale-105 text-slate-600 hover:text-slate-900 transition-all duration-300 border border-slate-200/40 cursor-pointer shadow-xs z-10"
+          className="absolute top-6 right-6 p-2.5 rounded-full bg-slate-100/80 hover:bg-slate-200 hover:scale-105 text-slate-600 transition-all duration-300 border border-slate-200/40 cursor-pointer shadow-xs z-10"
         >
           <X className="w-4.5 h-4.5" />
         </button>
 
-        {/* DRAWER CONTENT: ABOUT (GIỚI THIỆU / DIFFERENCE SECTION) */}
+        {/* DRAWER CONTENT: ABOUT (DYNAMIC VALUE READ) */}
         {activeDrawer === 'about' && (
           <div className="space-y-16 animate-slide-in pb-12 pt-4">
             
-            {/* Header Area */}
             <div className="space-y-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
                 <Sparkles className="w-3 h-3 text-[#0284c7]" />
                 Định vị cốt lõi
               </span>
               <h2 className="text-2xl sm:text-3xl font-black tracking-tight uppercase leading-[1.3] text-[#0b1329]">
-                Định hình lại chuẩn mực Media cho doanh nghiệp
+                {siteContent.aboutHeadline}
               </h2>
             </div>
             
             <div className="w-16 h-1 bg-gradient-to-r from-[#0284c7] to-cyan-400 rounded-full" />
             
-            {/* Segment Description */}
             <p className="text-[13.5px] sm:text-[14.5px] text-slate-600 leading-relaxed font-semibold">
-              Phần lớn doanh nghiệp SME tại Việt Nam đang gặp 3 sai lầm lớn khi đầu tư cho Media: Coi chi phí media là khoản tiêu sản dùng một lần, thuê freelancer thiếu tính cam kết dài hạn, hoặc chọn các Marketing Agency lớn với chi phí bị đội lên do các khâu trung gian. <span className="text-[#0284c7] font-black">Vũ Anh Media</span> thay đổi thực trạng đó bằng 3 nguyên tắc làm việc:
+              {siteContent.aboutDescription}
             </p>
 
-            {/* Generous spaced principles list */}
+            {/* Spaced principles list */}
             <div className="space-y-6">
-              {[
-                { 
-                  num: '01', 
-                  title: 'Kiểm soát rủi ro vận hành bằng quy trình', 
-                  desc: 'Freelancer làm việc dựa trên năng lực cá nhân và không có đội ngũ backup. Vũ Anh Media vận hành theo team có cấu trúc, có cam kết deadline rõ ràng bằng hợp đồng và luôn chủ động hệ thống thiết bị quay dựng chuyên dụng (Sony A7S3, Blackmagic 6K Pro...).' 
-                },
-                { 
-                  num: '02', 
-                  title: 'Biến Media thành tài sản tích lũy', 
-                  desc: 'Chúng tôi không chỉ giao file video rồi kết thúc hợp tác. Vũ Anh Media xây dựng hệ thống lưu trữ bài bản, giúp doanh nghiệp sở hữu trọn vẹn file gốc, file dự án để có thể tái sử dụng trong vòng 6 - 12 tháng, tối ưu hóa từng đồng chi phí sản xuất.' 
-                },
-                { 
-                  num: '03', 
-                  title: 'Chuyên sâu tối đa, không phân tán nguồn lực', 
-                  desc: 'Chúng tôi nói KHÔNG với việc nhận chạy ads, booking KOL hay làm marketing tổng thể để tập trung 100% vào phần lõi: Sản xuất và Vận hành Media. Doanh nghiệp nhận được chất lượng sản xuất cao cấp nhất mà không phải gánh chi phí gián tiếp.' 
-                }
-              ].map((card, idx) => (
+              {siteContent.aboutPrinciples.map((card, idx) => (
                 <div 
                   key={idx} 
                   className="glass-card rounded-2xl p-6 sm:p-8 border border-white/80 bg-white/40 shadow-xs space-y-4 transition-transform duration-300 hover:-translate-y-1"
@@ -708,13 +1829,12 @@ const App: React.FC = () => {
               <div className="space-y-2">
                 <span className="text-[10px] font-black tracking-widest text-[#0284c7] uppercase">Về người sáng lập</span>
                 <h3 className="text-xl sm:text-2xl font-black text-[#0b1329] tracking-tight uppercase leading-[1.3]">
-                  Kinh nghiệm đúc kết từ chi tiết nhỏ
+                  {siteContent.founderTitle}
                 </h3>
               </div>
 
               {/* Elegant Founder Grid Card */}
               <div className="glass-card rounded-2xl overflow-hidden border border-white/80 bg-white/45 shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center sm:items-start transition-all duration-300 hover:bg-white/80">
-                {/* 4:5 Artistic Portrait container */}
                 <div className="w-36 h-48 sm:w-40 sm:h-52 rounded-xl overflow-hidden bg-slate-900 border border-white/90 shadow-lg shrink-0 relative group">
                   <img 
                     src="/assets/founder.png" 
@@ -724,7 +1844,6 @@ const App: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
                 </div>
                 
-                {/* Info and quote - exact text restored */}
                 <div className="flex flex-col justify-center space-y-4 text-center sm:text-left">
                   <div className="space-y-1">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#0284c7]/10 text-[9px] font-black text-[#0284c7] uppercase tracking-widest leading-none">
@@ -735,7 +1854,7 @@ const App: React.FC = () => {
                   
                   <div className="relative">
                     <p className="text-[13px] sm:text-[13.5px] text-slate-600 font-semibold italic border-l-3 border-[#0284c7] pl-4 leading-relaxed text-left">
-                      "Kinh nghiệm nằm ở việc chú ý tới brief, dữ liệu hiện trường và cách bàn giao sau cùng để giữ chuẩn lâu dài."
+                      "{siteContent.founderQuote}"
                     </p>
                   </div>
                 </div>
@@ -744,146 +1863,71 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* DRAWER CONTENT: SERVICES (DỊCH VỤ / Bento Grid 3 columns) */}
+        {/* DRAWER CONTENT: SERVICES (DYNAMIC VALUE READ) */}
         {activeDrawer === 'services' && (
           <div className="space-y-16 animate-slide-in pb-12 pt-4">
             
-            {/* Header */}
             <div className="space-y-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
                 Hệ sinh thái toàn diện
               </span>
               <h2 className="text-2xl sm:text-3xl font-black tracking-tight uppercase leading-[1.3] text-[#0b1329]">
-                Hệ sinh thái dịch vụ Media toàn diện cho SME
+                {siteContent.servicesHeadline}
               </h2>
             </div>
             
             <div className="w-16 h-1 bg-gradient-to-r from-[#0284c7] to-cyan-400 rounded-full" />
             
             <p className="text-[13.5px] sm:text-[14px] text-slate-600 leading-relaxed font-semibold">
-              Mỗi doanh nghiệp cần một sự chuẩn bị và giải pháp khác nhau. Vũ Anh Media thiết kế 3 tầng trục năng lực dịch vụ bài bản để hỗ trợ sự phát triển liên tục của bạn:
+              {siteContent.servicesDescription}
             </p>
 
-            {/* Service Columns - spaced out beautiful layout */}
+            {/* Service Columns */}
             <div className="space-y-6">
-              
-              {/* SERVICE 1 */}
-              <div className="glass-card rounded-2xl p-6 sm:p-8 border border-white/80 bg-white/40 shadow-xs space-y-5 transition-transform duration-300 hover:-translate-y-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-[11px] font-mono font-black text-[#0284c7] bg-[#0284c7]/5 px-2.5 py-0.5 rounded-lg border border-[#0284c7]/10 w-fit">
-                      TẦNG 01
-                    </span>
-                    <h3 className="font-extrabold text-[16px] sm:text-[17px] text-[#0b1329] uppercase tracking-tight">
-                      Media Production — Sản xuất theo dự án
-                    </h3>
+              {siteContent.servicesList.map((sv, idx) => (
+                <div key={idx} className={`glass-card rounded-2xl p-6 sm:p-8 border shadow-lg space-y-5 transition-transform duration-300 hover:-translate-y-1 ${idx === 1 ? 'border-[#0284c7]/30 bg-[#0284c7]/5' : 'border-white/80 bg-white/40'}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                      <span className={`text-[11px] font-mono font-black px-2.5 py-0.5 rounded-lg w-fit block ${idx === 1 ? 'bg-[#0284c7] text-white' : 'bg-[#0284c7]/5 text-[#0284c7] border border-[#0284c7]/10'}`}>
+                        {sv.tag}
+                      </span>
+                      <h3 className="font-extrabold text-[16px] sm:text-[17px] text-[#0b1329] uppercase tracking-tight">
+                        {sv.title}
+                      </h3>
+                    </div>
+                    <div className={`p-2.5 rounded-xl ${idx === 1 ? 'bg-[#0284c7]/10' : 'bg-slate-100'}`}>
+                      {sv.icon === 'film' ? <Film className="w-5 h-5 text-[#0284c7]" /> : sv.icon === 'layers' ? <Layers className="w-5 h-5 text-[#0284c7]" /> : <Shield className="w-5 h-5 text-[#0284c7]" />}
+                    </div>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-slate-100">
-                    <Film className="w-5 h-5 text-[#0284c7]" />
-                  </div>
-                </div>
-                
-                <p className="text-[13px] text-slate-600 leading-relaxed font-semibold">
-                  Giải quyết bài toán tạo dấu ấn hình ảnh đột phá trong các chiến dịch ngắn hạn hoặc xây dựng nền tảng nhận diện cốt lõi cho thương hiệu.
-                </p>
-                
-                <div className="pt-4 border-t border-slate-200/40 space-y-3">
-                  <div>
-                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Sản phẩm cốt lõi</span>
-                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
-                      Video TVC doanh nghiệp • Video Profile thương hiệu/sản phẩm • Video quảng cáo cửa hàng • Video ngắn đa nền tảng (TikTok, Reels, Shorts) • Nhiếp ảnh thương mại chuẩn mực.
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Cam kết B2B</span>
-                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
-                      Quy trình trọn gói từ Brief, kịch bản, storyboard, shot list đến hậu kỳ chuyên sâu (Color Grading 4K, Sound, Motion).
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* SERVICE 2 */}
-              <div className="glass-card rounded-2xl p-6 sm:p-8 border border-[#0284c7]/30 bg-[#0284c7]/5 shadow-xs space-y-5 transition-transform duration-300 hover:-translate-y-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-[11px] font-mono font-black text-white bg-[#0284c7] px-2.5 py-0.5 rounded-lg w-fit">
-                      TẦNG 02
-                    </span>
-                    <h3 className="font-extrabold text-[16px] sm:text-[17px] text-[#0b1329] uppercase tracking-tight">
-                      Monthly Media — Giải pháp nội dung định kỳ
-                    </h3>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-[#0284c7]/10">
-                    <Layers className="w-5 h-5 text-[#0284c7]" />
+                  
+                  <p className="text-[13px] text-slate-600 leading-relaxed font-semibold">
+                    {sv.desc}
+                  </p>
+                  
+                  <div className="pt-4 border-t border-slate-200/40 space-y-3">
+                    <div>
+                      <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">{sv.deliverablesLabel}</span>
+                      <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
+                        {sv.deliverables}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">{sv.commitmentLabel}</span>
+                      <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
+                        {sv.commitment}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                
-                <p className="text-[13px] text-slate-600 leading-relaxed font-semibold">
-                  Giải quyết bài toán đứt gãy mạch nội dung. Duy trì điểm chạm liên tục với khách hàng mục tiêu mà không làm tăng áp lực quản lý cho chủ doanh nghiệp.
-                </p>
-                
-                <div className="pt-4 border-t border-[#0284c7]/10 space-y-3">
-                  <div>
-                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Sản phẩm cốt lõi</span>
-                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
-                      Gói nội dung cam kết số lượng theo tháng cho Spa, Nha khoa, F&B, Doanh nghiệp SME (Video ngắn + Bộ ảnh sản phẩm/nhân vật + Tuyến nội dung viết tương ứng).
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Cam kết B2B</span>
-                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
-                      Lịch sản xuất cố định, nhân sự phụ trách riêng biệt, output đầu ra đồng đều về mặt visual direction.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* SERVICE 3 */}
-              <div className="glass-card rounded-2xl p-6 sm:p-8 border border-white/80 bg-white/40 shadow-xs space-y-5 transition-transform duration-300 hover:-translate-y-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <span className="text-[11px] font-mono font-black text-[#0284c7] bg-[#0284c7]/5 px-2.5 py-0.5 rounded-lg border border-[#0284c7]/10 w-fit">
-                      TẦNG 03
-                    </span>
-                    <h3 className="font-extrabold text-[16px] sm:text-[17px] text-[#0b1329] uppercase tracking-tight">
-                      Media Operations — Tư vấn & Thiết lập bộ máy nội bộ
-                    </h3>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-slate-100">
-                    <Shield className="w-5 h-5 text-[#0284c7]" />
-                  </div>
-                </div>
-                
-                <p className="text-[13px] text-slate-600 leading-relaxed font-semibold">
-                  Dành cho các doanh nghiệp muốn tự chủ năng lực sản xuất nhưng đang thiếu quy trình quản trị, khiến tài nguyên bị thất thoát và nhân sự vận hành cảm tính.
-                </p>
-                
-                <div className="pt-4 border-t border-slate-200/40 space-y-3">
-                  <div>
-                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Sản phẩm cốt lõi</span>
-                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
-                      Chuẩn hóa quy trình từ khâu Brief – Sản xuất – Duyệt – Đăng; Phân vai nhân sự media nội bộ; Thiết lập hệ thống lưu trữ và bàn giao tài sản số (file gốc, file dự án) để tái sử dụng dài hạn.
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Cam kết B2B</span>
-                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
-                      Chỉ tập trung chuyên sâu vào vận hành sản xuất media, chuyển giao một hệ thống tự chạy ổn định sau 3 - 6 tháng.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
+              ))}
             </div>
           </div>
         )}
 
-        {/* DRAWER CONTENT: PROJECTS (DỰ ÁN) */}
+        {/* DRAWER CONTENT: PROJECTS (DYNAMIC VALUE READ) */}
         {activeDrawer === 'projects' && (
           <div className="space-y-16 animate-slide-in pb-12 pt-4">
             
-            {/* Header */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
@@ -903,9 +1947,9 @@ const App: React.FC = () => {
             
             <div className="w-16 h-1 bg-gradient-to-r from-[#0284c7] to-cyan-400 rounded-full" />
 
-            {/* DYNAMIC SANDBOX BUILDER - DIRECT COMPUTER FILE UPLOADER (Only visible in ADMIN MODE) */}
+            {/* Dynamic on-page admin creator sandbox widget */}
             {isAdmin ? (
-              <div className="glass-card rounded-2xl p-6 border border-[#0284c7]/20 bg-white/50 space-y-4">
+              <div className="glass-card rounded-2xl p-6 border border-[#0284c7]/25 bg-white/50 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <UploadCloud className="w-4 h-4 text-[#0284c7]" />
@@ -915,23 +1959,21 @@ const App: React.FC = () => {
                   </div>
                   <button 
                     onClick={handleLogoutAdmin}
-                    className="text-[10px] font-black text-rose-600 hover:text-rose-500 transition-colors uppercase cursor-pointer"
+                    className="text-[10px] font-black text-[#0284c7] hover:text-sky-600 transition-colors uppercase cursor-pointer"
                   >
                     Thoát Admin
                   </button>
                 </div>
                 
-                {/* Visual Direct Computer File Uploader Field */}
                 <form onSubmit={handleAddProject} className="space-y-4 pt-1">
                   
-                  {/* File Selector Zone */}
                   <div className="space-y-1.5">
                     <label className="text-[9.5px] font-extrabold text-slate-400 uppercase tracking-widest">Tệp sản phẩm từ máy tính (Ảnh / Video)</label>
                     
                     {!selectedFile ? (
                       <div 
                         onClick={() => document.getElementById('form-file-input')?.click()}
-                        className="border border-dashed border-slate-300 hover:border-[#0284c7]/40 rounded-xl p-6 bg-white/40 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center space-y-2"
+                        className="border border-dashed border-slate-200 hover:border-[#0284c7]/40 rounded-xl p-6 bg-white/40 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center space-y-2"
                       >
                         <input 
                           type="file" 
@@ -945,12 +1987,11 @@ const App: React.FC = () => {
                           }}
                         />
                         <UploadCloud className="w-8 h-8 text-[#0284c7] animate-pulse" />
-                        <p className="text-[12.5px] font-bold text-slate-800">Chọn ảnh hoặc video từ máy tính của bạn</p>
-                        <p className="text-[11px] text-slate-400 font-semibold">Hỗ trợ các định dạng hình ảnh và video MP4</p>
+                        <p className="text-[12.5px] font-bold text-slate-700">Chọn ảnh hoặc video từ máy tính của bạn</p>
+                        <p className="text-[11px] text-slate-400 font-semibold">Tự động phát hiện loại tệp cực nhanh</p>
                       </div>
                     ) : (
-                      <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-white/80 p-4 flex items-center gap-4 transition-all duration-300">
-                        {/* Selected File Miniature Preview */}
+                      <div className="relative rounded-xl overflow-hidden border border-slate-200/80 bg-white/60 p-4 flex items-center gap-4 transition-all duration-300">
                         <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative flex items-center justify-center">
                           {selectedFile.type.startsWith('video/') ? (
                             <video 
@@ -970,7 +2011,6 @@ const App: React.FC = () => {
                           )}
                         </div>
                         
-                        {/* File Meta Info */}
                         <div className="flex-1 min-w-0 text-left">
                           <p className="text-[12.5px] font-bold text-slate-800 truncate" title={selectedFile.name}>
                             {selectedFile.name}
@@ -980,7 +2020,6 @@ const App: React.FC = () => {
                           </p>
                         </div>
 
-                        {/* Remove Selected File Button */}
                         <button 
                           type="button"
                           onClick={() => {
@@ -989,7 +2028,6 @@ const App: React.FC = () => {
                             setUploadFeedback({ type: null, msg: '' });
                           }}
                           className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-500 transition-colors cursor-pointer"
-                          title="Chọn tệp khác"
                         >
                           <X className="w-4.5 h-4.5" />
                         </button>
@@ -1005,7 +2043,7 @@ const App: React.FC = () => {
                         value={newTitle}
                         onChange={(e) => setNewTitle(e.target.value)}
                         placeholder="Ví dụ: Phim quảng bá thương hiệu..." 
-                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/60 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
                         required
                       />
                     </div>
@@ -1029,8 +2067,8 @@ const App: React.FC = () => {
                       type="text" 
                       value={newDesc}
                       onChange={(e) => setNewDesc(e.target.value)}
-                      placeholder="Ví dụ: Chiến dịch Định Vị Thẩm Mỹ Viện – Tối ưu hóa hình ảnh Minimalist Luxury..." 
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/60 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                      placeholder="Ví dụ: Chiến dịch Định Vị Thẩm Mỹ Viện..." 
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
                     />
                   </div>
 
@@ -1050,7 +2088,7 @@ const App: React.FC = () => {
                     {projects.length !== initialProjects.length && (
                       <button 
                         type="button"
-                        onClick={handleRestoreDefaults}
+                        onClick={handleResetToDefault}
                         className="px-4 py-2.5 text-[11px] font-bold uppercase text-slate-500 hover:text-rose-500 bg-slate-100 hover:bg-slate-200 rounded-lg border border-slate-200 transition-all cursor-pointer"
                       >
                         Reset Danh mục
@@ -1148,69 +2186,51 @@ const App: React.FC = () => {
               ))}
             </div>
 
-            {/* Drawer Footer with secret lock - completely hides admin panels from normal users */}
+            {/* Drawer Footer with secret lock - completely redirects to full CMS */}
             <div className="pt-8 border-t border-slate-200/50 flex items-center justify-between text-[11px] text-slate-400 font-semibold select-none">
               <span>VŨ ANH MEDIA © 2026</span>
               <div className="flex items-center">
-                {isAdmin ? (
-                  <button 
-                    onClick={handleLogoutAdmin}
-                    className="inline-flex items-center gap-1.5 text-[#0284c7] hover:text-sky-600 transition-colors cursor-pointer"
-                  >
-                    <Unlock className="w-3.5 h-3.5" />
-                    Thoát Admin
-                  </button>
-                ) : (
-                  <button 
-                    onClick={() => setIsPasscodeModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 text-slate-300 hover:text-slate-400 transition-colors cursor-pointer"
-                    title="Nhập mật mã quản lý"
-                  >
-                    <Lock className="w-3.5 h-3.5" />
-                    Quản trị
-                  </button>
-                )}
+                <button 
+                  onClick={() => setIsPasscodeModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 text-slate-300 hover:text-slate-400 transition-colors cursor-pointer"
+                  title="Nhập mật mã quản lý"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  Hệ thống CMS Quản trị
+                </button>
               </div>
             </div>
 
           </div>
         )}
 
-        {/* DRAWER CONTENT: PROCESS (QUY TRÌNH) */}
+        {/* DRAWER CONTENT: PROCESS (DYNAMIC VALUE READ) */}
         {activeDrawer === 'process' && (
           <div className="space-y-16 animate-slide-in pb-12 pt-4">
             
-            {/* Header */}
             <div className="space-y-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
                 Lộ trình triển khai
               </span>
               <h2 className="text-2xl sm:text-3xl font-black tracking-tight uppercase leading-[1.3] text-[#0b1329]">
-                Quy trình làm việc bài bản
+                {siteContent.processHeadline}
               </h2>
             </div>
             
             <div className="w-16 h-1 bg-gradient-to-r from-[#0284c7] to-cyan-400 rounded-full" />
 
             <p className="text-[13.5px] sm:text-[14px] text-slate-600 leading-relaxed font-semibold">
-              Doanh nghiệp rất sợ sự mập mờ và trễ hẹn. Một quy trình rõ ràng thể hiện Vũ Anh Media có năng lực quản trị, điều hành thực chiến và chuyên nghiệp nhất.
+              {siteContent.processDescription}
             </p>
 
-            {/* Glowing vertical timeline with 4-step glass card steps - expert kịch bản restored */}
+            {/* Glowing vertical timeline */}
             <div className="relative border-l-2 border-sky-100/80 pl-8 ml-4 space-y-8">
-              {[
-                { step: '01', title: 'Nghiên cứu & Định vị', desc: 'Khảo sát thực tế bối cảnh thương hiệu, bóc tách "nỗi đau" truyền thông hiện tại và xác lập tệp khách hàng mục tiêu.' },
-                { step: '02', title: 'Kịch bản & Storyboard', desc: 'Lên ý tưởng chi tiết, xây dựng lời thoại đàm thoại tự nhiên (tránh sáo rỗng, công nghiệp), duyệt kỹ lưỡng trước khi bấm máy.' },
-                { step: '03', title: 'Sản xuất & Hậu kỳ', desc: 'Bấm máy trực tiếp với thiết bị chuyên dụng và đội ngũ sản xuất thực chiến. Xử lý màu sắc (Color Grading) và âm thanh chuẩn chỉ.' },
-                { step: '04', title: 'Bàn giao & Tối ưu', desc: 'Bàn giao sản phẩm đúng cam kết kỳ hạn. Hỗ trợ căn chỉnh định dạng để đạt hiệu quả hiển thị và giữ chân tốt nhất trên đa nền tảng.' }
-              ].map((timeline, idx) => (
+              {siteContent.processSteps.map((timeline, idx) => (
                 <div key={idx} className="relative group transition-all duration-300">
-                  {/* Timeline dot with glowing neon pulse */}
                   <div className="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-white border-2 border-[#0284c7] flex items-center justify-center shadow-[0_0_10px_rgba(2,132,199,0.3)] z-10 transition-transform duration-300 group-hover:scale-110">
                     <span className="w-2.5 h-2.5 bg-[#0284c7] rounded-full" />
                   </div>
                   
-                  {/* Timeline content glass card */}
                   <div className="glass-card rounded-2xl p-6 border border-white/80 bg-white/40 shadow-xs space-y-2 transition-all duration-300 hover:bg-white/80 hover:-translate-y-1">
                     <div className="flex items-center gap-3">
                       <span className="text-[11.5px] font-mono font-bold text-[#0284c7] bg-[#0284c7]/5 px-2.5 py-0.5 rounded-lg border border-[#0284c7]/10">
@@ -1230,24 +2250,23 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* DRAWER CONTENT: CONTACT (LIÊN HỆ / CTA & FORM) */}
+        {/* DRAWER CONTENT: CONTACT (DYNAMIC VALUE READ) */}
         {activeDrawer === 'contact' && (
           <div className="space-y-16 animate-slide-in pb-12 pt-4">
             
-            {/* Header */}
             <div className="space-y-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
                 Gửi yêu cầu
               </span>
               <h2 className="text-2xl sm:text-3xl font-black tracking-tight uppercase leading-[1.3] text-[#0b1329]">
-                Chuẩn hóa tối ưu năng lực Media của bạn ngay hôm nay
+                {siteContent.contactHeadline}
               </h2>
             </div>
             
             <div className="w-16 h-1 bg-gradient-to-r from-[#0284c7] to-cyan-400 rounded-full" />
 
             <p className="text-[13.5px] sm:text-[14.5px] text-slate-600 leading-relaxed font-semibold">
-              Đừng để ngân sách marketing bị lãng phí chỉ vì những hình ảnh lệch chuẩn hoặc một hệ thống nội dung rời rạc. Hãy chia sẻ với Vũ Anh Media về bài toán hiện tại của doanh nghiệp bạn.
+              {siteContent.contactDescription}
             </p>
 
             {formState !== 'success' ? (
@@ -1362,13 +2381,13 @@ const App: React.FC = () => {
               <div className="flex items-start gap-3">
                 <Phone className="w-4 h-4 text-[#0284c7] shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-black text-[#0b1329]">Email liên hệ:</span> hello@vuanhmedia.vn
+                  <span className="font-black text-[#0b1329]">Email liên hệ:</span> {siteContent.contactEmail}
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-[#0284c7] shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-black text-[#0b1329]">Vùng hoạt động:</span> Thành phố Hồ Chí Minh | Hà Nội
+                  <span className="font-black text-[#0b1329]">Vùng hoạt động:</span> {siteContent.contactRegion}
                 </div>
               </div>
             </div>
@@ -1428,7 +2447,7 @@ const App: React.FC = () => {
             <div className="space-y-1.5">
               <h3 className="font-extrabold text-[15px] text-[#0b1329] uppercase tracking-widest">Xác thực Quản trị</h3>
               <p className="text-[12px] text-slate-500 font-semibold leading-relaxed">
-                Vui lòng nhập mật mã quản trị để mở khóa Trình biên tập nhanh của Vũ Anh Media.
+                Vui lòng nhập mật mã quản trị để mở khóa Trình biên tập nhanh và hệ thống CMS của Vũ Anh Media.
               </p>
             </div>
             
@@ -1451,7 +2470,7 @@ const App: React.FC = () => {
                 type="submit"
                 className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 text-[11px] font-black uppercase tracking-widest text-white bg-[#0284c7] hover:bg-sky-500 rounded-xl shadow-lg shadow-sky-500/15 transition-all duration-300 cursor-pointer"
               >
-                Mở khóa quản trị
+                Mở khóa quản trị & CMS
               </button>
             </form>
           </div>
