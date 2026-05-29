@@ -153,3 +153,55 @@ body {
 .animate-shake {
   animation: shake 0.4s ease-in-out;
 }
+
+/* Futuristic White-Blue Hero BG Motion Design */
+@keyframes hero-zoom {
+  0%, 100% {
+    transform: scale(1.04) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.1) translate3d(-8px, -4px, 0);
+  }
+}
+.animate-hero-zoom {
+  animation: hero-zoom 22s ease-in-out infinite;
+  transform-origin: center right;
+}
+
+@keyframes light-streak {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(100%) skewX(-20deg);
+  }
+}
+.animate-light-streak {
+  animation: light-streak 24s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+
+@keyframes float-light {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.12;
+  }
+  50% {
+    transform: translate3d(20px, -15px, 0) scale(1.08);
+    opacity: 0.22;
+  }
+}
+.animate-float-light {
+  animation: float-light 14s ease-in-out infinite;
+}
+
+/* Accessibility: Support reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-zoom,
+  .animate-light-streak,
+  .animate-float-light,
+  .animate-pulse-slow {
+    animation: none !important;
+    transform: scale(1.04) !important;
+  }
+}
+

@@ -203,6 +203,17 @@ const App: React.FC = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [videoModalUrl, setVideoModalUrl] = useState('');
   
+  // Parallax scroll state
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
   // Contact Form state
   const [company, setCompany] = useState('');
   const [name, setName] = useState('');
@@ -1606,27 +1617,44 @@ const App: React.FC = () => {
       className="relative h-screen w-screen overflow-hidden font-sans antialiased text-[#0b1329] bg-[#f3f6fb] select-none"
     >
       
-      {/* SHOWREEL VIDEO BACKGROUND - PREMIUM WHITE BLUE FUTURE GLASS */}
-      <div className="absolute inset-0 z-0 select-none pointer-events-none">
-        <video 
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4" 
-          autoPlay 
-          loop 
-          muted 
-          playsInline 
-          className="w-full h-full object-cover filter brightness-[0.9] contrast-[1.02] saturate-[1.1]"
-        />
+      {/* FUTURISTIC PREMIUM IMAGE BACKGROUND WITH MOTION */}
+      <div className="absolute inset-0 z-0 select-none pointer-events-none overflow-hidden">
         
-        {/* Cool elegant white-blue frosted overlays */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-white/92 via-sky-50/78 to-white/45 pointer-events-none backdrop-blur-[0.5px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.92),transparent_75%)] pointer-events-none" />
+        {/* Parallax Container */}
+        <div 
+          className="w-full h-full transform will-change-transform"
+          style={{
+            transform: `translateY(${scrollY * 0.15}px) translateZ(0)`,
+            backfaceVisibility: 'hidden'
+          }}
+        >
+          {/* Zoom breathing animated Image */}
+          <img 
+            src="/assets/hero/hero-future-bg.jpg" 
+            alt="Vũ Anh Media Futuristic VR Background" 
+            className="w-full h-full object-cover object-[80%_center] animate-hero-zoom will-change-transform scale-[1.04]"
+            style={{
+              backfaceVisibility: 'hidden',
+              filter: 'blur(0)'
+            }}
+          />
+        </div>
         
-        {/* Futuristic Floating Ambient Orbs */}
-        <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-sky-400/22 to-cyan-400/15 blur-[130px] pointer-events-none animate-pulse-slow" />
-        <div className="absolute bottom-[10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#0284c7]/15 to-indigo-500/5 blur-[150px] pointer-events-none" />
+        {/* Soft elegant white-blue frosted overlays (Ensures 100% legibility on left, displays VR subject on right) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/98 via-white/80 to-transparent sm:from-white/96 sm:via-white/60 sm:to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-transparent to-transparent sm:from-white/70 sm:via-transparent sm:to-transparent pointer-events-none" />
+        
+        {/* Slow moving Light Streak Overlay */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-45">
+          <div className="w-[150%] h-full bg-gradient-to-r from-transparent via-white/[0.12] to-transparent animate-light-streak absolute top-0 left-0" />
+        </div>
+
+        {/* Futuristic Floating Ambient Orbs (Trôi nhẹ, tạo chiều sâu cho luồng sáng) */}
+        <div className="absolute bottom-[20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-[#0284c7]/20 to-sky-400/10 blur-[130px] pointer-events-none animate-float-light" />
+        <div className="absolute top-[10%] left-[-5%] w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-sky-300/15 to-transparent blur-[120px] pointer-events-none" />
         
         {/* Futuristic Tech Grid Pattern */}
-        <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(rgba(2,132,199,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(2,132,199,0.15)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(2,132,199,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(2,132,199,0.15)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
       </div>
 
       {/* FLOATING PILL NAVBAR - DOUBLE CAPSULE PATTERN */}
