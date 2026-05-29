@@ -555,8 +555,8 @@ const App: React.FC = () => {
           
           {/* Headline - High contrast, powerful typography with highlighted key terms */}
           <h1 className="text-3xl sm:text-4.5xl lg:text-[2.85rem] font-black text-[#0b1329] tracking-tight uppercase leading-[1.3] drop-shadow-xs">
-            Sản xuất nội dung <span className="text-[#0284c7]">chuyên nghiệp</span>. <br />
-            Vận hành media <span className="text-[#0284c7]">bài bản</span>.
+            Sản xuất nội dung <span className="text-[#0284c7]">chuyên nghiệp</span> <br />
+            Vận hành media <span className="text-[#0284c7]">bài bản</span>
           </h1>
           
           {/* Sub-headline */}
