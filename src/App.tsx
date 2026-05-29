@@ -15,7 +15,6 @@ import {
   Unlock
 } from 'lucide-react';
 
-
 interface Project {
   id: number;
   category: 'video' | 'image' | 'regular';
@@ -26,8 +25,8 @@ interface Project {
   link?: string; // Optional custom external product link
 }
 
-// Brand Logo Component - Uncropped rounded-xl with blue glowing drop shadow and single-line brand name
-const VALogo: React.FC<{ light?: boolean }> = ({ light = false }) => (
+// Brand Logo Component - Fully optimized for premium Futuristic White-Blue Theme
+const VALogo: React.FC = () => (
   <div className="flex items-center gap-3">
     {/* Monogram VA image - uncropped with a highly premium glowing cyber-blue drop shadow */}
     <div className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 flex items-center justify-center rounded-xl overflow-hidden bg-black border border-white/20 shadow-[0_0_15px_rgba(2,132,199,0.35)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_22px_rgba(2,132,199,0.55)]">
@@ -43,7 +42,7 @@ const VALogo: React.FC<{ light?: boolean }> = ({ light = false }) => (
       <span className="text-[14px] sm:text-[16px] font-black text-[#0284c7] tracking-[0.04em] leading-none uppercase">
         VŨ ANH
       </span>
-      <span className={`text-[10px] sm:text-[11.5px] font-black tracking-[0.22em] leading-none ml-2 uppercase ${light ? 'text-white/80' : 'text-[#0b1329]'}`}>
+      <span className="text-[10px] sm:text-[11.5px] font-black tracking-[0.22em] leading-none ml-2 uppercase text-[#0b1329]">
         MEDIA
       </span>
     </div>
@@ -85,6 +84,17 @@ const App: React.FC = () => {
   const [newDesc, setNewDesc] = useState('');
   const [newCategory, setNewCategory] = useState<'video' | 'image' | 'regular'>('video');
   const [uploadFeedback, setUploadFeedback] = useState<{ type: 'success' | 'error' | null, msg: string }>({ type: null, msg: '' });
+
+  // Partner data list for marquee scroll
+  const partnersList = [
+    "Học Viện Thẩm Mỹ Royal / Phòng khám Royal",
+    "Nha Khoa Việt Giáp / Nha Khoa Thuỳ Anh",
+    "Adam Eraton",
+    "Masan (Núi Pháo)",
+    "Sinshung Vina CT",
+    "Q-home / Ecocasa",
+    "Crescendo International Music Festival & Competition"
+  ];
 
   // Initial projects data from the original website
   const initialProjects: Project[] = [
@@ -363,8 +373,6 @@ const App: React.FC = () => {
     }, 4000);
   };
 
-
-
   // Add custom project manually from the direct file selection form
   const handleAddProject = (e: React.FormEvent) => {
     e.preventDefault();
@@ -456,10 +464,10 @@ const App: React.FC = () => {
       onDragOver={handleGlobalDragOver}
       onDragLeave={handleGlobalDragLeave}
       onDrop={handleGlobalDrop}
-      className="relative h-screen w-screen overflow-hidden font-sans antialiased text-[#0b1329] bg-[#f4f7fb] select-none"
+      className="relative h-screen w-screen overflow-hidden font-sans antialiased text-[#0b1329] bg-[#f3f6fb] select-none"
     >
       
-      {/* SHOWREEL VIDEO BACKGROUND */}
+      {/* SHOWREEL VIDEO BACKGROUND - PREMIUM WHITE BLUE FUTURE GLASS */}
       <div className="absolute inset-0 z-0 select-none pointer-events-none">
         <video 
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4" 
@@ -467,15 +475,15 @@ const App: React.FC = () => {
           loop 
           muted 
           playsInline 
-          className="w-full h-full object-cover filter brightness-[0.92] contrast-[1.02]"
+          className="w-full h-full object-cover filter brightness-[0.9] contrast-[1.02] saturate-[1.1]"
         />
         
-        {/* Soft elegant cool white-blue frosted overlays (NO BLACKS) */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-white/90 via-sky-50/70 to-white/40 pointer-events-none backdrop-blur-[0.5px]" />
+        {/* Cool elegant white-blue frosted overlays */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-white/92 via-sky-50/78 to-white/45 pointer-events-none backdrop-blur-[0.5px]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.92),transparent_75%)] pointer-events-none" />
         
         {/* Futuristic Floating Ambient Orbs */}
-        <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-sky-400/20 to-cyan-400/15 blur-[130px] pointer-events-none" />
+        <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-sky-400/22 to-cyan-400/15 blur-[130px] pointer-events-none animate-pulse-slow" />
         <div className="absolute bottom-[10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#0284c7]/15 to-indigo-500/5 blur-[150px] pointer-events-none" />
         
         {/* Futuristic Tech Grid Pattern */}
@@ -494,7 +502,7 @@ const App: React.FC = () => {
             onClick={(e) => { e.preventDefault(); setActiveDrawer(null); }}
             className="cursor-pointer"
           >
-            <VALogo light={false} />
+            <VALogo />
           </a>
         </div>
 
@@ -536,52 +544,80 @@ const App: React.FC = () => {
       </nav>
 
       {/* HERO CONTENT - BOTTOM-LEFT ALIGNED */}
-      <main className="absolute bottom-12 sm:bottom-16 lg:bottom-20 left-8 sm:left-16 lg:left-24 z-20 max-w-2xl text-left pointer-events-none">
-        <div className="space-y-5 sm:space-y-6 pointer-events-auto select-none animate-fade-in">
+      <main className="absolute top-[20%] sm:top-[22%] md:top-[24%] left-6 sm:left-12 lg:left-24 z-20 max-w-3xl text-left pointer-events-none px-4">
+        <div className="space-y-6 sm:space-y-7 pointer-events-auto select-none animate-fade-in">
           
-          {/* Eyebrow */}
+          {/* Tagline */}
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/70 border border-white/95 backdrop-blur-md rounded-full shadow-xs text-[10px] font-black tracking-widest text-[#0284c7] uppercase">
             <span className="w-1.5 h-1.5 bg-[#0284c7] rounded-full animate-pulse" />
-            VŨ ANH MEDIA
+            Media Production & Operations
           </div>
           
-          {/* Headline - Đập tan sự phân vân trong 3 giây đầu */}
-          <h1 className="text-2xl sm:text-3.5xl lg:text-[2.25rem] font-black text-[#0b1329] tracking-tight uppercase leading-[1.38] drop-shadow-xs">
-            Nâng Tầm Thương Hiệu <br />
-            Bằng Thước Phim Điện Ảnh <br />
-            <span className="text-[#0284c7]">& Hình Ảnh Đột Phá</span>
+          {/* Headline - High contrast, powerful typography with highlighted key terms */}
+          <h1 className="text-3xl sm:text-4.5xl lg:text-[2.85rem] font-black text-[#0b1329] tracking-tight uppercase leading-[1.3] drop-shadow-xs">
+            Sản xuất nội dung <span className="text-[#0284c7]">chuyên nghiệp</span>. <br />
+            Vận hành media <span className="text-[#0284c7]">bài bản</span>.
           </h1>
           
           {/* Sub-headline */}
-          <div className="space-y-3 max-w-xl">
+          <div className="max-w-2xl">
             <p className="text-slate-600 text-[13.5px] sm:text-[14.5px] leading-relaxed font-semibold">
-              Chúng tôi đồng hành cùng các doanh nghiệp, clinic và nhãn hàng để tối ưu hóa hình ảnh, biến ý tưởng sáng tạo thành những chiến dịch media có tỷ lệ chuyển đổi cao. Không chỉ là đẹp, đó là câu chuyện chạm đến cảm xúc.
+              Vũ Anh Media đồng hành cùng các doanh nghiệp <span className="text-slate-900 font-extrabold">SME</span> giải quyết triệt để khoảng trống về nhân sự và quy trình sản xuất. Chúng tôi không chỉ cung cấp những thước phim, bộ ảnh chuẩn mực mà còn thiết lập hệ thống vận hành để nội dung của bạn ra đều đặn, đúng định hướng và thực sự trở thành <span className="text-slate-900 font-extrabold">tài sản thương hiệu</span>.
             </p>
           </div>
 
-          <div className="pt-2 flex flex-wrap gap-3">
+          <div className="pt-2 flex flex-wrap gap-4">
             <button 
               onClick={() => setActiveDrawer('contact')}
-              className="inline-flex items-center gap-2 px-6 py-3.5 text-[10.5px] font-extrabold uppercase tracking-widest text-white bg-[#0284c7] hover:bg-sky-500 rounded-full shadow-lg shadow-sky-500/15 transition-all duration-300 group cursor-pointer"
+              className="inline-flex items-center gap-2 px-7 py-4 text-[10.5px] font-extrabold uppercase tracking-widest text-white bg-[#0284c7] hover:bg-sky-500 rounded-full shadow-lg shadow-sky-500/20 transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer"
             >
-              Nhận Báo Giá & Tư Vấn Ngay
+              Yêu cầu tư vấn giải pháp
               <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
             <button 
-              onClick={() => setActiveDrawer('contact')}
-              className="inline-flex items-center gap-2 px-6 py-3.5 text-[10.5px] font-extrabold uppercase tracking-widest text-[#0b1329] bg-white/80 hover:bg-white border border-[#0b1329]/15 rounded-full transition-all duration-300 hover:shadow-xs cursor-pointer"
+              onClick={() => setActiveDrawer('projects')}
+              className="inline-flex items-center gap-2 px-7 py-4 text-[10.5px] font-extrabold uppercase tracking-widest text-[#0b1329] bg-white/80 hover:bg-white border border-[#0b1329]/15 rounded-full transition-all duration-300 hover:shadow-lg cursor-pointer"
             >
-              Kết Nối Với Chuyên Gia
+              Xem năng lực thực chiến
             </button>
           </div>
         </div>
       </main>
 
+      {/* SOCIAL PROOF SECTION - PREMIUM MARQUEE INTEGRATION AT THE BOTTOM VIEWPORT */}
+      <div className="absolute bottom-16 sm:bottom-20 left-6 sm:left-12 lg:left-24 right-6 sm:right-12 lg:right-24 z-20 pointer-events-auto select-none space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-t border-slate-200/50 pt-5">
+          
+          <div className="max-w-xl shrink-0">
+            <span className="text-[10px] font-black tracking-widest text-[#0284c7] uppercase">Đối tác thực chiến</span>
+            <p className="text-[11.5px] text-slate-500 font-bold leading-relaxed mt-1">
+              Doanh nghiệp không cần những thử nghiệm cảm tính. Họ cần sự đảm bảo. Vũ Anh Media là đơn vị đứng sau các chiến dịch hình ảnh, chuỗi nội dung định kỳ và video quy chuẩn của các thương hiệu dẫn đầu:
+            </p>
+          </div>
+          
+          {/* Duplicated infinite sliding list with glow and fading edges */}
+          <div className="flex-1 overflow-hidden mask-gradient py-2">
+            <div className="flex gap-6 whitespace-nowrap animate-marquee">
+              {partnersList.concat(partnersList).map((partner, idx) => (
+                <div 
+                  key={idx} 
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/70 border border-white/95 backdrop-blur-md text-[11px] font-extrabold text-slate-700 shadow-xs"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0284c7] animate-pulse" />
+                  {partner}
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       {/* TECH TAGS IN CORNER */}
-      <footer className="absolute bottom-6 sm:bottom-8 right-8 sm:right-12 z-20 hidden md:flex items-center gap-6 text-[9.5px] font-mono tracking-widest text-slate-500 select-none pointer-events-none">
+      <footer className="absolute bottom-6 left-6 sm:left-12 lg:left-24 right-6 sm:right-12 lg:right-24 z-20 flex items-center justify-between text-[9.5px] font-mono tracking-widest text-slate-400 select-none pointer-events-none">
         <div className="flex items-center gap-2">
           <span className="w-1.2 h-1.2 bg-[#0284c7] rounded-full animate-pulse" />
-          <span>FUTURISTIC WHITE-BLUE</span>
+          <span>PRODUCTION & OPERATIONS AGENCY</span>
         </div>
         <div>VŨ ANH MEDIA © 2026</div>
       </footer>
@@ -594,61 +630,84 @@ const App: React.FC = () => {
         />
       )}
 
-      {/* LIQUID-GLASS DRAWER PANEL */}
+      {/* LIQUID-GLASS DRAWER PANEL - PREMIUM LIGHT GLASS FUTURISTIC STYLE */}
       <div 
-        className={`fixed top-0 right-0 h-screen w-full md:w-[620px] lg:w-[680px] z-50 glass-panel border-l border-white/40 p-8 sm:p-12 overflow-y-auto transform transition-transform duration-500 ease-in-out ${activeDrawer ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed top-0 right-0 h-screen w-full md:w-[620px] lg:w-[680px] z-50 glass-panel border-l border-white/80 p-8 sm:p-12 overflow-y-auto transform transition-transform duration-500 ease-in-out ${activeDrawer ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        {/* CLOSE BUTTON */}
+        {/* CLOSE BUTTON - SLEEK LIGHT GLASS CIRCLE */}
         <button 
           onClick={() => setActiveDrawer(null)}
-          className="absolute top-6 right-6 p-2.5 rounded-full bg-slate-100/80 hover:bg-slate-200 hover:scale-105 text-slate-600 transition-all duration-300 border border-slate-200/40 cursor-pointer shadow-xs"
+          className="absolute top-6 right-6 p-2.5 rounded-full bg-slate-100/80 hover:bg-slate-200 hover:scale-105 text-slate-600 hover:text-slate-900 transition-all duration-300 border border-slate-200/40 cursor-pointer shadow-xs z-10"
         >
-          <X className="w-4 h-4" />
+          <X className="w-4.5 h-4.5" />
         </button>
 
-        {/* DRAWER CONTENT: ABOUT (GIỚI THIỆU & TRIẾT LÝ) */}
+        {/* DRAWER CONTENT: ABOUT (GIỚI THIỆU / DIFFERENCE SECTION) */}
         {activeDrawer === 'about' && (
-          <div className="space-y-10 animate-slide-in pb-10">
-            <div className="space-y-3">
+          <div className="space-y-16 animate-slide-in pb-12 pt-4">
+            
+            {/* Header Area */}
+            <div className="space-y-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
                 <Sparkles className="w-3 h-3 text-[#0284c7]" />
-                Giới thiệu & Triết lý
+                Định vị cốt lõi
               </span>
-              <h2 className="text-2xl sm:text-3.5xl font-black tracking-tight uppercase leading-[1.3] bg-gradient-to-r from-[#0b1329] via-slate-800 to-[#0284c7] bg-clip-text text-transparent">
-                Duy trì chất lượng đều trong nhiều tháng
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight uppercase leading-[1.3] text-[#0b1329]">
+                Định hình lại chuẩn mực Media cho doanh nghiệp
               </h2>
             </div>
             
             <div className="w-16 h-1 bg-gradient-to-r from-[#0284c7] to-cyan-400 rounded-full" />
             
+            {/* Segment Description */}
             <p className="text-[13.5px] sm:text-[14.5px] text-slate-600 leading-relaxed font-semibold">
-              Điều doanh nghiệp cần về lâu dài là một cách làm việc giúp hình ảnh, nội dung và đội ngũ có thể phối hợp ổn định theo thời gian.
+              Phần lớn doanh nghiệp SME tại Việt Nam đang gặp 3 sai lầm lớn khi đầu tư cho Media: Coi chi phí media là khoản tiêu sản dùng một lần, thuê freelancer thiếu tính cam kết dài hạn, hoặc chọn các Marketing Agency lớn với chi phí bị đội lên do các khâu trung gian. <span className="text-[#0284c7] font-black">Vũ Anh Media</span> thay đổi thực trạng đó bằng 3 nguyên tắc làm việc:
             </p>
 
-            {/* Grid of 4 philosophy cards - exact text restored */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {/* Generous spaced principles list */}
+            <div className="space-y-6">
               {[
-                { num: '01.briefing', title: 'Rõ việc trước khi quay', desc: 'Làm rõ nội dung phục vụ việc gì, nói với ai và phần tư liệu nào cần giữ lại.' },
-                { num: '02.workflow', title: 'Phối hợp có nhịp', desc: 'Lịch quay, shotlist, vai trò, mốc duyệt và phản hồi được thống nhất.' },
-                { num: '03.quality', title: 'Giữ chuẩn qua từng lần', desc: 'Khung hình, màu sắc, âm thanh và nhịp dựng được giữ cùng một chuẩn.' },
-                { num: '04.operation', title: 'Làm lâu không mất nhịp', desc: 'Giữ lại kinh nghiệm sau mỗi lần làm để chuẩn bị nhanh hơn và ít hao sức.' }
+                { 
+                  num: '01', 
+                  title: 'Kiểm soát rủi ro vận hành bằng quy trình', 
+                  desc: 'Freelancer làm việc dựa trên năng lực cá nhân và không có đội ngũ backup. Vũ Anh Media vận hành theo team có cấu trúc, có cam kết deadline rõ ràng bằng hợp đồng và luôn chủ động hệ thống thiết bị quay dựng chuyên dụng (Sony A7S3, Blackmagic 6K Pro...).' 
+                },
+                { 
+                  num: '02', 
+                  title: 'Biến Media thành tài sản tích lũy', 
+                  desc: 'Chúng tôi không chỉ giao file video rồi kết thúc hợp tác. Vũ Anh Media xây dựng hệ thống lưu trữ bài bản, giúp doanh nghiệp sở hữu trọn vẹn file gốc, file dự án để có thể tái sử dụng trong vòng 6 - 12 tháng, tối ưu hóa từng đồng chi phí sản xuất.' 
+                },
+                { 
+                  num: '03', 
+                  title: 'Chuyên sâu tối đa, không phân tán nguồn lực', 
+                  desc: 'Chúng tôi nói KHÔNG với việc nhận chạy ads, booking KOL hay làm marketing tổng thể để tập trung 100% vào phần lõi: Sản xuất và Vận hành Media. Doanh nghiệp nhận được chất lượng sản xuất cao cấp nhất mà không phải gánh chi phí gián tiếp.' 
+                }
               ].map((card, idx) => (
-                <div key={idx} className="glass-card rounded-2xl p-6 border border-white/80 bg-white/40 shadow-xs space-y-3 transition-transform duration-300 hover:-translate-y-1">
+                <div 
+                  key={idx} 
+                  className="glass-card rounded-2xl p-6 sm:p-8 border border-white/80 bg-white/40 shadow-xs space-y-4 transition-transform duration-300 hover:-translate-y-1"
+                >
                   <div className="flex items-center justify-between">
-                    <span className="text-[11.5px] font-mono font-bold tracking-wider text-[#0284c7]">{card.num}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#0284c7]/50" />
+                    <span className="text-[12px] font-mono font-black tracking-wider text-[#0284c7] bg-[#0284c7]/5 px-2.5 py-0.5 rounded-lg border border-[#0284c7]/10">
+                      {card.num}.principle
+                    </span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0284c7]/30" />
                   </div>
-                  <h3 className="font-extrabold text-[14px] sm:text-[14.5px] text-[#0b1329] leading-tight uppercase tracking-tight">{card.title}</h3>
-                  <p className="text-[12.5px] text-slate-500 leading-relaxed font-semibold">{card.desc}</p>
+                  <h3 className="font-extrabold text-[15px] sm:text-[16px] text-[#0b1329] leading-tight uppercase tracking-tight">
+                    {card.title}
+                  </h3>
+                  <p className="text-[12.5px] sm:text-[13px] text-slate-500 leading-relaxed font-semibold">
+                    {card.desc}
+                  </p>
                 </div>
               ))}
             </div>
 
             {/* EXQUISITE FOUNDER PROFILE SECTION */}
-            <div className="pt-10 border-t border-slate-200/50 space-y-6">
+            <div className="pt-12 border-t border-slate-200/50 space-y-6">
               <div className="space-y-2">
                 <span className="text-[10px] font-black tracking-widest text-[#0284c7] uppercase">Về người sáng lập</span>
-                <h3 className="text-xl sm:text-2xl font-black text-[#0b1329] tracking-tight uppercase leading-[1.3] bg-gradient-to-r from-[#0b1329] via-slate-800 to-[#0284c7] bg-clip-text text-transparent">
+                <h3 className="text-xl sm:text-2xl font-black text-[#0b1329] tracking-tight uppercase leading-[1.3]">
                   Kinh nghiệm đúc kết từ chi tiết nhỏ
                 </h3>
               </div>
@@ -685,106 +744,135 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* DRAWER CONTENT: SERVICES (DỊCH VỤ) */}
+        {/* DRAWER CONTENT: SERVICES (DỊCH VỤ / Bento Grid 3 columns) */}
         {activeDrawer === 'services' && (
-          <div className="space-y-10 animate-slide-in pb-10">
-            <div className="space-y-3">
+          <div className="space-y-16 animate-slide-in pb-12 pt-4">
+            
+            {/* Header */}
+            <div className="space-y-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
-                Phân loại dịch vụ
+                Hệ sinh thái toàn diện
               </span>
-              <h2 className="text-2xl sm:text-3.5xl font-black tracking-tight uppercase leading-[1.3] bg-gradient-to-r from-[#0b1329] via-slate-800 to-[#0284c7] bg-clip-text text-transparent">
-                Đóng gói chuyên nghiệp, chạm đúng nỗi đau
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight uppercase leading-[1.3] text-[#0b1329]">
+                Hệ sinh thái dịch vụ Media toàn diện cho SME
               </h2>
             </div>
             
             <div className="w-16 h-1 bg-gradient-to-r from-[#0284c7] to-cyan-400 rounded-full" />
             
             <p className="text-[13.5px] sm:text-[14px] text-slate-600 leading-relaxed font-semibold">
-              Mỗi doanh nghiệp cần một sự chuẩn bị khác nhau. Chúng tôi thiết kế các gói cấu trúc dịch vụ thiết thực để đáp ứng đúng quy mô dự án của bạn:
+              Mỗi doanh nghiệp cần một sự chuẩn bị và giải pháp khác nhau. Vũ Anh Media thiết kế 3 tầng trục năng lực dịch vụ bài bản để hỗ trợ sự phát triển liên tục của bạn:
             </p>
 
-            {/* Service Grid - kịch bản texts updated */}
+            {/* Service Columns - spaced out beautiful layout */}
             <div className="space-y-6">
               
               {/* SERVICE 1 */}
-              <div className="glass-card rounded-2xl p-6 sm:p-8 border border-white/80 bg-white/40 shadow-xs space-y-4 transition-transform duration-300 hover:-translate-y-1">
+              <div className="glass-card rounded-2xl p-6 sm:p-8 border border-white/80 bg-white/40 shadow-xs space-y-5 transition-transform duration-300 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[11.5px] font-mono font-bold text-[#0284c7] bg-[#0284c7]/5 px-2 py-0.5 rounded">01.cinematic</span>
-                    <h3 className="font-extrabold text-[15px] sm:text-[15.5px] text-[#0b1329] uppercase tracking-tight">Sản Xuất Video Thước Phim Ngắn & TVC Cinematic</h3>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <span className="text-[11px] font-mono font-black text-[#0284c7] bg-[#0284c7]/5 px-2.5 py-0.5 rounded-lg border border-[#0284c7]/10 w-fit">
+                      TẦNG 01
+                    </span>
+                    <h3 className="font-extrabold text-[16px] sm:text-[17px] text-[#0b1329] uppercase tracking-tight">
+                      Media Production — Sản xuất theo dự án
+                    </h3>
                   </div>
-                  <div className="p-2 rounded-lg bg-[#0284c7]/5">
+                  <div className="p-2.5 rounded-xl bg-slate-100">
                     <Film className="w-5 h-5 text-[#0284c7]" />
                   </div>
                 </div>
-                <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed font-semibold">
-                  Biến thông điệp cốt lõi của thương hiệu thành những thước phim chuẩn điện ảnh, có nhịp điệu (tempo) cuốn hút, tối ưu giữ chân người xem (Retention rate) trên Tiktok, YouTube Reels để tăng chuyển đổi tự nhiên.
+                
+                <p className="text-[13px] text-slate-600 leading-relaxed font-semibold">
+                  Giải quyết bài toán tạo dấu ấn hình ảnh đột phá trong các chiến dịch ngắn hạn hoặc xây dựng nền tảng nhận diện cốt lõi cho thương hiệu.
                 </p>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-slate-200/40 text-[12px] text-slate-500 font-semibold">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
-                    Kịch bản phân cảnh & shotlist rõ ràng
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
-                    Hậu kỳ màu sắc & âm thanh chuẩn điện ảnh
-                  </li>
-                </ul>
+                
+                <div className="pt-4 border-t border-slate-200/40 space-y-3">
+                  <div>
+                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Sản phẩm cốt lõi</span>
+                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
+                      Video TVC doanh nghiệp • Video Profile thương hiệu/sản phẩm • Video quảng cáo cửa hàng • Video ngắn đa nền tảng (TikTok, Reels, Shorts) • Nhiếp ảnh thương mại chuẩn mực.
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Cam kết B2B</span>
+                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
+                      Quy trình trọn gói từ Brief, kịch bản, storyboard, shot list đến hậu kỳ chuyên sâu (Color Grading 4K, Sound, Motion).
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* SERVICE 2 */}
-              <div className="glass-card rounded-2xl p-6 sm:p-8 border border-[#0284c7]/20 bg-sky-50/20 shadow-xs space-y-4 transition-transform duration-300 hover:-translate-y-1">
+              <div className="glass-card rounded-2xl p-6 sm:p-8 border border-[#0284c7]/30 bg-[#0284c7]/5 shadow-xs space-y-5 transition-transform duration-300 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[11.5px] font-mono font-bold text-[#0284c7] bg-[#0284c7]/5 px-2 py-0.5 rounded">02.photography</span>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-extrabold text-[15px] sm:text-[15.5px] text-[#0b1329] uppercase tracking-tight">Nhiếp Ảnh Sản Phẩm & Nhận Diện Cao Cấp</h3>
-                      <span className="px-2 py-0.5 text-[8px] font-mono font-bold bg-[#0284c7] text-white rounded-full tracking-wider uppercase">Khuyên dùng</span>
-                    </div>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <span className="text-[11px] font-mono font-black text-white bg-[#0284c7] px-2.5 py-0.5 rounded-lg w-fit">
+                      TẦNG 02
+                    </span>
+                    <h3 className="font-extrabold text-[16px] sm:text-[17px] text-[#0b1329] uppercase tracking-tight">
+                      Monthly Media — Giải pháp nội dung định kỳ
+                    </h3>
                   </div>
-                  <div className="p-2 rounded-lg bg-[#0284c7]/10">
+                  <div className="p-2.5 rounded-xl bg-[#0284c7]/10">
                     <Layers className="w-5 h-5 text-[#0284c7]" />
                   </div>
                 </div>
-                <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed font-semibold">
-                  Cam kết độ chân thực 100%, giữ trọn vẹn đặc tính sản phẩm nhưng được nâng tầm qua tư duy duy mỹ, nghệ thuật ánh sáng (Chiaroscuro) và quy trình xử lý hậu kỳ khắt khe nhất.
+                
+                <p className="text-[13px] text-slate-600 leading-relaxed font-semibold">
+                  Giải quyết bài toán đứt gãy mạch nội dung. Duy trì điểm chạm liên tục với khách hàng mục tiêu mà không làm tăng áp lực quản lý cho chủ doanh nghiệp.
                 </p>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-sky-100/40 text-[12px] text-slate-500 font-semibold">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
-                    Ánh sáng Chiaroscuro tôn vinh chất liệu
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
-                    Hậu kỳ khắt khe, chân thực 100%
-                  </li>
-                </ul>
+                
+                <div className="pt-4 border-t border-[#0284c7]/10 space-y-3">
+                  <div>
+                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Sản phẩm cốt lõi</span>
+                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
+                      Gói nội dung cam kết số lượng theo tháng cho Spa, Nha khoa, F&B, Doanh nghiệp SME (Video ngắn + Bộ ảnh sản phẩm/nhân vật + Tuyến nội dung viết tương ứng).
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Cam kết B2B</span>
+                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
+                      Lịch sản xuất cố định, nhân sự phụ trách riêng biệt, output đầu ra đồng đều về mặt visual direction.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* SERVICE 3 */}
-              <div className="glass-card rounded-2xl p-6 sm:p-8 border border-white/80 bg-white/40 shadow-xs space-y-4 transition-transform duration-300 hover:-translate-y-1">
+              <div className="glass-card rounded-2xl p-6 sm:p-8 border border-white/80 bg-white/40 shadow-xs space-y-5 transition-transform duration-300 hover:-translate-y-1">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[11.5px] font-mono font-bold text-[#0284c7] bg-[#0284c7]/5 px-2 py-0.5 rounded">03.operations</span>
-                    <h3 className="font-extrabold text-[15px] sm:text-[15.5px] text-[#0b1329] uppercase tracking-tight">Giải Pháp Vận Hành Content & Livestream Hệ Thống</h3>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <span className="text-[11px] font-mono font-black text-[#0284c7] bg-[#0284c7]/5 px-2.5 py-0.5 rounded-lg border border-[#0284c7]/10 w-fit">
+                      TẦNG 03
+                    </span>
+                    <h3 className="font-extrabold text-[16px] sm:text-[17px] text-[#0b1329] uppercase tracking-tight">
+                      Media Operations — Tư vấn & Thiết lập bộ máy nội bộ
+                    </h3>
                   </div>
-                  <div className="p-2 rounded-lg bg-[#0284c7]/5">
+                  <div className="p-2.5 rounded-xl bg-slate-100">
                     <Shield className="w-5 h-5 text-[#0284c7]" />
                   </div>
                 </div>
-                <p className="text-[12.5px] sm:text-[13px] text-slate-600 leading-relaxed font-semibold">
-                  Thiết lập kịch bản thực tế, hội thoại tự nhiên (không công nghiệp, không sáo rỗng), giúp các Clinic, Spa, Nhãn hàng, Hệ thống đào tạo phủ sóng thương hiệu liên tục và giữ lửa tương tác.
+                
+                <p className="text-[13px] text-slate-600 leading-relaxed font-semibold">
+                  Dành cho các doanh nghiệp muốn tự chủ năng lực sản xuất nhưng đang thiếu quy trình quản trị, khiến tài nguyên bị thất thoát và nhân sự vận hành cảm tính.
                 </p>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-slate-200/40 text-[12px] text-slate-500 font-semibold">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
-                    Lịch nội dung định kỳ tháng hệ thống
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
-                    Kịch bản đàm thoại thực, tỷ lệ tương tác cao
-                  </li>
-                </ul>
+                
+                <div className="pt-4 border-t border-slate-200/40 space-y-3">
+                  <div>
+                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Sản phẩm cốt lõi</span>
+                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
+                      Chuẩn hóa quy trình từ khâu Brief – Sản xuất – Duyệt – Đăng; Phân vai nhân sự media nội bộ; Thiết lập hệ thống lưu trữ và bàn giao tài sản số (file gốc, file dự án) để tái sử dụng dài hạn.
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest">Cam kết B2B</span>
+                    <p className="text-[12.5px] text-slate-600 font-semibold leading-relaxed mt-0.5">
+                      Chỉ tập trung chuyên sâu vào vận hành sản xuất media, chuyển giao một hệ thống tự chạy ổn định sau 3 - 6 tháng.
+                    </p>
+                  </div>
+                </div>
               </div>
 
             </div>
@@ -793,31 +881,31 @@ const App: React.FC = () => {
 
         {/* DRAWER CONTENT: PROJECTS (DỰ ÁN) */}
         {activeDrawer === 'projects' && (
-          <div className="space-y-10 animate-slide-in pb-10">
-            <div className="space-y-3">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
-                Bộ sưu tập
-              </span>
+          <div className="space-y-16 animate-slide-in pb-12 pt-4">
+            
+            {/* Header */}
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl sm:text-3.5xl font-black tracking-tight uppercase leading-[1.3] bg-gradient-to-r from-[#0b1329] via-slate-800 to-[#0284c7] bg-clip-text text-transparent">
-                  Tác phẩm đã thực hiện
-                </h2>
-                
-                {/* Admin Mode indicator Banner */}
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
+                  Bộ sưu tập
+                </span>
                 {isAdmin && (
-                  <span className="px-2.5 py-1 text-[8.5px] font-black uppercase tracking-widest bg-emerald-500 text-white rounded-md flex items-center gap-1 animate-pulse">
+                  <span className="px-2.5 py-1 text-[8.5px] font-black uppercase tracking-widest bg-[#0284c7] text-white rounded-md flex items-center gap-1 animate-pulse">
                     <Unlock className="w-2.5 h-2.5" />
                     Admin
                   </span>
                 )}
               </div>
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight uppercase leading-[1.3] text-[#0b1329]">
+                Tác phẩm đã thực hiện
+              </h2>
             </div>
             
             <div className="w-16 h-1 bg-gradient-to-r from-[#0284c7] to-cyan-400 rounded-full" />
 
             {/* DYNAMIC SANDBOX BUILDER - DIRECT COMPUTER FILE UPLOADER (Only visible in ADMIN MODE) */}
             {isAdmin ? (
-              <div className="glass-card rounded-2xl p-6 border border-emerald-500/20 bg-emerald-50/5 space-y-4">
+              <div className="glass-card rounded-2xl p-6 border border-[#0284c7]/20 bg-white/50 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <UploadCloud className="w-4 h-4 text-[#0284c7]" />
@@ -827,7 +915,7 @@ const App: React.FC = () => {
                   </div>
                   <button 
                     onClick={handleLogoutAdmin}
-                    className="text-[10px] font-black text-rose-500 hover:text-rose-600 transition-colors uppercase cursor-pointer"
+                    className="text-[10px] font-black text-rose-600 hover:text-rose-500 transition-colors uppercase cursor-pointer"
                   >
                     Thoát Admin
                   </button>
@@ -843,7 +931,7 @@ const App: React.FC = () => {
                     {!selectedFile ? (
                       <div 
                         onClick={() => document.getElementById('form-file-input')?.click()}
-                        className="border-2 border-dashed border-slate-200 hover:border-[#0284c7]/40 rounded-xl p-6 bg-white/40 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center space-y-2"
+                        className="border border-dashed border-slate-300 hover:border-[#0284c7]/40 rounded-xl p-6 bg-white/40 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center space-y-2"
                       >
                         <input 
                           type="file" 
@@ -857,13 +945,13 @@ const App: React.FC = () => {
                           }}
                         />
                         <UploadCloud className="w-8 h-8 text-[#0284c7] animate-pulse" />
-                        <p className="text-[12.5px] font-bold text-slate-700">Chọn ảnh hoặc video từ máy tính của bạn</p>
+                        <p className="text-[12.5px] font-bold text-slate-800">Chọn ảnh hoặc video từ máy tính của bạn</p>
                         <p className="text-[11px] text-slate-400 font-semibold">Hỗ trợ các định dạng hình ảnh và video MP4</p>
                       </div>
                     ) : (
-                      <div className="relative rounded-xl overflow-hidden border border-slate-200/80 bg-white/60 p-4 flex items-center gap-4 transition-all duration-300">
+                      <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-white/80 p-4 flex items-center gap-4 transition-all duration-300">
                         {/* Selected File Miniature Preview */}
-                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-200 border border-slate-300 shrink-0 relative flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative flex items-center justify-center">
                           {selectedFile.type.startsWith('video/') ? (
                             <video 
                               src={filePreviewUrl!} 
@@ -917,7 +1005,7 @@ const App: React.FC = () => {
                         value={newTitle}
                         onChange={(e) => setNewTitle(e.target.value)}
                         placeholder="Ví dụ: Phim quảng bá thương hiệu..." 
-                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/60 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
                         required
                       />
                     </div>
@@ -926,7 +1014,7 @@ const App: React.FC = () => {
                       <select 
                         value={newCategory}
                         onChange={(e) => setNewCategory(e.target.value as any)}
-                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12px] font-bold text-slate-700 outline-none focus:border-[#0284c7] cursor-pointer"
+                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-[12px] font-bold text-slate-700 outline-none focus:border-[#0284c7] cursor-pointer"
                       >
                         <option value="video">Video</option>
                         <option value="image">Hình ảnh</option>
@@ -942,7 +1030,7 @@ const App: React.FC = () => {
                       value={newDesc}
                       onChange={(e) => setNewDesc(e.target.value)}
                       placeholder="Ví dụ: Chiến dịch Định Vị Thẩm Mỹ Viện – Tối ưu hóa hình ảnh Minimalist Luxury..." 
-                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/60 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
                     />
                   </div>
 
@@ -963,7 +1051,7 @@ const App: React.FC = () => {
                       <button 
                         type="button"
                         onClick={handleRestoreDefaults}
-                        className="px-4 py-2.5 text-[11px] font-bold uppercase text-slate-400 hover:text-rose-500 bg-slate-100 hover:bg-slate-200 rounded-lg border border-slate-200 transition-all cursor-pointer"
+                        className="px-4 py-2.5 text-[11px] font-bold uppercase text-slate-500 hover:text-rose-500 bg-slate-100 hover:bg-slate-200 rounded-lg border border-slate-200 transition-all cursor-pointer"
                       >
                         Reset Danh mục
                       </button>
@@ -984,7 +1072,7 @@ const App: React.FC = () => {
                 <button 
                   key={cat.key}
                   onClick={() => setActiveCategory(cat.key as any)}
-                  className={`px-4.5 py-2 text-[11px] font-extrabold uppercase tracking-widest rounded-full transition-all duration-300 border cursor-pointer ${activeCategory === cat.key ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-600 border-slate-200/60 hover:bg-slate-200/50 hover:scale-[1.02]'}`}
+                  className={`px-4.5 py-2 text-[11px] font-extrabold uppercase tracking-widest rounded-full transition-all duration-300 border cursor-pointer ${activeCategory === cat.key ? 'bg-slate-900 text-white border-slate-900 shadow-sm' : 'bg-slate-100 text-slate-600 border-slate-200/60 hover:bg-slate-200/50 hover:scale-[1.02]'}`}
                 >
                   {cat.label}
                 </button>
@@ -996,9 +1084,9 @@ const App: React.FC = () => {
               {filteredProjects.map(proj => (
                 <div 
                   key={proj.id}
-                  className={`group relative rounded-2xl overflow-hidden bg-slate-900 border shadow-sm transition-all duration-500 ${newlyAddedProjectId === proj.id ? 'border-[#0284c7] shadow-[0_0_18px_rgba(2,132,199,0.45)] scale-[1.01] animate-pulse-border' : 'border-slate-200/40'}`}
+                  className={`group relative rounded-2xl overflow-hidden bg-white border shadow-xs transition-all duration-500 ${newlyAddedProjectId === proj.id ? 'border-[#0284c7] shadow-[0_0_18px_rgba(2,132,199,0.45)] scale-[1.01] animate-pulse-border' : 'border-slate-200/50'}`}
                 >
-                  <div className="aspect-[4/3] w-full overflow-hidden bg-slate-800 relative">
+                  <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100 relative">
                     <img 
                       src={proj.img} 
                       alt={proj.title} 
@@ -1015,26 +1103,30 @@ const App: React.FC = () => {
                           <Play className="w-5 h-5 fill-white ml-0.5" />
                         </button>
                       ) : (
-                        <span className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white bg-slate-900/90 backdrop-blur-md rounded-full">
+                        <span className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white bg-slate-900/90 backdrop-blur-md rounded-full border border-white/10">
                           Xem ảnh
                         </span>
                       )}
                     </div>
 
-                    <span className="absolute top-4 left-4 px-2.5 py-1 text-[8.5px] font-extrabold uppercase tracking-widest bg-slate-900/80 backdrop-blur-md text-white rounded-md">
+                    <span className="absolute top-4 left-4 px-2.5 py-1 text-[8.5px] font-extrabold uppercase tracking-widest bg-slate-900/80 backdrop-blur-md text-white rounded-md border border-slate-200/40">
                       {proj.category === 'video' ? 'VIDEO' : proj.category === 'image' ? 'HÌNH ẢNH' : 'ĐỊNH KỲ'}
                     </span>
                   </div>
 
-                  <div className="p-5 bg-white space-y-2">
-                    <h3 className="font-extrabold text-[13.5px] text-[#0b1329] tracking-tight leading-tight group-hover:text-[#0284c7] transition-colors duration-300 uppercase">{proj.title}</h3>
-                    <p className="text-[11.5px] text-slate-500 leading-relaxed font-semibold">{proj.desc}</p>
+                  <div className="p-5 bg-white border-t border-slate-100 space-y-2">
+                    <h3 className="font-extrabold text-[13.5px] text-[#0b1329] tracking-tight leading-tight group-hover:text-[#0284c7] transition-colors duration-300 uppercase">
+                      {proj.title}
+                    </h3>
+                    <p className="text-[11.5px] text-slate-500 leading-relaxed font-semibold">
+                      {proj.desc}
+                    </p>
                     
                     <div className="flex flex-wrap gap-2.5 pt-1">
                       {proj.vid && (
                         <button 
                           onClick={() => handleOpenVideo(proj.vid!)}
-                          className="text-[11px] font-extrabold text-[#0284c7] hover:text-sky-500 underline uppercase tracking-wider block cursor-pointer"
+                          className="text-[11px] font-extrabold text-[#0284c7] hover:text-[#0284c7]/80 underline uppercase tracking-wider block cursor-pointer"
                         >
                           Xem video
                         </button>
@@ -1086,12 +1178,14 @@ const App: React.FC = () => {
 
         {/* DRAWER CONTENT: PROCESS (QUY TRÌNH) */}
         {activeDrawer === 'process' && (
-          <div className="space-y-10 animate-slide-in pb-10">
-            <div className="space-y-3">
+          <div className="space-y-16 animate-slide-in pb-12 pt-4">
+            
+            {/* Header */}
+            <div className="space-y-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
                 Lộ trình triển khai
               </span>
-              <h2 className="text-2xl sm:text-3.5xl font-black tracking-tight uppercase leading-[1.3] bg-gradient-to-r from-[#0b1329] via-slate-800 to-[#0284c7] bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight uppercase leading-[1.3] text-[#0b1329]">
                 Quy trình làm việc bài bản
               </h2>
             </div>
@@ -1103,7 +1197,7 @@ const App: React.FC = () => {
             </p>
 
             {/* Glowing vertical timeline with 4-step glass card steps - expert kịch bản restored */}
-            <div className="relative border-l-2 border-sky-100/60 pl-8 ml-4 space-y-8">
+            <div className="relative border-l-2 border-sky-100/80 pl-8 ml-4 space-y-8">
               {[
                 { step: '01', title: 'Nghiên cứu & Định vị', desc: 'Khảo sát thực tế bối cảnh thương hiệu, bóc tách "nỗi đau" truyền thông hiện tại và xác lập tệp khách hàng mục tiêu.' },
                 { step: '02', title: 'Kịch bản & Storyboard', desc: 'Lên ý tưởng chi tiết, xây dựng lời thoại đàm thoại tự nhiên (tránh sáo rỗng, công nghiệp), duyệt kỹ lưỡng trước khi bấm máy.' },
@@ -1117,7 +1211,7 @@ const App: React.FC = () => {
                   </div>
                   
                   {/* Timeline content glass card */}
-                  <div className="glass-card rounded-2xl p-6 border border-white/80 bg-white/40 shadow-xs space-y-2 transition-all duration-300 hover:bg-white/85 hover:border-white hover:-translate-y-1">
+                  <div className="glass-card rounded-2xl p-6 border border-white/80 bg-white/40 shadow-xs space-y-2 transition-all duration-300 hover:bg-white/80 hover:-translate-y-1">
                     <div className="flex items-center gap-3">
                       <span className="text-[11.5px] font-mono font-bold text-[#0284c7] bg-[#0284c7]/5 px-2.5 py-0.5 rounded-lg border border-[#0284c7]/10">
                         {timeline.step}
@@ -1136,26 +1230,29 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* DRAWER CONTENT: CONTACT (LIÊN HỆ) */}
+        {/* DRAWER CONTENT: CONTACT (LIÊN HỆ / CTA & FORM) */}
         {activeDrawer === 'contact' && (
-          <div className="space-y-10 animate-slide-in pb-10">
-            <div className="space-y-3">
+          <div className="space-y-16 animate-slide-in pb-12 pt-4">
+            
+            {/* Header */}
+            <div className="space-y-4">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0284c7]/10 rounded-full text-[10px] font-extrabold tracking-widest text-[#0284c7] uppercase">
                 Gửi yêu cầu
               </span>
-              <h2 className="text-2xl sm:text-3.5xl font-black tracking-tight uppercase leading-[1.3] bg-gradient-to-r from-[#0b1329] via-slate-800 to-[#0284c7] bg-clip-text text-transparent">
-                Bắt đầu số hóa thương hiệu của bạn ngay hôm nay
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight uppercase leading-[1.3] text-[#0b1329]">
+                Chuẩn hóa tối ưu năng lực Media của bạn ngay hôm nay
               </h2>
             </div>
             
             <div className="w-16 h-1 bg-gradient-to-r from-[#0284c7] to-cyan-400 rounded-full" />
 
-            <p className="text-[13.5px] sm:text-[14px] text-slate-600 leading-relaxed font-semibold">
-              Nhận tư vấn kịch bản & Giải pháp Media miễn phí cho doanh nghiệp của bạn.
+            <p className="text-[13.5px] sm:text-[14.5px] text-slate-600 leading-relaxed font-semibold">
+              Đừng để ngân sách marketing bị lãng phí chỉ vì những hình ảnh lệch chuẩn hoặc một hệ thống nội dung rời rạc. Hãy chia sẻ với Vũ Anh Media về bài toán hiện tại của doanh nghiệp bạn.
             </p>
 
             {formState !== 'success' ? (
               <form onSubmit={handleFormSubmit} className="space-y-6">
+                
                 <div className="space-y-1.5">
                   <label className="text-[9px] font-extrabold text-[#0284c7] uppercase tracking-widest">Tên doanh nghiệp của anh/chị</label>
                   <input 
@@ -1164,7 +1261,7 @@ const App: React.FC = () => {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="Ví dụ: Công ty Cổ phần Vũ Anh..." 
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]/20 focus:border-[#0284c7] text-[13px] font-semibold transition-all duration-300"
+                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]/20 focus:border-[#0284c7] text-[13px] font-semibold transition-all duration-300 text-slate-800"
                   />
                 </div>
 
@@ -1177,7 +1274,7 @@ const App: React.FC = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Ví dụ: Nguyễn Văn A..." 
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]/20 focus:border-[#0284c7] text-[13px] font-semibold transition-all duration-300"
+                      className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]/20 focus:border-[#0284c7] text-[13px] font-semibold transition-all duration-300 text-slate-800"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -1188,7 +1285,7 @@ const App: React.FC = () => {
                       value={contact}
                       onChange={(e) => setContact(e.target.value)}
                       placeholder="Ví dụ: 093 186 xxxx..." 
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]/20 focus:border-[#0284c7] text-[13px] font-semibold transition-all duration-300"
+                      className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]/20 focus:border-[#0284c7] text-[13px] font-semibold transition-all duration-300 text-slate-800"
                     />
                   </div>
                 </div>
@@ -1198,12 +1295,12 @@ const App: React.FC = () => {
                   <select 
                     value={need}
                     onChange={(e) => setNeed(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]/20 focus:border-[#0284c7] text-[13px] font-bold transition-all duration-300 text-[#0b1329] cursor-pointer"
+                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]/20 focus:border-[#0284c7] text-[13px] font-bold transition-all duration-300 text-slate-800 cursor-pointer"
                   >
-                    <option>Sản xuất Video & TVC Cinematic</option>
-                    <option>Nhiếp ảnh sản phẩm cao cấp</option>
-                    <option>Vận hành Content & Livestream</option>
-                    <option>Chưa rõ, cần tư vấn giải pháp</option>
+                    <option>Sản xuất theo dự án (Media Production)</option>
+                    <option>Nội dung cam kết tháng (Monthly Media)</option>
+                    <option>Tư vấn & Thiết lập bộ máy (Media Operations)</option>
+                    <option>Chưa rõ, cần khảo sát tư vấn kịch bản</option>
                   </select>
                 </div>
 
@@ -1214,30 +1311,34 @@ const App: React.FC = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Mô tả bối cảnh hiện tại, lịch bấm máy mong muốn của doanh nghiệp..." 
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]/20 focus:border-[#0284c7] text-[13px] font-semibold transition-all duration-300 resize-none"
+                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0284c7]/20 focus:border-[#0284c7] text-[13px] font-semibold transition-all duration-300 resize-none text-slate-800"
                   />
                 </div>
 
-                <button 
-                  type="submit" 
-                  disabled={formState === 'submitting'}
-                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-[#0284c7] hover:bg-sky-500 rounded-xl shadow-lg shadow-sky-500/15 transition-all duration-300 disabled:opacity-50 cursor-pointer hover:-translate-y-0.5"
-                >
-                  {formState === 'submitting' ? (
-                    'Đang gửi yêu cầu...'
-                  ) : (
-                    <>
-                      Nhận Báo Giá & Tư Vấn Ngay
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </>
-                  )}
-                </button>
-                <p className="text-[11px] font-semibold text-slate-400 text-center">
-                  Chúng tôi phản hồi thông tin với sự bảo mật và cam kết hỗ trợ tối đa cho doanh nghiệp của bạn.
-                </p>
+                <div className="space-y-3">
+                  <button 
+                    type="submit" 
+                    disabled={formState === 'submitting'}
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 text-[11px] font-black uppercase tracking-widest text-white bg-[#0284c7] hover:bg-[#0284c7]/90 rounded-xl shadow-lg shadow-sky-500/20 transition-all duration-300 disabled:opacity-50 cursor-pointer hover:-translate-y-0.5"
+                  >
+                    {formState === 'submitting' ? (
+                      'Đang gửi yêu cầu...'
+                    ) : (
+                      <>
+                        Đăng ký nhận tư vấn và khảo sát kênh Media miễn phí
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </button>
+                  
+                  <p className="text-[11px] font-semibold text-slate-400 text-center leading-relaxed">
+                    *Lưu ý: Vũ Anh Media chỉ ưu tiên tiếp nhận các dự án có phạm vi công việc rõ ràng để đảm bảo tiêu chuẩn chất lượng đầu ra tốt nhất cho đối tác.
+                  </p>
+                </div>
+
               </form>
             ) : (
-              <div className="p-8 rounded-2xl bg-sky-50/40 border border-[#0284c7]/15 text-center space-y-5 animate-scale-up">
+              <div className="p-8 rounded-2xl bg-sky-50/40 border border-sky-100 text-center space-y-5 animate-scale-up">
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#0284c7]/10 text-[#0284c7]">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
@@ -1257,7 +1358,7 @@ const App: React.FC = () => {
             )}
 
             {/* DIRECT CONTACT INFO */}
-            <div className="pt-6 border-t border-slate-200/60 space-y-4 text-[12.5px] text-slate-500 font-semibold">
+            <div className="pt-8 border-t border-slate-200/50 space-y-4 text-[12.5px] text-slate-500 font-semibold">
               <div className="flex items-start gap-3">
                 <Phone className="w-4 h-4 text-[#0284c7] shrink-0 mt-0.5" />
                 <div>
@@ -1338,7 +1439,7 @@ const App: React.FC = () => {
                 value={passcodeInput}
                 onChange={(e) => setPasscodeInput(e.target.value)}
                 placeholder="••••••••" 
-                className={`w-full px-4 py-3 rounded-xl border bg-slate-50 focus:bg-white text-[16px] font-bold text-center focus:outline-none focus:ring-2 transition-all duration-300 ${passcodeError ? 'border-rose-400 focus:ring-rose-500/20' : 'border-slate-200 focus:ring-[#0284c7]/20 focus:border-[#0284c7]'}`}
+                className={`w-full px-4 py-3.5 rounded-xl border bg-slate-50 focus:bg-white text-[16px] font-bold text-center text-slate-800 focus:outline-none focus:ring-2 transition-all duration-300 ${passcodeError ? 'border-rose-400 focus:ring-rose-500/20' : 'border-slate-200 focus:ring-[#0284c7]/20 focus:border-[#0284c7]'}`}
                 autoFocus
               />
               
@@ -1360,12 +1461,12 @@ const App: React.FC = () => {
       {/* GLOBAL DRAG AND DROP SCREEN INDICATOR */}
       {isGlobalDragging && (
         <div 
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/75 backdrop-blur-xl border-4 border-dashed border-[#0284c7] m-4 rounded-3xl transition-all duration-300 animate-fade-in pointer-events-none animate-pulse-border"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl border-4 border-dashed border-[#0284c7] m-4 rounded-3xl transition-all duration-300 animate-fade-in pointer-events-none animate-pulse-border"
         >
           <div className="p-6 rounded-full bg-[#0284c7]/10 text-[#0284c7] mb-4 shadow-[0_0_30px_rgba(2,132,199,0.15)] animate-bounce">
             <UploadCloud className="w-16 h-16" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-[#0b1329] uppercase tracking-widest">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-800 uppercase tracking-widest">
             Thả để cập nhật nhanh
           </h2>
           <p className="text-[13px] sm:text-[14px] text-slate-500 font-bold mt-2 max-w-sm text-center leading-relaxed px-4">
