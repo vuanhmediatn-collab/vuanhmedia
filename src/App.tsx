@@ -19,7 +19,8 @@ import {
   Save,
   LogOut,
   Home,
-  RotateCcw
+  RotateCcw,
+  Mail
 } from 'lucide-react';
 
 interface Project {
@@ -79,7 +80,9 @@ interface SiteContent {
   contactHeadline: string;
   contactDescription: string;
   contactEmail: string;
+  contactPhone: string;
   contactRegion: string;
+  contactFormEndpoint?: string;
 }
 
 // Default Site Content matching the exact B2B copywriting (no trailing periods on headline)
@@ -172,8 +175,10 @@ const defaultSiteContent: SiteContent = {
 
   contactHeadline: "Chuẩn hóa tối ưu năng lực Media của bạn ngay hôm nay",
   contactDescription: "Đừng để ngân sách marketing bị lãng phí chỉ vì những hình ảnh lệch chuẩn hoặc một hệ thống nội dung rời rạc. Hãy chia sẻ với Vũ Anh Media về bài toán hiện tại của doanh nghiệp bạn.",
-  contactEmail: "hello@vuanhmedia.vn",
-  contactRegion: "Thành phố Hồ Chí Minh | Hà Nội"
+  contactEmail: "vuanhmediatn@gmail.com",
+  contactPhone: "0974003662",
+  contactRegion: "Thành phố Hồ Chí Minh | Hà Nội",
+  contactFormEndpoint: ""
 };
 
 // Brand Logo Component - Fully optimized for premium Futuristic White-Blue Theme
@@ -220,7 +225,7 @@ const App: React.FC = () => {
   const [contact, setContact] = useState('');
   const [need, setNeed] = useState('Sản xuất Video & TVC Cinematic');
   const [message, setMessage] = useState('');
-  const [formState, setFormState] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [formState, setFormState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   // Client-side CMS routing & session states
   const [isAdminRoute, setIsAdminRoute] = useState<boolean>(() => {
@@ -339,7 +344,16 @@ const App: React.FC = () => {
     const saved = localStorage.getItem('vuanh_media_site_content');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Automatic B2B contact migration and default merging for robust content integrity
+        const merged = { ...defaultSiteContent, ...parsed };
+        if (merged.contactEmail === 'hello@vuanhmedia.vn' || !merged.contactEmail) {
+          merged.contactEmail = defaultSiteContent.contactEmail;
+        }
+        if (merged.contactPhone === '090 123 4567' || !merged.contactPhone || merged.contactPhone === 'chưa cấu hình') {
+          merged.contactPhone = defaultSiteContent.contactPhone;
+        }
+        return merged;
       } catch (e) {
         console.error('Error loading saved site content:', e);
       }
@@ -754,16 +768,52 @@ const App: React.FC = () => {
     setIsVideoModalOpen(true);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormState('submitting');
-    setTimeout(() => {
-      setFormState('success');
-      setCompany('');
-      setName('');
-      setContact('');
-      setMessage('');
-    }, 1000);
+    
+    // If a custom webhook/formspree endpoint is configured, submit real data
+    if (siteContent.contactFormEndpoint && siteContent.contactFormEndpoint.trim() !== '') {
+      try {
+        const response = await fetch(siteContent.contactFormEndpoint.trim(), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            company,
+            name,
+            contact,
+            need,
+            message,
+            submittedAt: new Date().toISOString()
+          })
+        });
+        
+        if (response.ok) {
+          setFormState('success');
+          setCompany('');
+          setName('');
+          setContact('');
+          setMessage('');
+        } else {
+          setFormState('error');
+        }
+      } catch (err) {
+        console.error('Contact submission error:', err);
+        setFormState('error');
+      }
+    } else {
+      // Simulate backend routing for testing and default demo fallback
+      setTimeout(() => {
+        setFormState('success');
+        setCompany('');
+        setName('');
+        setContact('');
+        setMessage('');
+      }, 1000);
+    }
   };
 
   // RENDER DYNAMIC ADMIN CMS INTERFACE
@@ -1274,13 +1324,22 @@ const App: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Email liên hệ công việc</label>
                     <input 
                       type="email"
                       value={siteContent.contactEmail}
                       onChange={(e) => updateContentField('contactEmail', e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Số điện thoại liên hệ</label>
+                    <input 
+                      type="text"
+                      value={siteContent.contactPhone}
+                      onChange={(e) => updateContentField('contactPhone', e.target.value)}
                       className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
                     />
                   </div>
@@ -1293,6 +1352,25 @@ const App: React.FC = () => {
                       className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12.5px] font-semibold outline-none focus:border-[#0284c7]"
                     />
                   </div>
+                </div>
+
+                <div className="pt-4 border-t space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-extrabold text-[#0284c7] uppercase tracking-wider flex items-center gap-1.5">
+                      🔗 Cấu hình cổng nhận yêu cầu khách hàng (Formspree / Webhook / Zapier)
+                    </label>
+                    <span className="text-[10.5px] px-2 py-0.5 bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 rounded-full font-bold">Tính năng B2B</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 font-semibold leading-relaxed">
+                    Mặc định, khi khách hàng bấm nút gửi thông tin liên hệ, trang web sẽ mô phỏng gửi thành công. Để nhận được thông tin yêu cầu của khách hàng gửi trực tiếp về email <span className="font-bold text-slate-600">{siteContent.contactEmail}</span>, bạn chỉ cần đăng ký tài khoản miễn phí trên <a href="https://formspree.io" target="_blank" rel="noopener noreferrer" className="text-[#0284c7] hover:underline font-bold">Formspree.io</a>, tạo 1 form mới, copy đường dẫn Endpoint nhận được và dán vào ô dưới đây.
+                  </p>
+                  <input 
+                    type="url"
+                    placeholder="Ví dụ: https://formspree.io/f/xoqyzabc hoặc Zapier Webhook URL..."
+                    value={siteContent.contactFormEndpoint || ''}
+                    onChange={(e) => updateContentField('contactFormEndpoint', e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white/50 text-[12px] font-mono outline-none focus:border-[#0284c7] placeholder-slate-400"
+                  />
                 </div>
               </div>
             )}
@@ -2299,6 +2377,18 @@ const App: React.FC = () => {
 
             {formState !== 'success' ? (
               <form onSubmit={handleFormSubmit} className="space-y-6">
+                {formState === 'error' && (
+                  <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 text-[12.5px] font-semibold text-center space-y-2 animate-scale-up">
+                    <p>⚠️ Gửi yêu cầu thất bại! Vui lòng kiểm tra lại kết nối hoặc thử lại.</p>
+                    <button 
+                      type="button" 
+                      onClick={() => setFormState('idle')} 
+                      className="text-[11px] underline font-extrabold uppercase hover:text-rose-750 cursor-pointer block mx-auto"
+                    >
+                      Quay lại nhập thông tin
+                    </button>
+                  </div>
+                )}
                 
                 <div className="space-y-1.5">
                   <label className="text-[9px] font-extrabold text-[#0284c7] uppercase tracking-widest">Tên doanh nghiệp của anh/chị</label>
@@ -2407,9 +2497,15 @@ const App: React.FC = () => {
             {/* DIRECT CONTACT INFO */}
             <div className="pt-8 border-t border-slate-200/50 space-y-4 text-[12.5px] text-slate-500 font-semibold">
               <div className="flex items-start gap-3">
-                <Phone className="w-4 h-4 text-[#0284c7] shrink-0 mt-0.5" />
+                <Mail className="w-4 h-4 text-[#0284c7] shrink-0 mt-0.5" />
                 <div>
                   <span className="font-black text-[#0b1329]">Email liên hệ:</span> {siteContent.contactEmail}
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Phone className="w-4 h-4 text-[#0284c7] shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-black text-[#0b1329]">Số điện thoại:</span> {siteContent.contactPhone}
                 </div>
               </div>
               <div className="flex items-start gap-3">
