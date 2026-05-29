@@ -1784,7 +1784,7 @@ const App: React.FC = () => {
       <footer className="absolute bottom-6 left-6 sm:left-12 lg:left-24 right-6 sm:right-12 lg:right-24 z-20 flex items-center justify-between text-[9.5px] font-mono tracking-widest text-slate-400 select-none pointer-events-none">
         <div className="flex items-center gap-2">
           <span className="w-1.2 h-1.2 bg-[#0284c7] rounded-full animate-pulse" />
-          <span>PRODUCTION & OPERATIONS AGENCY</span>
+          <span>MEDIA PRODUCTION & OPERATIONS</span>
         </div>
         <div>VŨ ANH MEDIA © 2026</div>
       </footer>
