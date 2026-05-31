@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { 
   Play, 
   X, 
-  Menu,
   CheckCircle2, 
   ArrowUpRight, 
   Phone, 
@@ -192,7 +191,7 @@ const VALogo: React.FC = () => (
         alt="VŨ ANH MEDIA Logo" 
       />
     </div>
-    <div className="flex items-baseline pl-0.5 select-none pointer-events-none whitespace-nowrap">
+    <div className="hidden sm:flex items-baseline pl-0.5 select-none pointer-events-none whitespace-nowrap">
       <span className="text-[14px] sm:text-[16px] font-black text-[#0284c7] tracking-[0.04em] leading-none uppercase">
         VŨ ANH
       </span>
@@ -205,7 +204,6 @@ const VALogo: React.FC = () => (
 
 const App: React.FC = () => {
   const [activeDrawer, setActiveDrawer] = useState<'about' | 'services' | 'projects' | 'process' | 'contact' | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<'all' | 'video' | 'image' | 'regular'>('all');
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [videoModalUrl, setVideoModalUrl] = useState('');
@@ -1750,13 +1748,12 @@ const App: React.FC = () => {
         {/* Futuristic Tech Grid Pattern */}
         <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(2,132,199,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(2,132,199,0.15)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
       </div>
-
       {/* FLOATING PILL NAVBAR - DOUBLE CAPSULE PATTERN */}
-      <nav className="fixed top-0 left-0 w-full z-30 flex items-center justify-between md:justify-center pt-5 sm:pt-7 px-4 sm:px-8 gap-2 sm:gap-3 pointer-events-none">
+      <nav className="fixed top-0 left-0 w-full z-30 flex items-center justify-center pt-5 sm:pt-7 px-4 sm:px-8 gap-1.5 sm:gap-3 pointer-events-none">
         
         {/* LEFT PILL: Brand Logo Capsule */}
         <div 
-          className="flex items-center rounded-full pl-3.5 pr-5 py-2 sm:py-2.5 shrink-0 shadow-lg shadow-sky-950/5 border border-white/85 backdrop-blur-xl bg-white/65 hover:scale-[1.01] transition-all duration-300 pointer-events-auto"
+          className="flex items-center rounded-full pl-2 pr-2 py-2 sm:pl-3.5 sm:pr-5 sm:py-2.5 shrink-0 shadow-lg shadow-sky-950/5 border border-white/85 backdrop-blur-xl bg-white/65 hover:scale-[1.01] transition-all duration-300 pointer-events-auto"
         >
           <a 
             href="#top" 
@@ -1769,99 +1766,40 @@ const App: React.FC = () => {
 
         {/* RIGHT PILL: Menu links capsule */}
         <div 
-          className="hidden md:flex items-center gap-4 sm:gap-9 rounded-full px-5 sm:px-8 py-3.5 sm:py-4 bg-white/65 backdrop-blur-xl border border-white/85 shadow-lg shadow-sky-950/5 pointer-events-auto"
+          className="flex items-center gap-1.5 sm:gap-4 md:gap-9 rounded-full px-3 sm:px-5 md:px-8 py-2.5 sm:py-3.5 md:py-4 bg-white/65 backdrop-blur-xl border border-white/85 shadow-lg shadow-sky-950/5 pointer-events-auto"
         >
           <button 
             onClick={() => setActiveDrawer('about')}
-            className={`text-[11px] sm:text-[12.5px] font-extrabold uppercase tracking-widest transition-colors duration-200 cursor-pointer ${activeDrawer === 'about' ? 'text-[#0284c7]' : 'text-slate-600 hover:text-[#0284c7]'}`}
+            className={`text-[9.5px] sm:text-[11px] md:text-[12.5px] font-extrabold uppercase tracking-wider sm:tracking-widest transition-colors duration-200 cursor-pointer ${activeDrawer === 'about' ? 'text-[#0284c7]' : 'text-slate-600 hover:text-[#0284c7]'}`}
           >
             Giới thiệu
           </button>
           <button 
             onClick={() => setActiveDrawer('services')}
-            className={`text-[11px] sm:text-[12.5px] font-extrabold uppercase tracking-widest transition-colors duration-200 cursor-pointer ${activeDrawer === 'services' ? 'text-[#0284c7]' : 'text-slate-600 hover:text-[#0284c7]'}`}
+            className={`text-[9.5px] sm:text-[11px] md:text-[12.5px] font-extrabold uppercase tracking-wider sm:tracking-widest transition-colors duration-200 cursor-pointer ${activeDrawer === 'services' ? 'text-[#0284c7]' : 'text-slate-600 hover:text-[#0284c7]'}`}
           >
             Dịch vụ
           </button>
           <button 
             onClick={() => setActiveDrawer('projects')}
-            className={`text-[11px] sm:text-[12.5px] font-extrabold uppercase tracking-widest transition-colors duration-200 cursor-pointer ${activeDrawer === 'projects' ? 'text-[#0284c7]' : 'text-slate-600 hover:text-[#0284c7]'}`}
+            className={`text-[9.5px] sm:text-[11px] md:text-[12.5px] font-extrabold uppercase tracking-wider sm:tracking-widest transition-colors duration-200 cursor-pointer ${activeDrawer === 'projects' ? 'text-[#0284c7]' : 'text-slate-600 hover:text-[#0284c7]'}`}
           >
             Dự án
           </button>
           <button 
             onClick={() => setActiveDrawer('process')}
-            className={`text-[11px] sm:text-[12.5px] font-extrabold uppercase tracking-widest transition-colors duration-200 cursor-pointer ${activeDrawer === 'process' ? 'text-[#0284c7]' : 'text-slate-600 hover:text-[#0284c7]'}`}
+            className={`text-[9.5px] sm:text-[11px] md:text-[12.5px] font-extrabold uppercase tracking-wider sm:tracking-widest transition-colors duration-200 cursor-pointer ${activeDrawer === 'process' ? 'text-[#0284c7]' : 'text-slate-600 hover:text-[#0284c7]'}`}
           >
             Quy trình
           </button>
           <button 
             onClick={() => setActiveDrawer('contact')}
-            className={`text-[11px] sm:text-[12.5px] font-extrabold uppercase tracking-widest transition-colors duration-200 cursor-pointer ${activeDrawer === 'contact' ? 'text-[#0284c7]' : 'text-slate-600 hover:text-[#0284c7]'}`}
+            className={`text-[9.5px] sm:text-[11px] md:text-[12.5px] font-extrabold uppercase tracking-wider sm:tracking-widest transition-colors duration-200 cursor-pointer ${activeDrawer === 'contact' ? 'text-[#0284c7]' : 'text-slate-600 hover:text-[#0284c7]'}`}
           >
             Liên hệ
           </button>
         </div>
-
-        {/* MOBILE MENU TOGGLE BUTTON */}
-        <div className="flex md:hidden items-center pointer-events-auto">
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/65 backdrop-blur-xl border border-white/85 shadow-lg shadow-sky-950/5 text-[#0284c7] hover:bg-white/85 transition-all active:scale-95 cursor-pointer"
-            aria-label="Toggle Menu"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
       </nav>
-
-      {/* MOBILE NAV OVERLAY */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-20 bg-slate-950/20 backdrop-blur-md md:hidden animate-fade-in" onClick={() => setMobileMenuOpen(false)}>
-          <div 
-            className="absolute top-[80px] right-4 left-4 rounded-3xl bg-white/80 backdrop-blur-2xl border border-white/90 shadow-2xl p-6 flex flex-col gap-4 pointer-events-auto animate-scale-up"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex flex-col gap-1">
-              <button 
-                onClick={() => { setActiveDrawer('about'); setMobileMenuOpen(false); }}
-                className={`w-full text-left py-3 px-4 rounded-xl font-extrabold text-[12px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeDrawer === 'about' ? 'bg-[#0284c7]/10 text-[#0284c7]' : 'text-slate-600 hover:bg-[#0284c7]/5 hover:text-[#0284c7]'}`}
-              >
-                Giới thiệu
-              </button>
-              <button 
-                onClick={() => { setActiveDrawer('services'); setMobileMenuOpen(false); }}
-                className={`w-full text-left py-3 px-4 rounded-xl font-extrabold text-[12px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeDrawer === 'services' ? 'bg-[#0284c7]/10 text-[#0284c7]' : 'text-slate-600 hover:bg-[#0284c7]/5 hover:text-[#0284c7]'}`}
-              >
-                Dịch vụ
-              </button>
-              <button 
-                onClick={() => { setActiveDrawer('projects'); setMobileMenuOpen(false); }}
-                className={`w-full text-left py-3 px-4 rounded-xl font-extrabold text-[12px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeDrawer === 'projects' ? 'bg-[#0284c7]/10 text-[#0284c7]' : 'text-slate-600 hover:bg-[#0284c7]/5 hover:text-[#0284c7]'}`}
-              >
-                Dự án
-              </button>
-              <button 
-                onClick={() => { setActiveDrawer('process'); setMobileMenuOpen(false); }}
-                className={`w-full text-left py-3 px-4 rounded-xl font-extrabold text-[12px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeDrawer === 'process' ? 'bg-[#0284c7]/10 text-[#0284c7]' : 'text-slate-600 hover:bg-[#0284c7]/5 hover:text-[#0284c7]'}`}
-              >
-                Quy trình
-              </button>
-              <button 
-                onClick={() => { setActiveDrawer('contact'); setMobileMenuOpen(false); }}
-                className={`w-full text-left py-3 px-4 rounded-xl font-extrabold text-[12px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeDrawer === 'contact' ? 'bg-[#0284c7]/10 text-[#0284c7]' : 'text-slate-600 hover:bg-[#0284c7]/5 hover:text-[#0284c7]'}`}
-              >
-                Liên hệ
-              </button>
-            </div>
-            
-            <div className="border-t border-slate-200/50 pt-3.5 px-4 flex items-center justify-between text-slate-400">
-              <span className="text-[9px] font-black tracking-widest text-[#0284c7] uppercase">VŨ ANH MEDIA</span>
-              <span className="text-[8px] font-bold">© 2026</span>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* HERO CONTENT - BOTTOM-LEFT ALIGNED (READING DYNAMIC CONTENT) */}
       <main className="absolute top-[15%] sm:top-[22%] md:top-[24%] left-6 sm:left-12 lg:left-24 z-20 max-w-3xl text-left pointer-events-none px-4">
