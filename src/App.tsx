@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Play, 
   X, 
+  Menu,
   CheckCircle2, 
   ArrowUpRight, 
   Phone, 
@@ -204,6 +205,7 @@ const VALogo: React.FC = () => (
 
 const App: React.FC = () => {
   const [activeDrawer, setActiveDrawer] = useState<'about' | 'services' | 'projects' | 'process' | 'contact' | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<'all' | 'video' | 'image' | 'regular'>('all');
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [videoModalUrl, setVideoModalUrl] = useState('');
@@ -1750,7 +1752,7 @@ const App: React.FC = () => {
       </div>
 
       {/* FLOATING PILL NAVBAR - DOUBLE CAPSULE PATTERN */}
-      <nav className="fixed top-0 left-0 w-full z-30 flex items-center justify-center pt-5 sm:pt-7 px-4 sm:px-8 gap-2 sm:gap-3 pointer-events-none">
+      <nav className="fixed top-0 left-0 w-full z-30 flex items-center justify-between md:justify-center pt-5 sm:pt-7 px-4 sm:px-8 gap-2 sm:gap-3 pointer-events-none">
         
         {/* LEFT PILL: Brand Logo Capsule */}
         <div 
@@ -1767,7 +1769,7 @@ const App: React.FC = () => {
 
         {/* RIGHT PILL: Menu links capsule */}
         <div 
-          className="flex items-center gap-4 sm:gap-9 rounded-full px-5 sm:px-8 py-3.5 sm:py-4 bg-white/65 backdrop-blur-xl border border-white/85 shadow-lg shadow-sky-950/5 pointer-events-auto"
+          className="hidden md:flex items-center gap-4 sm:gap-9 rounded-full px-5 sm:px-8 py-3.5 sm:py-4 bg-white/65 backdrop-blur-xl border border-white/85 shadow-lg shadow-sky-950/5 pointer-events-auto"
         >
           <button 
             onClick={() => setActiveDrawer('about')}
@@ -1800,11 +1802,70 @@ const App: React.FC = () => {
             Liên hệ
           </button>
         </div>
+
+        {/* MOBILE MENU TOGGLE BUTTON */}
+        <div className="flex md:hidden items-center pointer-events-auto">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/65 backdrop-blur-xl border border-white/85 shadow-lg shadow-sky-950/5 text-[#0284c7] hover:bg-white/85 transition-all active:scale-95 cursor-pointer"
+            aria-label="Toggle Menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </nav>
 
+      {/* MOBILE NAV OVERLAY */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-20 bg-slate-950/20 backdrop-blur-md md:hidden animate-fade-in" onClick={() => setMobileMenuOpen(false)}>
+          <div 
+            className="absolute top-[80px] right-4 left-4 rounded-3xl bg-white/80 backdrop-blur-2xl border border-white/90 shadow-2xl p-6 flex flex-col gap-4 pointer-events-auto animate-scale-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex flex-col gap-1">
+              <button 
+                onClick={() => { setActiveDrawer('about'); setMobileMenuOpen(false); }}
+                className={`w-full text-left py-3 px-4 rounded-xl font-extrabold text-[12px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeDrawer === 'about' ? 'bg-[#0284c7]/10 text-[#0284c7]' : 'text-slate-600 hover:bg-[#0284c7]/5 hover:text-[#0284c7]'}`}
+              >
+                Giới thiệu
+              </button>
+              <button 
+                onClick={() => { setActiveDrawer('services'); setMobileMenuOpen(false); }}
+                className={`w-full text-left py-3 px-4 rounded-xl font-extrabold text-[12px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeDrawer === 'services' ? 'bg-[#0284c7]/10 text-[#0284c7]' : 'text-slate-600 hover:bg-[#0284c7]/5 hover:text-[#0284c7]'}`}
+              >
+                Dịch vụ
+              </button>
+              <button 
+                onClick={() => { setActiveDrawer('projects'); setMobileMenuOpen(false); }}
+                className={`w-full text-left py-3 px-4 rounded-xl font-extrabold text-[12px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeDrawer === 'projects' ? 'bg-[#0284c7]/10 text-[#0284c7]' : 'text-slate-600 hover:bg-[#0284c7]/5 hover:text-[#0284c7]'}`}
+              >
+                Dự án
+              </button>
+              <button 
+                onClick={() => { setActiveDrawer('process'); setMobileMenuOpen(false); }}
+                className={`w-full text-left py-3 px-4 rounded-xl font-extrabold text-[12px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeDrawer === 'process' ? 'bg-[#0284c7]/10 text-[#0284c7]' : 'text-slate-600 hover:bg-[#0284c7]/5 hover:text-[#0284c7]'}`}
+              >
+                Quy trình
+              </button>
+              <button 
+                onClick={() => { setActiveDrawer('contact'); setMobileMenuOpen(false); }}
+                className={`w-full text-left py-3 px-4 rounded-xl font-extrabold text-[12px] uppercase tracking-widest transition-all duration-200 cursor-pointer ${activeDrawer === 'contact' ? 'bg-[#0284c7]/10 text-[#0284c7]' : 'text-slate-600 hover:bg-[#0284c7]/5 hover:text-[#0284c7]'}`}
+              >
+                Liên hệ
+              </button>
+            </div>
+            
+            <div className="border-t border-slate-200/50 pt-3.5 px-4 flex items-center justify-between text-slate-400">
+              <span className="text-[9px] font-black tracking-widest text-[#0284c7] uppercase">VŨ ANH MEDIA</span>
+              <span className="text-[8px] font-bold">© 2026</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* HERO CONTENT - BOTTOM-LEFT ALIGNED (READING DYNAMIC CONTENT) */}
-      <main className="absolute top-[20%] sm:top-[22%] md:top-[24%] left-6 sm:left-12 lg:left-24 z-20 max-w-3xl text-left pointer-events-none px-4">
-        <div className="space-y-6 sm:space-y-7 pointer-events-auto select-none animate-fade-in">
+      <main className="absolute top-[15%] sm:top-[22%] md:top-[24%] left-6 sm:left-12 lg:left-24 z-20 max-w-3xl text-left pointer-events-none px-4">
+        <div className="space-y-4 sm:space-y-7 pointer-events-auto select-none animate-fade-in">
           
           {/* Tagline */}
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/70 border border-white/95 backdrop-blur-md rounded-full shadow-xs text-[10px] font-black tracking-widest text-[#0284c7] uppercase">
@@ -1813,7 +1874,7 @@ const App: React.FC = () => {
           </div>
           
           {/* Headline - Dynamic and custom styled to match original highlight structure */}
-          <h1 className="text-3xl sm:text-4.5xl lg:text-[2.85rem] font-black text-[#0b1329] tracking-tight uppercase leading-[1.3] drop-shadow-xs">
+          <h1 className="text-2xl sm:text-4.5xl lg:text-[2.85rem] font-black text-[#0b1329] tracking-tight uppercase leading-[1.3] drop-shadow-xs">
             {siteContent.heroHeadlineLine1} <span className="text-[#0284c7]">{siteContent.heroHeadlineHighlight1}</span> <br />
             {siteContent.heroHeadlineLine2} <span className="text-[#0284c7]">{siteContent.heroHeadlineHighlight2}</span>
           </h1>
@@ -1828,14 +1889,14 @@ const App: React.FC = () => {
           <div className="pt-2 flex flex-wrap gap-4">
             <button 
               onClick={() => setActiveDrawer('contact')}
-              className="inline-flex items-center gap-2 px-7 py-4 text-[10.5px] font-extrabold uppercase tracking-widest text-white bg-[#0284c7] hover:bg-sky-500 rounded-full shadow-lg shadow-sky-500/20 transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 sm:px-7 py-3.5 sm:py-4 text-[10px] sm:text-[10.5px] font-extrabold uppercase tracking-widest text-white bg-[#0284c7] hover:bg-sky-500 rounded-full shadow-lg shadow-sky-500/20 transition-all duration-300 hover:-translate-y-0.5 group cursor-pointer"
             >
               {siteContent.heroCta1Text}
               <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
             <button 
               onClick={() => setActiveDrawer('projects')}
-              className="inline-flex items-center gap-2 px-7 py-4 text-[10.5px] font-extrabold uppercase tracking-widest text-[#0b1329] bg-white/80 hover:bg-white border border-[#0b1329]/15 rounded-full transition-all duration-300 hover:shadow-lg cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 sm:px-7 py-3.5 sm:py-4 text-[10px] sm:text-[10.5px] font-extrabold uppercase tracking-widest text-[#0b1329] bg-white/80 hover:bg-white border border-[#0b1329]/15 rounded-full transition-all duration-300 hover:shadow-lg cursor-pointer"
             >
               {siteContent.heroCta2Text}
             </button>
@@ -1844,12 +1905,12 @@ const App: React.FC = () => {
       </main>
 
       {/* SOCIAL PROOF SECTION - DYNAMIC VALUE READ */}
-      <div className="absolute bottom-16 sm:bottom-20 left-6 sm:left-12 lg:left-24 right-6 sm:right-12 lg:right-24 z-20 pointer-events-auto select-none space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-t border-slate-200/50 pt-5">
+      <div className="absolute bottom-12 sm:bottom-20 left-6 sm:left-12 lg:left-24 right-6 sm:right-12 lg:right-24 z-20 pointer-events-auto select-none space-y-3 sm:space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2 lg:gap-4 border-t border-slate-200/50 pt-3 sm:pt-5">
           
           <div className="max-w-xl shrink-0">
             <span className="text-[10px] font-black tracking-widest text-[#0284c7] uppercase">Đối tác thực chiến</span>
-            <p className="text-[11.5px] text-slate-500 font-bold leading-relaxed mt-1">
+            <p className="hidden sm:block text-[11.5px] text-slate-500 font-bold leading-relaxed mt-1">
               {siteContent.partnersIntro}
             </p>
           </div>
@@ -1873,8 +1934,8 @@ const App: React.FC = () => {
       </div>
 
       {/* TECH TAGS IN CORNER */}
-      <footer className="absolute bottom-6 left-6 sm:left-12 lg:left-24 right-6 sm:right-12 lg:right-24 z-20 flex items-center justify-between text-[9.5px] font-mono tracking-widest text-slate-400 select-none pointer-events-none">
-        <div className="flex items-center gap-2">
+      <footer className="absolute bottom-4 sm:bottom-6 left-6 sm:left-12 lg:left-24 right-6 sm:right-12 lg:right-24 z-20 flex items-center justify-center sm:justify-between text-[9px] sm:text-[9.5px] font-mono tracking-widest text-slate-400 select-none pointer-events-none">
+        <div className="hidden sm:flex items-center gap-2">
           <span className="w-1.2 h-1.2 bg-[#0284c7] rounded-full animate-pulse" />
           <span>MEDIA PRODUCTION & OPERATIONS</span>
         </div>
