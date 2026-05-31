@@ -108,26 +108,26 @@ const defaultSiteContent: SiteContent = {
   ],
 
   aboutHeadline: "Định hình lại chuẩn mực Media cho doanh nghiệp",
-  aboutDescription: "Phần lớn doanh nghiệp SME tại Việt Nam đang gặp 3 sai lầm lớn khi đầu tư cho Media: Coi chi phí media là khoản tiêu sản dùng một lần, thuê freelancer thiếu tính cam kết dài hạn, hoặc chọn các Marketing Agency lớn với chi phí bị đội lên do các khâu trung gian. Vũ Anh Media thay đổi thực trạng đó bằng 3 nguyên tắc làm việc:",
+  aboutDescription: "Hầu hết các doanh nghiệp đi lên từ chuyên môn thường gặp khó khăn trong việc duy trì chất lượng và tần suất xuất hiện hình ảnh đồng đều. Nhận diện thương hiệu bị đứt gãy do quy trình sản xuất manh mún, nhân sự thiếu tính cam kết lâu dài hoặc chi phí vận hành bị đội lên cao qua các khâu trung gian. VŨ ANH MEDIA được sinh ra để tái định nghĩa hoạt động sản xuất hình ảnh bằng 3 trụ cột vận hành cốt lõi:",
   aboutPrinciples: [
     { 
       num: '01', 
-      title: 'Kiểm soát rủi ro vận hành bằng quy trình', 
-      desc: 'Freelancer làm việc dựa trên năng lực cá nhân và không có đội ngũ backup. Vũ Anh Media vận hành theo team có cấu trúc, có cam kết deadline rõ ràng bằng hợp đồng và luôn chủ động hệ thống thiết bị quay dựng chuyên dụng (Sony A7S3, Blackmagic 6K Pro...).' 
+      title: 'Vận hành chuẩn hóa bằng quy trình hệ thống', 
+      desc: 'Chúng tôi loại bỏ hoàn toàn sự phụ thuộc vào cảm tính cá nhân hay tính ngẫu hứng nghệ thuật. Mọi chiến dịch hình ảnh của VŨ ANH MEDIA đều được kiểm soát nghiêm ngặt từ khâu Briefing, Shotlist kịch bản đến tối ưu hóa hiện trường. Sự cam kết tuyệt đối về chất lượng và tiến độ được đảm bảo bằng hợp đồng pháp lý cùng quy trình vận hành đội ngũ đồng bộ, chuyên nghiệp.' 
     },
     { 
       num: '02', 
-      title: 'Biến Media thành tài sản tích lũy', 
-      desc: 'Chúng tôi không chỉ giao file video rồi kết thúc hợp tác. Vũ Anh Media xây dựng hệ thống lưu trữ bài bản, giúp doanh nghiệp sở hữu trọn vẹn file gốc, file dự án để có thể tái sử dụng trong vòng 6 - 12 tháng, tối ưu hóa từng đồng chi phí sản xuất.' 
+      title: 'Tối ưu hóa & Biến Media thành tài sản tích lũy', 
+      desc: 'Một thước phim hay tấm ảnh chất lượng cao không phải là khoản chi phí tiêu sản một lần. Chúng tôi đồng hành cùng đối tác xây dựng thư viện tư liệu media thông minh, lưu trữ và bảo mật dữ liệu dự án tối thiểu 12 tháng. Doanh nghiệp dễ dàng khai thác, tái cấu trúc và phân phối nội dung đa kênh trọn đời, giúp nhân bản giá trị sử dụng và tối ưu hóa tối đa chi phí đầu tư dài hạn.' 
     },
     { 
       num: '03', 
-      title: 'Chuyên sâu tối đa, không phân tán nguồn lực', 
-      desc: 'Chúng tôi nói KHÔNG với việc nhận chạy ads, booking KOL hay làm marketing tổng thể để tập trung 100% vào phần lõi: Sản xuất và Vận hành Media. Doanh nghiệp nhận được chất lượng sản xuất cao cấp nhất mà không phải gánh chi phí gián tiếp.' 
+      title: 'Tập trung tối đa vào giá trị lõi', 
+      desc: 'VŨ ANH MEDIA nói KHÔNG với việc nhận triển khai đa dịch vụ dàn trải như Ads hay chạy sự kiện. Chúng tôi dồn 100% tài nguyên, tư duy nghệ thuật và công nghệ hiện đại vào năng lực cốt lõi: Sản xuất hình ảnh và Vận hành Media bài bản. Sự chuyên sâu tuyệt đối này đảm bảo mỗi khung hình bàn giao cho khách hàng đều đạt chuẩn mỹ thuật cao cấp nhất.' 
     }
   ],
-  founderTitle: "Kinh nghiệm đúc kết từ chi tiết nhỏ",
-  founderQuote: "Kinh nghiệm nằm ở việc chú ý tới brief, dữ liệu hiện trường và cách bàn giao sau cùng để giữ chuẩn lâu dài.",
+  founderTitle: "Tầm nhìn thương hiệu từ chi tiết nhỏ",
+  founderQuote: "Sự tinh tế của một tác phẩm media không nằm ở thiết bị đắt tiền, mà nằm ở tư duy thấu hiểu ngôn ngữ thương hiệu và kỷ luật đúc kết trong từng chi tiết nhỏ.",
 
   servicesHeadline: "Hệ sinh thái dịch vụ Media toàn diện cho SME",
   servicesDescription: "Mỗi doanh nghiệp cần một sự chuẩn bị và giải pháp khác nhau. Vũ Anh Media thiết kế 3 tầng trục năng lực dịch vụ bài bản để hỗ trợ sự phát triển liên tục của bạn:",
@@ -347,6 +347,20 @@ const App: React.FC = () => {
         const parsed = JSON.parse(saved);
         // Automatic B2B contact migration and default merging for robust content integrity
         const merged = { ...defaultSiteContent, ...parsed };
+        
+        // Force migration for updated elite B2B copywriting if old copy is found in localStorage
+        if (
+          !parsed.aboutPrinciples || 
+          (parsed.aboutPrinciples[0] && parsed.aboutPrinciples[0].title.toLowerCase().includes('kiểm soát rủi ro')) ||
+          (parsed.founderQuote && parsed.founderQuote.toLowerCase().includes('trên hiện trường')) ||
+          (parsed.aboutDescription && parsed.aboutDescription.toLowerCase().includes('freelancer thiếu tính'))
+        ) {
+          merged.aboutDescription = defaultSiteContent.aboutDescription;
+          merged.aboutPrinciples = defaultSiteContent.aboutPrinciples;
+          merged.founderTitle = defaultSiteContent.founderTitle;
+          merged.founderQuote = defaultSiteContent.founderQuote;
+        }
+
         if (merged.contactEmail === 'hello@vuanhmedia.vn' || !merged.contactEmail) {
           merged.contactEmail = defaultSiteContent.contactEmail;
         }
@@ -1939,8 +1953,8 @@ const App: React.FC = () => {
                 </h3>
               </div>
 
-              {/* Elegant Founder Grid Card */}
-              <div className="glass-card rounded-2xl overflow-hidden border border-white/80 bg-white/45 shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center sm:items-start transition-all duration-300 hover:bg-white/80">
+              {/* Elegant Founder Grid Card (Liquid-Glass 3D & HUD detailing) */}
+              <div className="premium-founder-glass rounded-2xl overflow-hidden p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center sm:items-start hud-brackets-blue">
                 <div className="w-36 h-48 sm:w-40 sm:h-52 rounded-xl overflow-hidden bg-slate-900 border border-white/90 shadow-lg shrink-0 relative group">
                   <img 
                     src="/assets/founder.png" 
@@ -1948,20 +1962,33 @@ const App: React.FC = () => {
                     alt="Founder Vũ Anh" 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+                  
+                  {/* Glowing HUD statuses */}
+                  <div className="absolute top-2.5 left-2.5 px-1.5 py-0.5 bg-black/75 backdrop-blur-md rounded border border-white/10 font-mono text-[8px] text-white/90 tracking-wider">
+                    [ OPERATOR ]
+                  </div>
+                  <div className="absolute bottom-2.5 right-2.5 flex items-center gap-1.5 px-1.5 py-0.5 bg-black/75 backdrop-blur-md rounded border border-white/10 font-mono text-[8px] text-white/90 tracking-wider">
+                    <span className="pulsing-hud-dot"></span>
+                    ACTIVE
+                  </div>
                 </div>
                 
-                <div className="flex flex-col justify-center space-y-4 text-center sm:text-left">
+                <div className="flex flex-col justify-center space-y-4 text-center sm:text-left flex-1 relative">
                   <div className="space-y-1">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#0284c7]/10 text-[9px] font-black text-[#0284c7] uppercase tracking-widest leading-none">
                       Founder / Media Director
                     </span>
-                    <h4 className="text-lg sm:text-xl font-black text-[#0b1329] uppercase tracking-wider">VŨ ANH</h4>
+                    <h4 className="text-xl sm:text-2xl font-black text-[#0b1329] uppercase tracking-wider">VŨ ANH</h4>
                   </div>
                   
                   <div className="relative">
-                    <p className="text-[13px] sm:text-[13.5px] text-slate-600 font-semibold italic border-l-3 border-[#0284c7] pl-4 leading-relaxed text-left">
+                    <p className="text-[13.5px] sm:text-[14px] text-slate-700 font-medium italic border-l-4 border-[#0284c7] pl-5 leading-relaxed text-left">
                       "{siteContent.founderQuote}"
                     </p>
+                    {/* Visual background monogram for HUD detailing */}
+                    <span className="absolute -right-4 -bottom-6 font-mono text-[64px] font-black text-slate-400/5 select-none pointer-events-none">
+                      VAM
+                    </span>
                   </div>
                 </div>
               </div>
