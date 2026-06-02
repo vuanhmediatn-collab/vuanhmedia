@@ -1766,7 +1766,7 @@ const App: React.FC = () => {
 
         {/* RIGHT PILL: Menu links capsule */}
         <div 
-          className="flex items-center gap-1.5 sm:gap-4 md:gap-9 rounded-full px-3 sm:px-5 md:px-8 py-2.5 sm:py-3.5 md:py-4 bg-white/65 backdrop-blur-xl border border-white/85 shadow-lg shadow-sky-950/5 pointer-events-auto"
+          className="flex items-center gap-2.5 sm:gap-4 md:gap-9 rounded-full px-3.5 sm:px-5 md:px-8 py-2.5 sm:py-3.5 md:py-4 bg-white/65 backdrop-blur-xl border border-white/85 shadow-lg shadow-sky-950/5 pointer-events-auto"
         >
           <button 
             onClick={() => setActiveDrawer('about')}
@@ -1813,8 +1813,8 @@ const App: React.FC = () => {
           
           {/* Headline - Dynamic and custom styled to match original highlight structure */}
           <h1 className="text-2xl sm:text-4.5xl lg:text-[2.85rem] font-black text-[#0b1329] tracking-tight uppercase leading-[1.3] drop-shadow-xs">
-            {siteContent.heroHeadlineLine1} <span className="text-[#0284c7]">{siteContent.heroHeadlineHighlight1}</span> <br />
-            {siteContent.heroHeadlineLine2} <span className="text-[#0284c7]">{siteContent.heroHeadlineHighlight2}</span>
+            {siteContent.heroHeadlineLine1} <span className="text-[#0284c7] whitespace-nowrap">{siteContent.heroHeadlineHighlight1}</span> <br />
+            {siteContent.heroHeadlineLine2} <span className="text-[#0284c7] whitespace-nowrap">{siteContent.heroHeadlineHighlight2}</span>
           </h1>
           
           {/* Sub-headline */}
