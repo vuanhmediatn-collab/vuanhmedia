@@ -184,23 +184,36 @@ const defaultSiteContent: SiteContent = {
 // Helper function to extract YouTube ID from any YouTube URL format
 const getYouTubeId = (url: string): string | null => {
   if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
-  const match = url.trim().match(regExp);
-  return (match && match[2].length === 11) ? match[2] : null;
+  const trimmed = url.trim();
+  const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
+  const match = trimmed.match(regExp);
+  if (match && match[1]) return match[1];
+  
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.hostname.includes('youtube.com')) {
+      const v = parsed.searchParams.get('v');
+      if (v && v.length === 11) return v;
+    }
+    if (parsed.hostname.includes('youtu.be')) {
+      const pathId = parsed.pathname.replace(/^\//, '');
+      if (pathId.length === 11) return pathId;
+    }
+  } catch (e) {}
+  return null;
 };
 
 // Helper function to extract Vimeo ID
 const getVimeoId = (url: string): string | null => {
   if (!url) return null;
-  const regExp = /(?:www\.|player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)/;
-  const match = url.trim().match(regExp);
+  const match = url.trim().match(/(?:vimeo\.com\/)(?:.*\/)?(\d+)/);
   return match ? match[1] : null;
 };
 
 // Helper function to extract Google Drive file ID
 const getGoogleDriveId = (url: string): string | null => {
   if (!url) return null;
-  const match = url.match(/\/file\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
+  const match = url.match(/\/file\/d\/([^\/\?]+)/) || url.match(/[?&]id=([^&]+)/);
   return match ? match[1] : null;
 };
 
@@ -230,6 +243,7 @@ const isVideoUrl = (url: string): boolean => {
 
 // Helper to auto-generate thumbnail from video URL if image is missing
 const getVideoThumbnail = (videoUrl: string): string | null => {
+  if (!videoUrl) return null;
   const ytId = getYouTubeId(videoUrl);
   if (ytId) {
     return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
@@ -434,12 +448,26 @@ const App: React.FC = () => {
     return defaultSiteContent;
   });
 
-  // Persistent projects state in localStorage
+  // Persistent projects state in localStorage with automatic blob URL sanitization
   const [projects, setProjects] = useState<Project[]>(() => {
     const saved = localStorage.getItem('vuanh_media_projects');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed: Project[] = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map(p => {
+            let img = p.img;
+            let vid = p.vid;
+            // Clean up expired blob URLs from previous browser sessions
+            if (img && img.startsWith('blob:')) {
+              img = 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80';
+            }
+            if (vid && vid.startsWith('blob:')) {
+              vid = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_215831_c6a8989c-d716-4d8d-8745-e972a2eec711.mp4';
+            }
+            return { ...p, img, vid };
+          });
+        }
       } catch (e) {
         console.error('Error loading saved projects:', e);
       }
@@ -612,12 +640,22 @@ const App: React.FC = () => {
 
   const handleSaveEditProject = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!editTitle.trim()) {
+      triggerCmsToast('Vui lòng nhập tiêu đề dự án!');
+      return;
+    }
     
     let finalVid: string | undefined = editVid.trim() || undefined;
     let finalImg = editImg.trim();
     let finalLink: string | undefined = editLink.trim() || undefined;
 
-    // Auto-generate YouTube thumbnail if missing or placeholder
+    // Auto classify as video if video URL exists
+    let category = editCategory;
+    if (finalVid && isVideoUrl(finalVid)) {
+      category = 'video';
+    }
+
+    // Auto-generate YouTube thumbnail or fallback if image is missing
     if (finalVid && (!finalImg || finalImg.includes('unsplash.com'))) {
       const ytThumb = getVideoThumbnail(finalVid);
       if (ytThumb) {
@@ -625,13 +663,20 @@ const App: React.FC = () => {
       }
     }
 
+    // Ensure thumbnail is never empty string
+    if (!finalImg) {
+      finalImg = finalVid 
+        ? 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80' 
+        : 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+    }
+
     setProjects(prev => prev.map(p => {
       if (p.id === editingProjectId) {
         return {
           ...p,
           title: editTitle.trim(),
-          category: editCategory,
-          desc: editDesc.trim(),
+          category: category,
+          desc: editDesc.trim() || (category === 'video' ? 'Dự án Video mới cập nhật.' : 'Dự án mới cập nhật.'),
           img: finalImg,
           vid: finalVid,
           link: finalLink
@@ -2735,19 +2780,35 @@ const App: React.FC = () => {
       {/* SMART VIDEO LIGHTBOX MODAL */}
       {isVideoModalOpen && (
         <div 
-          className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 transition-all duration-300 animate-fade-in"
+          className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/92 backdrop-blur-lg p-3 sm:p-6 transition-all duration-300 animate-fade-in"
           onClick={() => setIsVideoModalOpen(false)}
         >
-          <button 
-            onClick={() => setIsVideoModalOpen(false)}
-            className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-20 shadow-lg hover:scale-105"
-            title="Đóng video"
-          >
-            <X className="w-6 h-6" />
-          </button>
+          {/* Top Bar with Open Source Link & Close Button */}
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-3 z-30">
+            {videoModalUrl && (
+              <a 
+                href={videoModalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-[11px] font-bold border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
+                title="Mở đường dẫn video gốc trong cửa sổ mới"
+              >
+                <span>Mở link gốc</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+            )}
+            <button 
+              onClick={() => setIsVideoModalOpen(false)}
+              className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer shadow-lg hover:scale-105"
+              title="Đóng video (ESC)"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
           
           <div 
-            className="relative w-full max-w-4xl aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border border-white/15 flex flex-col"
+            className="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border border-white/20 flex flex-col items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             {getYouTubeId(videoModalUrl) ? (
@@ -2775,26 +2836,16 @@ const App: React.FC = () => {
                 className="w-full h-full border-0"
               />
             ) : (
-              <div className="relative w-full h-full flex flex-col items-center justify-center">
-                <video 
-                  src={videoModalUrl} 
-                  autoPlay 
-                  controls 
-                  playsInline
-                  className="w-full h-full object-contain"
-                />
-                <div className="absolute bottom-3 right-3 z-10">
-                  <a 
-                    href={videoModalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/70 hover:bg-black/90 backdrop-blur-md text-white text-[11px] font-bold border border-white/20 transition-all"
-                  >
-                    <span>Mở video nguồn</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-              </div>
+              <video 
+                src={videoModalUrl} 
+                autoPlay 
+                controls 
+                playsInline
+                className="w-full h-full object-contain bg-black"
+                onError={(e) => {
+                  console.warn('Video playback warning:', e);
+                }}
+              />
             )}
           </div>
         </div>
