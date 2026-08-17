@@ -181,6 +181,62 @@ const defaultSiteContent: SiteContent = {
   contactFormEndpoint: ""
 };
 
+// Helper function to extract YouTube ID from any YouTube URL format
+const getYouTubeId = (url: string): string | null => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+  const match = url.trim().match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
+// Helper function to extract Vimeo ID
+const getVimeoId = (url: string): string | null => {
+  if (!url) return null;
+  const regExp = /(?:www\.|player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)/;
+  const match = url.trim().match(regExp);
+  return match ? match[1] : null;
+};
+
+// Helper function to extract Google Drive file ID
+const getGoogleDriveId = (url: string): string | null => {
+  if (!url) return null;
+  const match = url.match(/\/file\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
+  return match ? match[1] : null;
+};
+
+// Smart check if a URL is a video URL
+const isVideoUrl = (url: string): boolean => {
+  if (!url) return false;
+  const lowercaseUrl = url.toLowerCase().trim();
+  return (
+    lowercaseUrl.endsWith('.mp4') ||
+    lowercaseUrl.endsWith('.webm') ||
+    lowercaseUrl.endsWith('.mov') ||
+    lowercaseUrl.endsWith('.m4v') ||
+    lowercaseUrl.includes('.mp4?') ||
+    lowercaseUrl.includes('.webm?') ||
+    lowercaseUrl.includes('cloudfront.net') ||
+    lowercaseUrl.includes('youtube.com') ||
+    lowercaseUrl.includes('youtu.be') ||
+    lowercaseUrl.includes('vimeo.com') ||
+    lowercaseUrl.includes('tiktok.com') ||
+    lowercaseUrl.includes('drive.google.com') ||
+    lowercaseUrl.includes('fb.watch') ||
+    lowercaseUrl.includes('facebook.com/watch') ||
+    lowercaseUrl.startsWith('blob:') ||
+    lowercaseUrl.startsWith('data:video/')
+  );
+};
+
+// Helper to auto-generate thumbnail from video URL if image is missing
+const getVideoThumbnail = (videoUrl: string): string | null => {
+  const ytId = getYouTubeId(videoUrl);
+  if (ytId) {
+    return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+  }
+  return null;
+};
+
 // Brand Logo Component - Fully optimized for premium Futuristic White-Blue Theme
 const VALogo: React.FC = () => (
   <div className="flex items-center gap-3">
@@ -274,6 +330,9 @@ const App: React.FC = () => {
   const [newTitle, setNewTitle] = useState('');
   const [newDesc, setNewDesc] = useState('');
   const [newCategory, setNewCategory] = useState<'video' | 'image' | 'regular'>('video');
+  const [newVidUrl, setNewVidUrl] = useState('');
+  const [newImgUrl, setNewImgUrl] = useState('');
+  const [newLinkUrl, setNewLinkUrl] = useState('');
   const [uploadFeedback, setUploadFeedback] = useState<{ type: 'success' | 'error' | null, msg: string }>({ type: null, msg: '' });
 
   // Initial projects data from the original website
@@ -553,16 +612,29 @@ const App: React.FC = () => {
 
   const handleSaveEditProject = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    let finalVid: string | undefined = editVid.trim() || undefined;
+    let finalImg = editImg.trim();
+    let finalLink: string | undefined = editLink.trim() || undefined;
+
+    // Auto-generate YouTube thumbnail if missing or placeholder
+    if (finalVid && (!finalImg || finalImg.includes('unsplash.com'))) {
+      const ytThumb = getVideoThumbnail(finalVid);
+      if (ytThumb) {
+        finalImg = ytThumb;
+      }
+    }
+
     setProjects(prev => prev.map(p => {
       if (p.id === editingProjectId) {
         return {
           ...p,
-          title: editTitle,
+          title: editTitle.trim(),
           category: editCategory,
-          desc: editDesc,
-          img: editImg,
-          vid: editVid || undefined,
-          link: editLink || undefined
+          desc: editDesc.trim(),
+          img: finalImg,
+          vid: finalVid,
+          link: finalLink
         };
       }
       return p;
@@ -588,7 +660,7 @@ const App: React.FC = () => {
     setFilePreviewUrl(objectUrl);
     
     setNewCategory(isVideo ? 'video' : 'image');
-    setUploadFeedback({ type: 'success', msg: `Đã chọn tệp: "${file.name}"` });
+    setUploadFeedback({ type: 'success', msg: `Đã chọn tệp từ máy tính: "${file.name}"` });
   };
 
   // Global Drag & Drop Event Handlers (Only active when isAdmin is true)
@@ -652,7 +724,7 @@ const App: React.FC = () => {
       id: Date.now(),
       category: category,
       title: isVideo ? `Video Tải Lên ${timestamp}` : `Ảnh Tải Lên ${timestamp}`,
-      desc: `Tệp kéo thả nội bộ (${formattedDate}). Hỗ trợ phát xem thử tức thì.`,
+      desc: `Tệp kéo thả nội bộ (${formattedDate}). Hỗ trợ phát xem thử.`,
       img: isVideo ? 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80' : objectUrl,
       vid: isVideo ? objectUrl : undefined
     };
@@ -671,13 +743,14 @@ const App: React.FC = () => {
 
   // Helper to handle drag & dropped URLs
   const processDroppedLink = (url: string) => {
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
       setUploadFeedback({ type: 'error', msg: 'Đường dẫn liên kết không hợp lệ!' });
       return;
     }
 
-    const lowercaseUrl = url.toLowerCase();
-    const isVideo = lowercaseUrl.endsWith('.mp4') || lowercaseUrl.endsWith('.webm') || lowercaseUrl.endsWith('.mov') || lowercaseUrl.includes('cloudfront.net');
+    const isVideo = isVideoUrl(trimmedUrl);
+    const lowercaseUrl = trimmedUrl.toLowerCase();
     const isImage = lowercaseUrl.endsWith('.jpg') || lowercaseUrl.endsWith('.jpeg') || lowercaseUrl.endsWith('.png') || lowercaseUrl.endsWith('.webp') || lowercaseUrl.endsWith('.gif') || lowercaseUrl.includes('images.unsplash.com');
 
     const timestamp = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
@@ -692,20 +765,25 @@ const App: React.FC = () => {
     if (isVideo) {
       category = 'video';
       title = `Video Trực Tuyến ${timestamp}`;
-      desc = `Phát video trực tuyến kéo thả (${formattedDate}).`;
-      img = 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80';
-      vid = url;
+      desc = `Phát video xem trực tuyến (${formattedDate}).`;
+      vid = trimmedUrl;
+      const ytThumb = getVideoThumbnail(trimmedUrl);
+      if (ytThumb) {
+        img = ytThumb;
+      } else {
+        img = 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80';
+      }
     } else if (isImage) {
       category = 'image';
       title = `Ảnh Trực Tuyến ${timestamp}`;
-      desc = `Tài nguyên ảnh trực tuyến kéo thả (${formattedDate}).`;
-      img = url;
+      desc = `Tài nguyên ảnh trực tuyến (${formattedDate}).`;
+      img = trimmedUrl;
     } else {
       category = 'regular';
       title = `Sản Phẩm Trực Tuyến ${timestamp}`;
       let hostname = 'website';
       try {
-        hostname = new URL(url).hostname;
+        hostname = new URL(trimmedUrl).hostname;
       } catch (e) {}
       desc = `Liên kết sản phẩm từ ${hostname}. Click nút bên dưới để chuyển tiếp trang.`;
     }
@@ -717,7 +795,7 @@ const App: React.FC = () => {
       desc: desc,
       img: img,
       vid: vid,
-      link: category === 'regular' ? url : undefined
+      link: category === 'regular' ? trimmedUrl : undefined
     };
 
     setProjects(prev => [newProject, ...prev]);
@@ -732,7 +810,7 @@ const App: React.FC = () => {
     }, 4000);
   };
 
-  // Add custom project manually from the direct file selection form
+  // Add custom project manually from URL input or computer file
   const handleAddProject = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) {
@@ -740,32 +818,73 @@ const App: React.FC = () => {
       return;
     }
 
-    if (!selectedFile || !filePreviewUrl) {
-      setUploadFeedback({ type: 'error', msg: 'Vui lòng chọn một tệp hình ảnh hoặc video từ máy tính của bạn!' });
+    let finalVid: string | undefined = newVidUrl.trim() || undefined;
+    let finalImg: string = newImgUrl.trim();
+    let finalLink: string | undefined = newLinkUrl.trim() || undefined;
+
+    // Handle uploaded file if present
+    if (selectedFile && filePreviewUrl) {
+      const isVideo = selectedFile.type.startsWith('video/');
+      if (isVideo) {
+        finalVid = filePreviewUrl;
+        if (!finalImg) {
+          finalImg = 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80';
+        }
+      } else {
+        finalImg = filePreviewUrl;
+      }
+    }
+
+    // Auto-generate YouTube thumbnail if image is missing
+    if (finalVid && !finalImg) {
+      const ytThumb = getVideoThumbnail(finalVid);
+      if (ytThumb) {
+        finalImg = ytThumb;
+      }
+    }
+
+    // Fallback thumbnail if still missing
+    if (!finalImg) {
+      finalImg = finalVid 
+        ? 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80' 
+        : 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+    }
+
+    // Check if at least one source (URL or file) is provided
+    if (!finalVid && !finalImg && !finalLink && !selectedFile) {
+      setUploadFeedback({ type: 'error', msg: 'Vui lòng chọn tệp từ máy tính hoặc nhập đường dẫn Video/Ảnh/Liên kết!' });
       return;
     }
 
-    const isVideo = selectedFile.type.startsWith('video/');
+    // Auto classify as 'video' if a video URL/file is present
+    let category = newCategory;
+    if (finalVid && isVideoUrl(finalVid)) {
+      category = 'video';
+    }
 
     const newProject: Project = {
       id: Date.now(),
-      category: newCategory,
-      title: newTitle,
-      desc: newDesc || (newCategory === 'regular' ? 'Khách hàng thường xuyên.' : 'Dự án mới cập nhật.'),
-      img: isVideo ? 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80' : filePreviewUrl,
-      vid: isVideo ? filePreviewUrl : undefined
+      category: category,
+      title: newTitle.trim(),
+      desc: newDesc.trim() || (category === 'video' ? 'Dự án Video mới cập nhật.' : 'Dự án mới cập nhật.'),
+      img: finalImg,
+      vid: finalVid,
+      link: finalLink
     };
 
     setProjects(prev => [newProject, ...prev]);
     setNewlyAddedProjectId(newProject.id);
-    setActiveCategory(newCategory);
+    setActiveCategory(category);
     
     // Clear uploader & form inputs
     setNewTitle('');
     setNewDesc('');
+    setNewVidUrl('');
+    setNewImgUrl('');
+    setNewLinkUrl('');
     setSelectedFile(null);
     setFilePreviewUrl(null);
-    setUploadFeedback({ type: 'success', msg: `Đã cập nhật dự án "${newTitle}" lên trang web thành công!` });
+    setUploadFeedback({ type: 'success', msg: `Đã thêm dự án "${newTitle}" lên trang web thành công!` });
     
     setTimeout(() => {
       setNewlyAddedProjectId(null);
@@ -1498,14 +1617,82 @@ const App: React.FC = () => {
                     
                     <form onSubmit={handleAddProject} className="space-y-4">
                       
+                      {/* URL Link Input Fields for Video / Image / External Link */}
+                      <div className="space-y-3 p-4 rounded-xl bg-white/70 border border-slate-200/80">
+                        <span className="text-[10px] font-black text-[#0284c7] uppercase tracking-widest block">
+                          Dán đường dẫn Video hoặc Ảnh trực tuyến (URL)
+                        </span>
+
+                        <div className="space-y-1">
+                          <label className="text-[9.5px] font-extrabold text-slate-600 uppercase">
+                            Đường dẫn Video (YouTube, Vimeo, TikTok, Google Drive, MP4 URL)
+                          </label>
+                          <input 
+                            type="url" 
+                            value={newVidUrl}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setNewVidUrl(val);
+                              // Auto detect YouTube thumbnail if image field is empty
+                              const ytThumb = getVideoThumbnail(val);
+                              if (ytThumb && !newImgUrl) {
+                                setNewImgUrl(ytThumb);
+                              }
+                              if (val && isVideoUrl(val)) {
+                                setNewCategory('video');
+                              }
+                            }}
+                            placeholder="https://www.youtube.com/watch?v=... hoặc https://.../video.mp4" 
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7] focus:ring-1 focus:ring-[#0284c7]"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <label className="text-[9.5px] font-extrabold text-slate-600 uppercase">
+                              Đường dẫn Ảnh đại diện / Thumbnail (Tùy chọn)
+                            </label>
+                            <input 
+                              type="url" 
+                              value={newImgUrl}
+                              onChange={(e) => setNewImgUrl(e.target.value)}
+                              placeholder="https://images.unsplash.com/... (Tự động tạo nếu là YouTube)" 
+                              className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                            />
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <label className="text-[9.5px] font-extrabold text-slate-600 uppercase">
+                              Đường dẫn Liên kết ngoài / Sản phẩm (Shopee, Facebook, Web...)
+                            </label>
+                            <input 
+                              type="url" 
+                              value={newLinkUrl}
+                              onChange={(e) => setNewLinkUrl(e.target.value)}
+                              placeholder="https://vuanhmedia.com/..." 
+                              className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="relative flex items-center justify-center my-2">
+                        <div className="border-t border-slate-200 w-full"></div>
+                        <span className="bg-[#f3f6fb] px-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest shrink-0">
+                          HOẶC Chọn tệp từ máy tính
+                        </span>
+                      </div>
+
                       {/* Direct Computer File Selector Uploader */}
                       <div className="space-y-1.5">
-                        <label className="text-[9.5px] font-extrabold text-slate-500 uppercase tracking-widest">Tệp sản phẩm từ máy tính (Ảnh / Video)</label>
+                        <label className="text-[9.5px] font-extrabold text-slate-500 uppercase tracking-widest">
+                          Tệp sản phẩm từ máy tính (Ảnh / Video MP4)
+                        </label>
                         
                         {!selectedFile ? (
                           <div 
                             onClick={() => document.getElementById('cms-file-input')?.click()}
-                            className="border-2 border-dashed border-slate-200 hover:border-[#0284c7]/40 rounded-xl p-5 bg-white/40 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center space-y-2"
+                            className="border-2 border-dashed border-slate-200 hover:border-[#0284c7]/40 rounded-xl p-4 bg-white/40 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center space-y-1.5"
                           >
                             <input 
                               type="file" 
@@ -1518,13 +1705,13 @@ const App: React.FC = () => {
                                 }
                               }}
                             />
-                            <UploadCloud className="w-7 h-7 text-[#0284c7] animate-pulse" />
-                            <p className="text-[12px] font-bold text-slate-700">Chọn ảnh hoặc video từ máy tính của bạn</p>
-                            <p className="text-[10.5px] text-slate-400 font-semibold">Tự động nhận diện và thiết lập xem thử</p>
+                            <UploadCloud className="w-6 h-6 text-[#0284c7] animate-pulse" />
+                            <p className="text-[11.5px] font-bold text-slate-700">Chọn ảnh hoặc video từ máy tính của bạn</p>
+                            <p className="text-[10px] text-slate-400 font-semibold">Tự động nhận diện tệp và thiết lập xem thử</p>
                           </div>
                         ) : (
-                          <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-white/60 p-4 flex items-center gap-4 transition-all">
-                            <div className="w-14 h-14 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative flex items-center justify-center">
+                          <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-white/60 p-3 flex items-center gap-4 transition-all">
+                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative flex items-center justify-center">
                               {selectedFile.type.startsWith('video/') ? (
                                 <video 
                                   src={filePreviewUrl!} 
@@ -1544,10 +1731,10 @@ const App: React.FC = () => {
                             </div>
                             
                             <div className="flex-1 min-w-0 text-left">
-                              <p className="text-[12px] font-bold text-slate-800 truncate" title={selectedFile.name}>
+                              <p className="text-[11.5px] font-bold text-slate-800 truncate" title={selectedFile.name}>
                                 {selectedFile.name}
                               </p>
-                              <p className="text-[10.5px] text-slate-400 font-semibold mt-0.5">
+                              <p className="text-[10px] text-slate-400 font-semibold mt-0.5">
                                 {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • {selectedFile.type.startsWith('video/') ? 'Video' : 'Hình ảnh'}
                               </p>
                             </div>
@@ -1569,18 +1756,18 @@ const App: React.FC = () => {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="space-y-1">
-                          <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Tiêu đề tác phẩm</label>
+                          <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Tiêu đề tác phẩm (*)</label>
                           <input 
                             type="text" 
                             value={newTitle}
                             onChange={(e) => setNewTitle(e.target.value)}
-                            placeholder="Phim TVC nha khoa..." 
-                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white/60 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                            placeholder="Ví dụ: Phim TVC Nha Khoa Thùy Anh..." 
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7]"
                             required
                           />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Danh mục gợi ý</label>
+                          <label className="text-[9.5px] font-extrabold text-slate-500 uppercase">Danh mục tác phẩm</label>
                           <select 
                             value={newCategory}
                             onChange={(e) => setNewCategory(e.target.value as any)}
@@ -1600,7 +1787,7 @@ const App: React.FC = () => {
                           value={newDesc}
                           onChange={(e) => setNewDesc(e.target.value)}
                           placeholder="Chiến dịch định vị phân khúc cao cấp..." 
-                          className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white/60 text-[12px] font-semibold outline-none focus:border-[#0284c7]"
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] font-semibold outline-none focus:border-[#0284c7]"
                         />
                       </div>
 
@@ -1612,10 +1799,10 @@ const App: React.FC = () => {
 
                       <button 
                         type="submit"
-                        className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#0284c7] hover:bg-sky-500 text-white rounded-lg text-[11px] font-black uppercase tracking-wider shadow-sm transition-all cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-6 py-3 bg-[#0284c7] hover:bg-sky-500 text-white rounded-xl text-[11px] font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer"
                       >
-                        <Plus className="w-3.5 h-3.5" />
-                        Thêm dự án này
+                        <Plus className="w-4 h-4" />
+                        Thêm dự án tác phẩm mới
                       </button>
                     </form>
                   </div>
@@ -2545,30 +2732,70 @@ const App: React.FC = () => {
         )}
       </div>
 
-      {/* VIDEO LIGHTBOX MODAL */}
+      {/* SMART VIDEO LIGHTBOX MODAL */}
       {isVideoModalOpen && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 transition-all duration-300"
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4 transition-all duration-300 animate-fade-in"
           onClick={() => setIsVideoModalOpen(false)}
         >
           <button 
             onClick={() => setIsVideoModalOpen(false)}
-            className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+            className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-20 shadow-lg hover:scale-105"
+            title="Đóng video"
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6" />
           </button>
           
           <div 
-            className="relative w-full max-w-4xl aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border border-white/10"
+            className="relative w-full max-w-4xl aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border border-white/15 flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <video 
-              src={videoModalUrl} 
-              autoPlay 
-              controls 
-              playsInline
-              className="w-full h-full object-contain"
-            />
+            {getYouTubeId(videoModalUrl) ? (
+              <iframe 
+                src={`https://www.youtube.com/embed/${getYouTubeId(videoModalUrl)}?autoplay=1&rel=0&modestbranding=1`} 
+                title="YouTube Video Player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="w-full h-full border-0"
+              />
+            ) : getVimeoId(videoModalUrl) ? (
+              <iframe 
+                src={`https://player.vimeo.com/video/${getVimeoId(videoModalUrl)}?autoplay=1`} 
+                title="Vimeo Video Player"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full border-0"
+              />
+            ) : getGoogleDriveId(videoModalUrl) ? (
+              <iframe 
+                src={`https://drive.google.com/file/d/${getGoogleDriveId(videoModalUrl)}/preview`} 
+                title="Google Drive Video Player"
+                allow="autoplay"
+                allowFullScreen
+                className="w-full h-full border-0"
+              />
+            ) : (
+              <div className="relative w-full h-full flex flex-col items-center justify-center">
+                <video 
+                  src={videoModalUrl} 
+                  autoPlay 
+                  controls 
+                  playsInline
+                  className="w-full h-full object-contain"
+                />
+                <div className="absolute bottom-3 right-3 z-10">
+                  <a 
+                    href={videoModalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/70 hover:bg-black/90 backdrop-blur-md text-white text-[11px] font-bold border border-white/20 transition-all"
+                  >
+                    <span>Mở video nguồn</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
