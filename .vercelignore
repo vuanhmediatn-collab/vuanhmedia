@@ -1,0 +1,5 @@
+node_modules
+screenshots*
+motion_recordings*
+*.mp4
+scripts/temp*

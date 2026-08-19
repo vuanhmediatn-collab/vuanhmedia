@@ -1,5 +1,54 @@
 {
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "admin.vuanhmedia.com"
+        }
+      ],
+      "destination": "https://www.vuanhmedia.com/admin",
+      "permanent": false
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "admin.vuanhmedia.com"
+        }
+      ],
+      "destination": "https://www.vuanhmedia.com/admin/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "vuanhmedia.com"
+        }
+      ],
+      "destination": "https://www.vuanhmedia.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "vuanhmedia.com"
+        }
+      ],
+      "destination": "https://www.vuanhmedia.com/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }

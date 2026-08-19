@@ -17,9 +17,21 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Environment files
+.env
+.env.local
+.env.development
+.env.preview
+.env.production
+.env.*.local
+!.env.example
+
+# Review & QA capture artifacts
+screenshots/
+screenshots_v24/
+screenshots_v241/
+screenshots_v242/
+screenshots_rc/
+motion_recordings_v24/
+*.mp4
 .vercel

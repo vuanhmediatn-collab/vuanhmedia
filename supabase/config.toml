@@ -1,0 +1,37 @@
+# Supabase Configuration for vuanhmedia-production
+project_id = "rjylcqtiicmhhhpuxuyw"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[auth]
+enabled = true
+# Production Site URL
+site_url = "https://www.vuanhmedia.com"
+# Allowed Redirect URLs including Production, Apex, Vercel Preview, and Localhost
+additional_redirect_urls = [
+  "https://www.vuanhmedia.com/**",
+  "https://vuanhmedia.com/**",
+  "https://prosthetics-hero-9c87l6ihf-vuanhmedia.vercel.app/**",
+  "https://prosthetics-hero-9c87l6ihf-vuanhmedia.vercel.app/admin/reset-password",
+  "https://prosthetics-hero-4g0jvours-vuanhmedia.vercel.app/**",
+  "https://*-vuanhmedia.vercel.app/**",
+  "http://localhost:3000/**",
+  "http://localhost:5173/**"
+]
+jwt_expiry = 3600
+enable_signup = false
+
+[auth.email]
+enable_signup = false
+double_confirm_changes = true
+enable_confirmations = true
