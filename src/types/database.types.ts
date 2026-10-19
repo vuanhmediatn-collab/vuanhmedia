@@ -7,8 +7,8 @@ export type Json =
   | Json[];
 
 export type ProjectStatus = 'draft' | 'published' | 'hidden' | 'archived';
-export type VideoProvider = 'youtube' | 'vimeo' | 'drive';
-export type MediaType = 'image' | 'document' | 'audio';
+export type VideoProvider = 'youtube' | 'vimeo' | 'drive' | 'direct';
+export type MediaType = 'image' | 'video' | 'document' | 'audio';
 export type AdminRole = 'super_admin' | 'admin' | 'editor';
 export type ContentType = 'text' | 'array' | 'object';
 

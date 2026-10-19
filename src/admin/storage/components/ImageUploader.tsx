@@ -4,9 +4,11 @@ import {
   Link as LinkIcon, 
   X, 
   Image as ImageIcon, 
+  Film,
   AlertCircle, 
   FileCheck,
-  RefreshCw
+  RefreshCw,
+  Sparkles
 } from 'lucide-react';
 
 import { validateImageFile, formatFileSize } from '../utils/storageUtils';
@@ -22,7 +24,8 @@ interface ImageUploaderProps {
   isUploading?: boolean;
   disabled?: boolean;
   required?: boolean;
-  allowDirectUpload?: boolean; // false for new projects when project ID doesn't exist yet
+  allowDirectUpload?: boolean;
+  allowVideo?: boolean;
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -37,12 +40,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   disabled = false,
   required = false,
   allowDirectUpload = true,
+  allowVideo = false,
 }) => {
   const [mode, setMode] = useState<'upload' | 'url'>(allowDirectUpload ? 'upload' : 'url');
   const [localError, setLocalError] = useState<string | null>(null);
   const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
-  const [imageLoadError, setImageLoadError] = useState(false);
+  const [mediaLoadError, setMediaLoadError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync mode if allowDirectUpload changes
@@ -57,24 +61,24 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     if (selectedFile) {
       const objUrl = URL.createObjectURL(selectedFile);
       setLocalPreviewUrl(objUrl);
-      setImageLoadError(false);
-      return () => URL.revokeObjectURL(objUrl);
+      setMediaLoadError(false);
+      return () => {
+        URL.revokeObjectURL(objUrl);
+      };
     } else {
       setLocalPreviewUrl(null);
     }
   }, [selectedFile]);
 
-  const handleProcessFile = (file: File) => {
+  // Handle local file validation & selection
+  const handleFile = (file: File) => {
     setLocalError(null);
+    setMediaLoadError(false);
 
-    if (!projectId && allowDirectUpload) {
-      setLocalError('Vui lòng chọn dự án trước khi tải ảnh.');
-      return;
-    }
-
-    const val = validateImageFile(file);
-    if (!val.isValid) {
-      setLocalError(val.error || 'Tệp không hợp lệ.');
+    const result = validateImageFile(file);
+    if (!result.isValid) {
+      setLocalError(result.error || 'Tệp không hợp lệ.');
+      onFileSelect(null);
       return;
     }
 
@@ -82,49 +86,62 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      handleProcessFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFile(file);
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragOver(false);
-    if (disabled || isUploading || !allowDirectUpload) return;
+    if (disabled || isUploading) return;
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleProcessFile(e.dataTransfer.files[0]);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleFile(file);
     }
   };
 
   const handleClearSelectedFile = () => {
     onFileSelect(null);
     setLocalError(null);
+    setMediaLoadError(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
-  const isUploadDisabled = disabled || isUploading || !allowDirectUpload;
-  const isNoProjectSelected = allowDirectUpload && (!projectId || !projectId.trim());
+  // Determine active display URL for preview
+  const activeDisplayUrl = localPreviewUrl || (mode === 'url' ? currentUrl.trim() : '');
 
-  const activeDisplayUrl = localPreviewUrl || currentUrl;
+  const isVideoContent = Boolean(
+    (selectedFile && (selectedFile.type.startsWith('video/') || selectedFile.name.match(/\.(mp4|webm|mov)$/i))) ||
+    (activeDisplayUrl && activeDisplayUrl.match(/\.(mp4|webm|mov)(\?.*)?$/i)) ||
+    (activeDisplayUrl && activeDisplayUrl.includes('/storage/v1/object/public/') && activeDisplayUrl.includes('/videos/'))
+  );
+
+  const isNoProjectSelected = allowDirectUpload && (!projectId || !projectId.trim());
+  const isUploadDisabled = disabled || isUploading || isNoProjectSelected;
+
+  const acceptedTypes = allowVideo
+    ? '.jpg,.jpeg,.png,.webp,.gif,.svg,.mp4,.webm,.mov,image/*,video/*'
+    : '.jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp';
 
   return (
     <div className="space-y-2.5">
-      {/* Label and Source Mode Toggle */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div>
-          <label className="text-xs font-black uppercase tracking-wider text-slate-700 block">
-            {label} {required && <span className="text-rose-500">*</span>}
-          </label>
+      {/* Header & Mode Switcher */}
+      <div className="flex items-center justify-between gap-2">
+        <label className="text-xs font-bold text-[#0b1329] flex items-center gap-1.5">
+          {allowVideo ? <Film className="w-3.5 h-3.5 text-sky-600" /> : <ImageIcon className="w-3.5 h-3.5 text-slate-500" />}
+          <span>{label}</span>
+          {required && <span className="text-rose-500 font-black">*</span>}
           {helperText && (
-            <span className="text-[11px] text-slate-500 font-medium">{helperText}</span>
+            <span className="text-[11px] font-normal text-slate-400">({helperText})</span>
           )}
-        </div>
+        </label>
 
-        {/* Segmented Mode Switcher */}
-        <div className="flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200/80 self-start sm:self-auto">
+        <div className="inline-flex p-0.5 rounded-xl bg-slate-100 border border-slate-200/80">
           {allowDirectUpload && (
             <button
               type="button"
@@ -140,7 +157,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               }`}
             >
               <UploadCloud className="w-3.5 h-3.5" />
-              <span>Tải ảnh lên</span>
+              <span>Tải từ máy (50MB)</span>
             </button>
           )}
 
@@ -178,10 +195,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             <div className="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 text-center space-y-1">
               <AlertCircle className="w-5 h-5 text-amber-600 mx-auto" />
               <p className="text-xs font-bold text-amber-900">
-                Vui lòng chọn dự án trước khi tải ảnh.
+                Vui lòng chọn hoặc lưu dự án trước khi tải tệp.
               </p>
               <span className="text-[11px] text-amber-700 font-medium">
-                Hệ thống cần xác định thư mục dự án trên lưu trữ đám mây.
+                Hệ thống cần xác định thư mục dự án trên lưu trữ đám mây Supabase.
               </span>
             </div>
           ) : selectedFile ? (
@@ -189,15 +206,23 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3 animate-fade-in">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0">
-                  <FileCheck className="w-5 h-5" />
+                  {isVideoContent ? <Film className="w-5 h-5" /> : <FileCheck className="w-5 h-5" />}
                 </div>
                 <div className="min-w-0">
                   <span className="text-xs font-bold text-[#0b1329] truncate block">
                     {selectedFile.name}
                   </span>
-                  <span className="text-[11px] font-mono text-slate-500 font-semibold">
-                    {formatFileSize(selectedFile.size)} • Sẵn sàng tải lên
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-mono text-slate-500 font-semibold">
+                      {formatFileSize(selectedFile.size)} • Sẵn sàng tải lên
+                    </span>
+                    {!isVideoContent && selectedFile.size > 1.5 * 1024 * 1024 && (
+                      <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded-md flex items-center gap-0.5">
+                        <Sparkles className="w-2.5 h-2.5" />
+                        Tự tối ưu WebP
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -242,7 +267,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                accept={acceptedTypes}
                 onChange={handleFileInputChange}
                 disabled={isUploadDisabled}
                 className="hidden"
@@ -259,11 +284,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               <div>
                 <p className="text-xs font-bold text-[#0b1329]">
                   {isUploading
-                    ? 'Đang tải ảnh lên lưu trữ Supabase...'
-                    : 'Nhấn để chọn tệp hoặc kéo thả ảnh vào đây'}
+                    ? 'Đang tải tệp lên lưu trữ Supabase...'
+                    : 'Nhấn để chọn tệp hoặc kéo thả vào đây'}
                 </p>
-                <span className="text-[11px] text-slate-400 font-medium">
-                  Hỗ trợ định dạng: JPG, PNG, WebP (Tối đa 20 MB)
+                <span className="text-[11px] text-slate-400 font-medium block">
+                  {allowVideo 
+                    ? 'Hỗ trợ: JPG, PNG, WebP, GIF, MP4, WebM (Tối đa 50 MB - 0đ Miễn phí)'
+                    : 'Hỗ trợ: JPG, PNG, WebP, GIF, SVG (Tối đa 50 MB - Tự động nén WebP siêu nhẹ)'}
                 </span>
               </div>
             </div>
@@ -280,46 +307,55 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             value={currentUrl}
             onChange={(e) => {
               onUrlChange(e.target.value);
-              setImageLoadError(false);
+              setMediaLoadError(false);
             }}
-            placeholder="https://images.unsplash.com/... hoặc CDN URL"
+            placeholder={allowVideo ? "https://youtube.com/watch?v=... hoặc link MP4 / Drive / Unsplash" : "https://images.unsplash.com/... hoặc CDN URL"}
             className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono font-medium text-[#0b1329] focus:bg-white focus:border-[#0284c7] outline-none transition-all"
           />
           {!allowDirectUpload && (
             <span className="text-[10.5px] text-slate-500 font-semibold block">
-              💡 Lưu dự án trước để kích hoạt tính năng tải ảnh trực tiếp từ máy tính.
+              💡 Lưu dự án trước để kích hoạt tính năng tải trực tiếp từ máy tính.
             </span>
           )}
         </div>
       )}
 
-      {/* Live Safe Image Preview Box */}
+      {/* Live Safe Media Preview Box */}
       {activeDisplayUrl && (
         <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10.5px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1">
-              <ImageIcon className="w-3.5 h-3.5" />
-              Xem trước hình ảnh
+              {isVideoContent ? <Film className="w-3.5 h-3.5 text-sky-600" /> : <ImageIcon className="w-3.5 h-3.5" />}
+              {isVideoContent ? 'Xem trước Video' : 'Xem trước hình ảnh'}
             </span>
             {selectedFile && (
               <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
-                Ảnh mới chưa lưu
+                Tệp mới chưa lưu
               </span>
             )}
           </div>
 
-          <div className="w-full h-36 rounded-xl bg-slate-200/80 border border-slate-300/80 overflow-hidden flex items-center justify-center">
-            {!imageLoadError ? (
+          <div className="w-full min-h-36 max-h-56 rounded-xl bg-slate-900 border border-slate-800 overflow-hidden flex items-center justify-center">
+            {isVideoContent ? (
+              <video
+                src={activeDisplayUrl}
+                controls
+                playsInline
+                muted
+                className="w-full h-full max-h-56 object-contain bg-black"
+                onError={() => setMediaLoadError(true)}
+              />
+            ) : !mediaLoadError ? (
               <img
                 src={activeDisplayUrl}
                 alt="Preview"
-                className="w-full h-full object-contain"
-                onError={() => setImageLoadError(true)}
+                className="w-full h-full max-h-56 object-contain"
+                onError={() => setMediaLoadError(true)}
               />
             ) : (
-              <div className="text-center p-3 text-xs font-semibold text-slate-500 space-y-1">
+              <div className="text-center p-3 text-xs font-semibold text-slate-400 space-y-1">
                 <AlertCircle className="w-4 h-4 text-amber-500 mx-auto" />
-                <span>Không thể tải trước hình ảnh từ nguồn này.</span>
+                <span>Không thể xem trước tệp từ nguồn này.</span>
               </div>
             )}
           </div>

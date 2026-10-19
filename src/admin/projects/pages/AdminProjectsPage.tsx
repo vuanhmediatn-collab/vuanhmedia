@@ -137,7 +137,7 @@ export const AdminProjectsPage: React.FC = () => {
     }
   };
 
-  const handleSaveProject = async (formData: ProjectFormData, id?: string) => {
+  const handleSaveProject = async (formData: ProjectFormData, id?: string, newId?: string) => {
     if (id) {
       await updateMutation.mutateAsync({
         id,
@@ -145,7 +145,10 @@ export const AdminProjectsPage: React.FC = () => {
       });
       showFeedback('success', `Đã cập nhật dự án "${formData.title}" thành công.`);
     } else {
-      await createMutation.mutateAsync(formData);
+      await createMutation.mutateAsync({
+        ...formData,
+        ...(newId ? { id: newId } : {}),
+      });
       showFeedback('success', `Đã tạo dự án mới "${formData.title}" thành công.`);
     }
     setDrawerOpen(false);

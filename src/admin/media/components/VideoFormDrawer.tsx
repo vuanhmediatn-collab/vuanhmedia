@@ -50,6 +50,7 @@ export const VideoFormDrawer: React.FC<VideoFormDrawerProps> = ({
 }) => {
   const [formData, setFormData] = useState<VideoFormData>(INITIAL_VIDEO_FORM);
   const [selectedThumbnailFile, setSelectedThumbnailFile] = useState<File | null>(null);
+  const [selectedVideoFile, setSelectedVideoFile] = useState<File | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [detectedNotice, setDetectedNotice] = useState<string | null>(null);
 
@@ -81,11 +82,13 @@ export const VideoFormDrawer: React.FC<VideoFormDrawerProps> = ({
         }));
       }
       setSelectedThumbnailFile(null);
+      setSelectedVideoFile(null);
       setValidationError(null);
       setDetectedNotice(null);
     } else {
       setFormData(INITIAL_VIDEO_FORM);
       setSelectedThumbnailFile(null);
+      setSelectedVideoFile(null);
       setValidationError(null);
       setDetectedNotice(null);
     }
@@ -140,16 +143,36 @@ export const VideoFormDrawer: React.FC<VideoFormDrawerProps> = ({
       return;
     }
 
-    if (!formData.video_url.trim()) {
-      setValidationError('Vui lòng nhập Liên kết video.');
+    if (!formData.video_url.trim() && !selectedVideoFile) {
+      setValidationError('Vui lòng tải lên tệp video hoặc nhập liên kết video.');
       return;
     }
 
-    let finalThumbnailUrl = formData.thumbnail?.trim() || '';
+    let finalVideoUrl = formData.video_url.trim();
+    let finalProvider = formData.provider;
+    let uploadedVideoPath: string | null = null;
     let uploadedThumbPath: string | null = null;
     const oldThumbnailUrl = videoToEdit?.thumbnail;
 
-    // Priority 1: If custom thumbnail file selected, upload to Supabase Storage
+    // Step 1: Upload Video File if selected
+    if (selectedVideoFile) {
+      try {
+        const videoUploadResult = await upload(
+          formData.project_id,
+          'videos',
+          selectedVideoFile
+        );
+        finalVideoUrl = videoUploadResult.publicUrl;
+        uploadedVideoPath = videoUploadResult.storagePath;
+        finalProvider = 'direct';
+      } catch (videoErr: any) {
+        setValidationError(videoErr.message || 'Không thể tải tệp video lên.');
+        return;
+      }
+    }
+
+    // Step 2: Upload custom thumbnail if selected
+    let finalThumbnailUrl = formData.thumbnail?.trim() || '';
     if (selectedThumbnailFile) {
       try {
         const uploadResult = await upload(
@@ -160,12 +183,14 @@ export const VideoFormDrawer: React.FC<VideoFormDrawerProps> = ({
         finalThumbnailUrl = uploadResult.publicUrl;
         uploadedThumbPath = uploadResult.storagePath;
       } catch (uploadErr: any) {
+        if (uploadedVideoPath) {
+          await cleanupFailedUpload(uploadedVideoPath);
+        }
         setValidationError(uploadErr.message || 'Không thể tải ảnh đại diện video lên.');
         return;
       }
-    } else if (!finalThumbnailUrl && formData.provider === 'youtube') {
-      // Priority 3: Fallback auto-derive from YouTube
-      finalThumbnailUrl = deriveThumbnail(formData.video_url, 'youtube') || '';
+    } else if (!finalThumbnailUrl && finalProvider === 'youtube') {
+      finalThumbnailUrl = deriveThumbnail(finalVideoUrl, 'youtube') || '';
     }
 
     try {
@@ -173,18 +198,22 @@ export const VideoFormDrawer: React.FC<VideoFormDrawerProps> = ({
         {
           ...formData,
           title: formData.title.trim(),
-          video_url: formData.video_url.trim(),
+          video_url: finalVideoUrl,
+          provider: finalProvider,
           thumbnail: finalThumbnailUrl,
           description: formData.description.trim(),
         },
         videoToEdit?.id
       );
 
-      // Safe replacement: if DB update succeeds and replacing old managed thumbnail, cleanup old storage object
+      // Cleanup old thumbnail if updated
       if (videoToEdit && oldThumbnailUrl && oldThumbnailUrl !== finalThumbnailUrl) {
         deleteManagedImageByUrl(oldThumbnailUrl);
       }
     } catch (err: any) {
+      if (uploadedVideoPath) {
+        await cleanupFailedUpload(uploadedVideoPath);
+      }
       if (uploadedThumbPath) {
         await cleanupFailedUpload(uploadedThumbPath);
       }
@@ -208,7 +237,7 @@ export const VideoFormDrawer: React.FC<VideoFormDrawerProps> = ({
                 {videoToEdit ? 'Chỉnh sửa Video Clip' : 'Thêm Video mới'}
               </h3>
               <span className="text-xs text-slate-500 font-semibold">
-                {videoToEdit ? `ID: ${videoToEdit.id}` : 'Nhập liên kết YouTube, Vimeo hoặc Google Drive'}
+                {videoToEdit ? `ID: ${videoToEdit.id}` : 'Tải video trực tiếp (tối đa 50MB - 0đ) hoặc nhúng YouTube/Drive'}
               </span>
             </div>
           </div>
@@ -258,19 +287,30 @@ export const VideoFormDrawer: React.FC<VideoFormDrawerProps> = ({
             />
           </div>
 
-          {/* Video URL */}
+          {/* Video Media Uploader & URL Picker */}
           <div className="space-y-1.5">
-            <label className="text-xs font-black uppercase tracking-wider text-slate-700">
-              Liên kết Video (URL) <span className="text-rose-500">*</span>
-            </label>
-            <input
-              type="url"
-              required
+            <ImageUploader
+              label="Tệp hoặc Liên kết Video"
+              helperText="Tải MP4/WebM từ máy (Tối đa 50 MB - 0đ Miễn phí) hoặc chuyển sang dùng URL YouTube/Drive"
+              projectId={formData.project_id}
+              currentUrl={formData.video_url}
+              selectedFile={selectedVideoFile}
+              onFileSelect={(file) => {
+                setSelectedVideoFile(file);
+                if (file) {
+                  setFormData((prev) => ({
+                    ...prev,
+                    provider: 'direct',
+                    title: prev.title ? prev.title : file.name.replace(/\.[^.]+$/, ''),
+                  }));
+                }
+              }}
+              onUrlChange={(url) => handleUrlChange(url)}
+              isUploading={isUploading}
               disabled={isFormSubmitting}
-              value={formData.video_url}
-              onChange={(e) => handleUrlChange(e.target.value)}
-              placeholder="https://www.youtube.com/watch?v=..."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono font-medium text-[#0b1329] focus:bg-white focus:border-[#0284c7] outline-none transition-all"
+              allowDirectUpload={true}
+              allowVideo={true}
+              required={!formData.video_url && !selectedVideoFile}
             />
             {detectedNotice && (
               <span className="text-[11px] font-semibold text-emerald-600 block">
@@ -294,6 +334,7 @@ export const VideoFormDrawer: React.FC<VideoFormDrawerProps> = ({
                 <option value="youtube">YouTube</option>
                 <option value="vimeo">Vimeo</option>
                 <option value="drive">Google Drive</option>
+                <option value="direct">MP4 / WebM Trực tiếp (50MB Free)</option>
               </select>
             </div>
 
@@ -368,31 +409,30 @@ export const VideoFormDrawer: React.FC<VideoFormDrawerProps> = ({
               disabled={isFormSubmitting}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Ghi chú về phân cảnh, chất lượng 4K hoặc phiên bản cắt..."
+              placeholder="Ghi chú về phân cảnh, vai trò hoặc bối cảnh quay..."
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-[#0b1329] focus:bg-white focus:border-[#0284c7] outline-none transition-all resize-none"
             />
           </div>
         </form>
 
         {/* Footer */}
-        <div className="p-4 sm:p-5 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+        <div className="p-4 sm:p-5 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3 shrink-0">
           <button
             type="button"
             onClick={onClose}
             disabled={isFormSubmitting}
-            className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
+            className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200/60 transition-colors cursor-pointer"
           >
-            Hủy
+            Hủy bỏ
           </button>
-
           <button
             type="submit"
             form="video-form"
             disabled={isFormSubmitting}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0284c7] hover:bg-sky-500 text-white text-xs font-black uppercase tracking-wider shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0b1329] text-white text-xs font-bold shadow-md hover:bg-slate-800 transition-all cursor-pointer disabled:opacity-50"
           >
-            <Save className="w-4 h-4" />
-            <span>{isFormSubmitting ? 'Đang lưu...' : videoToEdit ? 'Lưu thay đổi' : 'Thêm video'}</span>
+            <Save className="w-4 h-4 text-sky-400" />
+            <span>{isSaving ? 'Đang lưu...' : isUploading ? 'Đang tải tệp...' : 'Lưu Video'}</span>
           </button>
         </div>
       </div>

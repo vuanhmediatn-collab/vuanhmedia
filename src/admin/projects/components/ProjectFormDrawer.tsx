@@ -17,7 +17,7 @@ interface ProjectFormDrawerProps {
   projectToEdit: ProjectRow | null;
   defaultSortOrder: number;
   isSaving: boolean;
-  onSave: (data: ProjectFormData, id?: string) => Promise<void>;
+  onSave: (data: ProjectFormData, id?: string, newId?: string) => Promise<void>;
   onClose: () => void;
 }
 
@@ -62,6 +62,9 @@ export const ProjectFormDrawer: React.FC<ProjectFormDrawerProps> = ({
   // Storage uploads state
   const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null);
   const [selectedThumbnailFile, setSelectedThumbnailFile] = useState<File | null>(null);
+  const [draftId, setDraftId] = useState<string>(() => 
+    typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+  );
 
   const { upload, cleanupFailedUpload, isUploading } = useImageUpload();
 
@@ -90,6 +93,7 @@ export const ProjectFormDrawer: React.FC<ProjectFormDrawerProps> = ({
         sort_order: defaultSortOrder,
       });
       setIsSlugManuallyEdited(false);
+      setDraftId(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`);
     }
     setSelectedCoverFile(null);
     setSelectedThumbnailFile(null);
@@ -135,22 +139,24 @@ export const ProjectFormDrawer: React.FC<ProjectFormDrawerProps> = ({
     const oldCoverUrl = projectToEdit?.cover_image;
     const oldThumbnailUrl = projectToEdit?.thumbnail;
 
+    const activeProjectId = projectToEdit?.id || draftId;
+
     try {
-      // If editing an existing project and user selected new cover file
-      if (selectedCoverFile && projectToEdit?.id) {
-        const coverUpload = await upload(projectToEdit.id, 'cover', selectedCoverFile);
+      // Upload cover file if selected (both for new and existing projects)
+      if (selectedCoverFile) {
+        const coverUpload = await upload(activeProjectId, 'cover', selectedCoverFile);
         finalCoverUrl = coverUpload.publicUrl;
         uploadedCoverPath = coverUpload.storagePath;
       }
 
-      // If editing an existing project and user selected new thumbnail file
-      if (selectedThumbnailFile && projectToEdit?.id) {
-        const thumbUpload = await upload(projectToEdit.id, 'thumbnail', selectedThumbnailFile);
+      // Upload thumbnail file if selected (both for new and existing projects)
+      if (selectedThumbnailFile) {
+        const thumbUpload = await upload(activeProjectId, 'thumbnail', selectedThumbnailFile);
         finalThumbnailUrl = thumbUpload.publicUrl;
         uploadedThumbPath = thumbUpload.storagePath;
       }
 
-      // Execute DB save
+      // Execute DB save with upfront ID if new
       await onSave(
         {
           ...formData,
@@ -164,7 +170,8 @@ export const ProjectFormDrawer: React.FC<ProjectFormDrawerProps> = ({
           cover_image: finalCoverUrl,
           thumbnail: finalThumbnailUrl,
         },
-        projectToEdit?.id
+        projectToEdit?.id,
+        projectToEdit ? undefined : activeProjectId
       );
 
       // Safe replacement cleanup
@@ -419,27 +426,27 @@ export const ProjectFormDrawer: React.FC<ProjectFormDrawerProps> = ({
             <ImageUploader
               label="Ảnh bìa Dự án (Cover Image)"
               helperText="Hiển thị đầu trang chi tiết dự án"
-              projectId={projectToEdit?.id}
+              projectId={projectToEdit?.id || draftId}
               currentUrl={formData.cover_image}
               selectedFile={selectedCoverFile}
               onFileSelect={setSelectedCoverFile}
               onUrlChange={(url) => setFormData((prev) => ({ ...prev, cover_image: url }))}
               isUploading={isUploading}
               disabled={isFormSubmitting}
-              allowDirectUpload={isExistingProject}
+              allowDirectUpload={true}
             />
 
             <ImageUploader
               label="Ảnh đại diện (Thumbnail)"
               helperText="Hiển thị trên danh sách và thẻ xem nhanh"
-              projectId={projectToEdit?.id}
+              projectId={projectToEdit?.id || draftId}
               currentUrl={formData.thumbnail}
               selectedFile={selectedThumbnailFile}
               onFileSelect={setSelectedThumbnailFile}
               onUrlChange={(url) => setFormData((prev) => ({ ...prev, thumbnail: url }))}
               isUploading={isUploading}
               disabled={isFormSubmitting}
-              allowDirectUpload={isExistingProject}
+              allowDirectUpload={true}
             />
           </div>
         </form>

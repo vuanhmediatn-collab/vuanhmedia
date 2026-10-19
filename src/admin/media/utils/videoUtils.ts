@@ -58,6 +58,9 @@ export const detectVideoProvider = (url: string): VideoProvider | null => {
   if (trimmed.includes('drive.google.com')) {
     return 'drive';
   }
+  if (trimmed.endsWith('.mp4') || trimmed.endsWith('.webm') || trimmed.endsWith('.mov') || trimmed.includes('/storage/v1/object/public/')) {
+    return 'direct';
+  }
   return null;
 };
 

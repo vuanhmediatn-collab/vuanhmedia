@@ -4,12 +4,15 @@ import {
   STORAGE_BUCKET, 
   validateImageFile, 
   buildStoragePath, 
+  compressImageIfLarge,
   isManagedStorageUrl, 
   extractManagedStoragePath 
 } from '../utils/storageUtils';
 
 /**
- * Uploads an image file to Supabase Storage in the vuanhmedia-assets bucket
+ * Uploads an image or video file to Supabase Storage in the vuanhmedia-assets bucket
+ * Automatically applies client-side WebP compression for large DSLR photos (>1.5MB)
+ * Supports files up to 50 MB (Supabase 100% Free Tier limit)
  */
 export const uploadImage = async ({
   projectId,
@@ -17,25 +20,28 @@ export const uploadImage = async ({
   file,
 }: UploadImageParams): Promise<UploadImageResult> => {
   if (!projectId || !projectId.trim()) {
-    throw new Error('Vui lòng chọn dự án trước khi tải ảnh.');
+    throw new Error('Vui lòng chọn dự án trước khi tải lên.');
   }
 
   const validation = validateImageFile(file);
   if (!validation.isValid) {
-    throw new Error(validation.error || 'Ảnh không hợp lệ.');
+    throw new Error(validation.error || 'Tệp không hợp lệ.');
   }
 
-  const storagePath = buildStoragePath(projectId, category, file.type);
+  // Apply smart client-side WebP compression if the file is a large image
+  const fileToUpload = await compressImageIfLarge(file);
+
+  const storagePath = buildStoragePath(projectId, category, fileToUpload.type, fileToUpload.name);
 
   const { data, error } = await supabase.storage
     .from(STORAGE_BUCKET)
-    .upload(storagePath, file, {
+    .upload(storagePath, fileToUpload, {
       cacheControl: '3600',
       upsert: false,
     });
 
   if (error) {
-    throw new Error(`Không thể tải ảnh lên: ${error.message}`);
+    throw new Error(`Không thể tải tệp lên: ${error.message}`);
   }
 
   const { data: urlData } = supabase.storage
@@ -45,10 +51,12 @@ export const uploadImage = async ({
   return {
     publicUrl: urlData.publicUrl,
     storagePath: data.path,
-    fileName: file.name,
-    fileSize: file.size,
+    fileName: fileToUpload.name,
+    fileSize: fileToUpload.size,
   };
 };
+
+export const uploadMedia = uploadImage;
 
 /**
  * Safely deletes a managed storage object by its public URL
