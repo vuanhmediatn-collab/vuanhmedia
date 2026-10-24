@@ -24,8 +24,7 @@
       <div class="brand-section">
         <div class="brand-logo">V</div>
         <div class="brand-info">
-          <h1>VAMOPS MARS <span class="badge">ARES-01</span></h1>
-          <p><span class="pulse-dot"></span> Trạm Media Sao Hoả</p>
+          <h1>VAMOPS <span class="badge">ARES-01</span></h1>
         </div>
       </div>
 
@@ -36,7 +35,7 @@
         </div>
         <div class="stat-item">
           <span class="stat-label">Khí Quyển</span>
-          <span class="stat-value highlight-amber" id="mars-weather-stat">-62°C · O2: 99%</span>
+          <span class="stat-value highlight-amber" id="mars-weather-stat">-62°C · O₂ 99%</span>
         </div>
         <div class="stat-item" id="ai-model-stat-item">
           <span class="stat-label">Lõi AI</span>
@@ -46,19 +45,21 @@
 
       <div class="top-actions">
         <div class="btn-group-views">
-          <button class="btn-pill active" data-view-target="overview" id="btn-view-overview" title="Toàn cảnh trạm">🪐 Toàn Cảnh</button>
+          <button class="btn-pill active" data-view-target="overview" id="btn-view-overview" title="Toàn cảnh trạm sao hoả">🪐 Toàn Cảnh</button>
           <button class="btn-pill" data-view-target="mars-window" id="btn-view-window" title="Cửa sổ nhìn ra sa mạc">🔭 Cửa Sổ</button>
-          <button class="btn-pill" data-view-target="rover-cam" id="btn-view-rover" title="Camera xe Rover">🚜 Rover</button>
-          <button class="btn-pill" data-view-target="war-room" id="btn-view-warroom" title="Hội đồng chiến lược">🌐 Hội Đồng</button>
+          <button class="btn-pill" data-view-target="rover-cam" id="btn-view-rover" title="Camera thám hiểm Rover">🚜 Rover</button>
+          <button class="btn-pill" data-view-target="war-room" id="btn-view-warroom" title="Bàn tròn chiến lược">🌐 Hội Đồng</button>
         </div>
-        <button class="btn-pill btn-meeting-pill" id="btn-toggle-meeting" style="background: rgba(16, 185, 129, 0.2); border-color: var(--emerald-core); color: var(--emerald-core);">
+        <button class="btn-pill btn-meeting-pill" id="btn-toggle-meeting" style="background: rgba(16, 185, 129, 0.2); border-color: var(--emerald-core); color: var(--emerald-core);" title="Triệu tập 12 chuyên gia họp bàn">
           👥 Họp Đội
         </button>
-        <button class="btn-pill" id="btn-sound-toggle"><span>🔊</span> Âm Thanh</button>
-        <button class="btn-pill" id="btn-open-ai-settings" style="background: rgba(6, 182, 212, 0.2); border-color: var(--cyan-core); color: var(--cyan-core);">
+        <button class="btn-pill" id="btn-sound-toggle" title="Bật/Tắt âm thanh">
+          <span>🔊</span> Âm Thanh
+        </button>
+        <button class="btn-pill" id="btn-open-ai-settings" style="background: rgba(6, 182, 212, 0.2); border-color: var(--cyan-core); color: var(--cyan-core);" title="Cấu hình AI Models & DNA">
           ⚙️ AI & DNA
         </button>
-        <button class="btn-pill" id="btn-open-vault" style="background: rgba(245, 158, 11, 0.2); border-color: var(--amber-core); color: var(--amber-core);">
+        <button class="btn-pill" id="btn-open-vault" style="background: rgba(245, 158, 11, 0.2); border-color: var(--amber-core); color: var(--amber-core);" title="Kho kịch bản đã duyệt">
           📂 Kho Bài (<span id="stat-vault-count">7</span>)
         </button>
       </div>
@@ -74,17 +75,17 @@
 
         <div class="form-group">
           <div class="form-label">
-            <span>Chủ Đề Chiến Dịch</span>
+            <span>Chủ Đề</span>
             <span style="color: var(--cyan-core); font-size: 9px;">Gợi ý</span>
           </div>
 
           <div class="preset-pills">
             <span class="preset-chip active" data-campaign-id="camp-01">Cỗ Máy B2B</span>
             <span class="preset-chip" data-campaign-id="camp-02">Agency vs AI</span>
-            <span class="preset-chip" data-campaign-id="camp-03">Hook 3s Vàng</span>
+            <span class="preset-chip" data-campaign-id="camp-03">Hook 3s</span>
           </div>
 
-          <textarea id="input-topic" class="text-input" placeholder="Nhập chủ đề chiến dịch...">Xây Dựng Cỗ Máy Media Tự Chủ Cho Doanh Nghiệp B2B</textarea>
+          <textarea id="input-topic" class="text-input" placeholder="Nhập chủ đề chiến dịch...">Xây Dựng Cỗ Máy Media Tự Chủ B2B</textarea>
         </div>
 
         <div class="form-group">
@@ -100,14 +101,14 @@
           <span>🚀</span> KÍCH HOẠT VAMOPS
         </button>
 
-        <div class="form-label" style="margin-top: 6px;">Tiến Trình Pipeline</div>
+        <div class="form-label" style="margin-top: 4px;">Tiến Trình 6 Bước</div>
         
         <div class="pipeline-steps">
           <div class="step-card" id="step-card-0">
             <div class="step-num">1</div>
             <div class="step-content">
               <div class="step-title">Phân Bổ Kế Hoạch & Brief</div>
-              <div class="step-desc">VAM-Commander (CMO)</div>
+              <div class="step-desc">CMO · Họp Đội</div>
             </div>
             <span class="step-badge">Chờ</span>
           </div>
@@ -116,7 +117,7 @@
             <div class="step-num">2</div>
             <div class="step-content">
               <div class="step-title">Quét Trend & Nỗi Đau</div>
-              <div class="step-desc">Dr. Psycho · Algo-Radar</div>
+              <div class="step-desc">Dr. Psycho · Algo</div>
             </div>
             <span class="step-badge">Chờ</span>
           </div>
@@ -125,7 +126,7 @@
             <div class="step-num">3</div>
             <div class="step-content">
               <div class="step-title">Hook & Kịch Bản 26s</div>
-              <div class="step-desc">Hook Master · Cinematic Bard</div>
+              <div class="step-desc">Hook Master · Story</div>
             </div>
             <span class="step-badge">Chờ</span>
           </div>
@@ -142,8 +143,8 @@
           <div class="step-card" id="step-card-4">
             <div class="step-num">5</div>
             <div class="step-content">
-              <div class="step-title">Render Pipeline Swift</div>
-              <div class="step-desc">Visual Artificer · 8K Render</div>
+              <div class="step-title">Render Swift 8K</div>
+              <div class="step-desc">Visual & Audio Engine</div>
             </div>
             <span class="step-badge">Chờ</span>
           </div>
@@ -152,7 +153,7 @@
             <div class="step-num">6</div>
             <div class="step-content">
               <div class="step-title">Lên Lịch & Duyệt Founder</div>
-              <div class="step-desc">Orbit Broadcaster · Vũ Anh</div>
+              <div class="step-desc">Phân Phối Đa Kênh</div>
             </div>
             <span class="step-badge">Chờ</span>
           </div>

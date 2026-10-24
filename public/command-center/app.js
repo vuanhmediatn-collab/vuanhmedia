@@ -405,12 +405,11 @@ class VAMOPSApp {
       const now = new Date();
       const timeStr = now.toTimeString().split(" ")[0];
       const sol = 482;
-      if (clockEl) clockEl.textContent = `SOL ${sol} · ${timeStr} MTC`;
+      if (clockEl) clockEl.textContent = `SOL ${sol} · ${timeStr}`;
 
       if (weatherEl) {
         const temp = (-62.2 + Math.sin(now.getTime() * 0.0001) * 0.8).toFixed(1);
-        const wind = (8.2 + Math.cos(now.getTime() * 0.0002) * 1.4).toFixed(1);
-        weatherEl.textContent = `${temp}°C · Gió ${wind} m/s · Bụi 0.18 Tau`;
+        weatherEl.textContent = `${temp}°C · O₂ 99%`;
       }
     };
     updateTime();
@@ -812,10 +811,10 @@ class VAMOPSApp {
 
         <div class="inspector-actions">
           <button class="btn-inspector-action" id="btn-inspector-chat">
-            <span>💬</span> Trao Đổi Kịch Bản Trực Tiếp
+            <span>💬</span> Trao Đổi
           </button>
           <button class="btn-inspector-action" id="btn-inspector-vault">
-            <span>📂</span> Mở Kho Ấn Phẩm Của Chuyên Gia
+            <span>📂</span> Kho Bài
           </button>
         </div>
       </div>
@@ -859,16 +858,31 @@ class VAMOPSApp {
     if (!track) return;
 
     track.innerHTML = "";
+    const shortRoles = {
+      "agent-cmo": "CMO",
+      "agent-algo": "Algo",
+      "agent-psycho": "Insight",
+      "agent-counter": "Phản Biện",
+      "agent-hook": "Hook 3s",
+      "agent-story": "Kịch Bản",
+      "agent-copy": "Copy",
+      "agent-critic": "Rubric",
+      "agent-visual": "Visual 8K",
+      "agent-sound": "SFX/Nhạc",
+      "agent-renderer": "Swift 8K",
+      "agent-seo": "Đa Kênh"
+    };
+
     VAMOPS_DATA.agents.forEach((agent) => {
       const chip = document.createElement("div");
       chip.className = "agent-chip";
       chip.setAttribute("data-agent-id", agent.id);
+      chip.title = `${agent.name} — ${agent.title}`;
+      const role = shortRoles[agent.id] || "AI";
       chip.innerHTML = `
         <div class="avatar-sm" style="border-color:${agent.deptColor}">${agent.avatar}</div>
-        <div class="agent-chip-info">
-          <div class="chip-name">${agent.name}</div>
-          <div class="chip-role">${agent.title.split("(")[0]}</div>
-        </div>
+        <span class="chip-name">${agent.name}</span>
+        <span class="chip-role">${role}</span>
       `;
       chip.addEventListener("click", () => this.selectAgent(agent));
       track.appendChild(chip);
