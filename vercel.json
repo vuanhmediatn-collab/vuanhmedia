@@ -47,6 +47,22 @@
   ],
   "rewrites": [
     {
+      "source": "/command-center",
+      "destination": "/command-center/index.html"
+    },
+    {
+      "source": "/command-center/",
+      "destination": "/command-center/index.html"
+    },
+    {
+      "source": "/vamops",
+      "destination": "/command-center/index.html"
+    },
+    {
+      "source": "/vamops/",
+      "destination": "/command-center/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

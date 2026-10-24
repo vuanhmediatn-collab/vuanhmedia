@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VAMOPS Command Center — Trụ Sở AI Vận Hành Media Đa Nền Tảng 3D</title>
+  <meta name="description" content="Trung tâm điều phối đa tác vụ AI Agents chuẩn Chuyên gia Cao Cấp của Vũ Anh Media Ops. Tự động hóa nghiên cứu, sáng tạo kịch bản điện ảnh, thẩm định Rubric và render video 24/7.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- 3D Canvas Container -->
+  <div id="canvas-3d-container"></div>
+  <div class="vignette-overlay"></div>
+  <div class="scanlines"></div>
+
+  <!-- UI Overlay Layer -->
+  <div class="ui-layer">
+    <!-- Top Header Bar -->
+    <header class="top-header glass-panel interactive-panel">
+      <div class="brand-section">
+        <div class="brand-logo">V</div>
+        <div class="brand-info">
+          <h1>VAMOPS COMMAND CENTER <span class="badge">STATION-VAM-01</span></h1>
+          <p><span class="pulse-dot"></span> 12 ROBOT AI TỰ CHỦ · <a href="https://www.vuanhmedia.com/portfolio" target="_blank" style="color:var(--cyan-core); text-decoration:none; font-weight:700;">vuanhmedia.com/portfolio</a> · <code>/command-center</code></p>
+        </div>
+      </div>
+
+      <div class="station-stats">
+        <div class="stat-item">
+          <span class="stat-label">Thời Gian Trạm</span>
+          <span class="stat-value highlight-cyan" id="live-clock">--:--:--</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Môi Trường</span>
+          <span class="stat-value">24°C · Quỹ Đạo VAM</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Kho Bài Đã Duyệt</span>
+          <span class="stat-value highlight-amber" id="stat-vault-count">7</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Chỉ Số Chất Lượng</span>
+          <span class="stat-value highlight-green">94.8 / 100</span>
+        </div>
+        <div class="stat-item" id="ai-model-stat-item">
+          <span class="stat-label">Lõi Trí Tuệ (AI Core)</span>
+          <span class="stat-value highlight-cyan" id="header-ai-model-label">● DNA Vũ Anh (Native)</span>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn-pill active" data-view-target="overview" id="btn-view-overview">🌐 Toàn Cảnh</button>
+        <button class="btn-pill" data-view-target="isometric" id="btn-view-iso">📐 Isometric</button>
+        <button class="btn-pill" id="btn-toggle-meeting" style="background: rgba(16, 185, 129, 0.2); border-color: var(--emerald-core); color: var(--emerald-core);">
+          👥 Họp Đội Ngũ (War Room)
+        </button>
+        <button class="btn-pill" id="btn-auto-rotate">🔄 Xoay Tự Động</button>
+        <button class="btn-pill" id="btn-sound-toggle"><span>🔊</span> ÂM THANH</button>
+        <button class="btn-pill" id="btn-open-ai-settings" style="background: rgba(6, 182, 212, 0.2); border-color: var(--cyan-core); color: var(--cyan-core);">
+          ⚙️ Cài Đặt AI & DNA
+        </button>
+        <button class="btn-pill" id="btn-open-vault" style="background: rgba(245, 158, 11, 0.2); border-color: var(--amber-core); color: var(--amber-core);">
+          📂 Kho Bài Đã Duyệt (7)
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Central Workspace (Left launcher & Right Inspector) -->
+    <main class="main-workspace">
+      <!-- Left Panel: Mission Control & Pipeline Steps -->
+      <section class="left-control-panel glass-panel interactive-panel">
+        <div class="panel-header">
+          <span class="panel-title">🎯 Giao Mục Tiêu Chiến Dịch</span>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            <span>Chủ Đề & Bài Toán Media</span>
+            <span style="color: var(--cyan-core); font-size: 9px;">Gợi ý mẫu</span>
+          </div>
+
+          <div class="preset-pills">
+            <span class="preset-chip active" data-campaign-id="camp-01">Cỗ Máy Media Tự Chủ B2B</span>
+            <span class="preset-chip" data-campaign-id="camp-02">Agency Cũ vs AI Media Ops</span>
+            <span class="preset-chip" data-campaign-id="camp-03">Bí Mật Hook 3 Giây Vàng</span>
+          </div>
+
+          <textarea id="input-topic" class="text-input" placeholder="Nhập chủ đề bạn muốn toàn bộ đội ngũ AI thực hiện...">Xây Dựng Cỗ Máy Media Tự Chủ Cho Doanh Nghiệp B2B</textarea>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">Nền Tảng Đích</div>
+          <div class="platform-selector">
+            <div class="platform-toggle active" data-platform="tiktok">📱 TikTok (9:16)</div>
+            <div class="platform-toggle active" data-platform="facebook">📘 Facebook</div>
+            <div class="platform-toggle active" data-platform="threads">🧵 Threads</div>
+          </div>
+        </div>
+
+        <button id="btn-launch-mission" class="btn-launch">
+          <span>🚀</span> KÍCH HOẠT HỆ THỐNG VAMOPS
+        </button>
+
+        <div class="form-label" style="margin-top: 10px;">Tiến Trình Pipeline (Realtime Trace)</div>
+        
+        <div class="pipeline-steps">
+          <div class="step-card" id="step-card-0">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Phân Bổ Kế Hoạch & Brief</div>
+              <div class="step-desc">VAM-Commander (CMO)</div>
+            </div>
+            <span class="step-badge">Chờ lệnh</span>
+          </div>
+
+          <div class="step-card" id="step-card-1">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">Quét Trend & Đào Sâu Nỗi Đau</div>
+              <div class="step-desc">Dr. Psycho · Algo-Radar</div>
+            </div>
+            <span class="step-badge">Chờ lệnh</span>
+          </div>
+
+          <div class="step-card" id="step-card-2">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Tạo Hook & Phân Cảnh Điện Ảnh</div>
+              <div class="step-desc">Hook Master · Cinematic Bard</div>
+            </div>
+            <span class="step-badge">Chờ lệnh</span>
+          </div>
+
+          <div class="step-card" id="step-card-3">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Thẩm Định Rubric 5 Tiêu Chí</div>
+              <div class="step-desc">The Ruthless Critic (Score $\ge$ 85)</div>
+            </div>
+            <span class="step-badge">Chờ lệnh</span>
+          </div>
+
+          <div class="step-card" id="step-card-4">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-title">Prompt 8K & Swift Render Engine</div>
+              <div class="step-desc">Visual Artificer · render_pipeline.swift</div>
+            </div>
+            <span class="step-badge">Chờ lệnh</span>
+          </div>
+
+          <div class="step-card" id="step-card-5">
+            <div class="step-num">6</div>
+            <div class="step-content">
+              <div class="step-title">Lên Lịch & Cổng Phê Duyệt Founder</div>
+              <div class="step-desc">Orbit Broadcaster · Vũ Anh Duyệt</div>
+            </div>
+            <span class="step-badge">Chờ lệnh</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Agent / Zone Inspector Drawer -->
+      <aside id="right-inspector" class="right-inspector-panel glass-panel interactive-panel">
+        <!-- Rendered dynamically via JS selectAgent() -->
+      </aside>
+    </main>
+
+    <!-- Bottom Bar: Agent Roster Carousel -->
+    <footer class="bottom-roster-bar glass-panel interactive-panel">
+      <div class="roster-title-box">
+        <span class="title">12 AI CHUYÊN GIA</span>
+        <span class="subtitle">Bấm vào agent để xem hồ sơ</span>
+      </div>
+      <div id="agent-roster-track" class="agent-scroll-track">
+        <!-- Rendered dynamically via JS renderAgentRoster() -->
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal: Approved Vault / Content Viewer -->
+  <div id="vault-modal" class="modal-backdrop">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2><span>📂</span> KHO NỘI DUNG & KỊCH BẢN ĐÃ DUYỆT (VAMOPS VAULT)</h2>
+        <button id="btn-close-vault" class="btn-close-modal">&times;</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="modal-tab-btn active" data-tab="beatsheet">🎬 Kịch Bản Điện Ảnh 26s</button>
+        <button class="modal-tab-btn" data-tab="rubric">⚖️ Bảng Điểm Rubric (94/100)</button>
+        <button class="modal-tab-btn" data-tab="hooks">🎯 3 Biến Thể Hook 3s</button>
+        <button class="modal-tab-btn" data-tab="distribution">📡 Lịch Đăng 3 Nền Tảng</button>
+        <button class="modal-tab-btn" data-tab="swiftcode">⚙️ Swift Render Pipeline</button>
+      </div>
+
+      <div id="vault-modal-body" class="modal-body">
+        <!-- Rendered dynamically via JS renderVaultContent() -->
+      </div>
+
+      <div class="modal-footer">
+        <div style="font-size: 13px; color: var(--text-muted);">
+          Trạng thái chiến dịch: <span id="modal-campaign-status" style="color: var(--amber-core); font-weight: 800;">Chờ Founder Vũ Anh Duyệt</span>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button id="btn-publish-campaign" class="btn-publish-vault">
+            <span>🚀</span> DUYỆT & ĐĂNG NGAY TRÊN 3 NỀN TẢNG
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: AI Engine & DNA Configuration Modal -->
+  <div id="ai-settings-modal" class="modal-backdrop">
+    <div class="modal-window ai-settings-window">
+      <div class="modal-header">
+        <h2><span>⚙️</span> TRUNG TÂM CẤU HÌNH AI THỰC TẾ & BẢN SẮC DNA VŨ ANH</h2>
+        <button id="btn-close-ai-settings" class="btn-close-modal">&times;</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="ai-tab-btn active" data-ai-tab="models">🔌 Cấu Hình AI Model & Key</button>
+        <button class="ai-tab-btn" data-ai-tab="dna">🧬 Bản Sắc DNA Vũ Anh (12 Năm)</button>
+        <button class="ai-tab-btn" data-ai-tab="sandbox">🧪 Prompt Sandbox Thử Nghiệm</button>
+      </div>
+
+      <div id="ai-settings-body" class="modal-body">
+        <!-- Tab Content populated by app.js -->
+      </div>
+
+      <div class="modal-footer">
+        <div style="font-size: 13px; color: var(--text-muted);" id="ai-modal-footer-status">
+          Lõi vận hành: <span id="active-model-footer-label" style="color: var(--cyan-core); font-weight: 700;">Đang tải...</span>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button id="btn-test-ai-connection" class="btn-pill" style="border-color: var(--cyan-core); color: var(--cyan-core);">
+            <span>⚡</span> Kiểm Tra Kết Nối (Ping)
+          </button>
+          <button id="btn-save-ai-settings" class="btn-publish-vault" style="background: var(--cyan-core); color: #000; font-weight: 800;">
+            <span>💾</span> LƯU CẤU HÌNH AI
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cyber Toast Notification -->
+  <div id="cyber-toast" class="cyber-toast">
+    <span id="toast-icon">✨</span>
+    <span id="toast-msg">Thông báo</span>
+  </div>
+
+  <!-- CDN Scripts for 3D & Animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <!-- VAMOPS Application Scripts -->
+  <script src="vamops-dna.js?v=3.0"></script>
+  <script src="ai-engine.js?v=3.0"></script>
+  <script src="agents-data.js?v=3.0"></script>
+  <script src="scene3d.js?v=3.0"></script>
+  <script src="app.js?v=3.0"></script>
+</body>
+</html>
