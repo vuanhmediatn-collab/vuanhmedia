@@ -91,7 +91,9 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   z-index: 10;
   pointer-events: none;
   display: flex;
@@ -110,82 +112,88 @@ body {
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-glass);
   box-shadow: var(--shadow-panel);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
 }
 
 /* ==========================================================================
-   TOP BAR (Station Header & Environmental Status)
+   TOP BAR (Station Header & Environmental Status - Compact Single-Row)
    ========================================================================== */
 .top-header {
-  margin: 18px 24px 0;
-  padding: 14px 24px;
+  margin: 8px 16px 0;
+  padding: 6px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(0, 240, 255, 0.35);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.12);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 240, 255, 0.12);
+  flex-shrink: 0;
+  height: 48px;
+  min-height: 48px;
 }
 
 .brand-section {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
 }
 
 .brand-logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 32px;
+  height: 32px;
   background: linear-gradient(135deg, #0284c7, #00f0ff);
-  border-radius: var(--radius-md);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: 22px;
+  font-size: 16px;
   color: #060913;
   flex-shrink: 0;
 }
 
 .brand-info h1 {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.02em;
   color: var(--text-main);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .brand-info h1 span.badge {
-  font-size: 11px;
+  font-size: 9.5px;
   font-family: var(--font-mono);
   background: rgba(0, 240, 255, 0.16);
   border: 1px solid var(--cyan-core);
   color: var(--cyan-core);
-  padding: 3px 9px;
+  padding: 1px 6px;
   border-radius: var(--radius-full);
   font-weight: 700;
 }
 
 .brand-info p {
-  font-size: 13px;
+  font-size: 10.5px;
   color: var(--text-muted);
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 3px;
+  gap: 5px;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .pulse-dot {
-  width: 9px;
-  height: 9px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background-color: var(--emerald-core);
-  box-shadow: 0 0 12px var(--emerald-core);
+  box-shadow: 0 0 8px var(--emerald-core);
   animation: pulseAnimation 2s infinite;
 }
 
@@ -198,30 +206,31 @@ body {
 .station-stats {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 12px;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0 16px;
+  padding: 0 10px;
   border-left: 1px solid var(--border-glass);
 }
 
 .stat-label {
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: 9px;
+  font-weight: 700;
   text-transform: uppercase;
   color: var(--text-dim);
   letter-spacing: 0.04em;
 }
 
 .stat-value {
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 800;
   color: var(--text-main);
-  margin-top: 2px;
+  font-family: var(--font-mono);
+  margin-top: 1px;
 }
 
 .stat-value.highlight-cyan { color: var(--cyan-core); text-shadow: 0 0 10px rgba(0, 240, 255, 0.4); }
@@ -231,29 +240,54 @@ body {
 .top-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
+}
+
+.btn-group-views {
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  border: 1px solid var(--border-glass);
+  gap: 1px;
+}
+
+.btn-group-views .btn-pill {
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  padding: 4px 9px;
+  font-size: 11px;
+  box-shadow: none;
+}
+
+.btn-group-views .btn-pill.active {
+  background: rgba(0, 240, 255, 0.22);
+  color: var(--cyan-core);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
 }
 
 .btn-pill {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-glass);
   color: var(--text-main);
-  padding: 9px 18px;
+  padding: 4px 10px;
   border-radius: var(--radius-full);
-  font-size: 13.5px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   transition: var(--transition);
+  white-space: nowrap;
 }
 
 .btn-pill:hover, .btn-pill.active {
   background: rgba(0, 240, 255, 0.18);
   border-color: var(--cyan-core);
   color: var(--cyan-core);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
 }
 
 /* ==========================================================================
@@ -262,21 +296,24 @@ body {
 .main-workspace {
   display: flex;
   justify-content: space-between;
-  padding: 18px 24px;
+  padding: 8px 16px;
   flex: 1;
+  min-height: 0; /* CRITICAL: prevents flex container overflow */
   position: relative;
-  gap: 20px;
+  gap: 14px;
+  overflow: hidden;
 }
 
 /* Left Panel: Giao Mục Tiêu & Pipeline Tracker */
 .left-control-panel {
-  width: 410px;
+  width: 310px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-height: calc(100vh - 190px);
+  gap: 8px;
+  height: 100%;
+  max-height: 100%;
   overflow-y: auto;
-  padding: 18px 20px;
+  padding: 12px 14px;
 }
 
 .panel-header {
@@ -523,88 +560,93 @@ body {
 /* ==========================================================================
    RIGHT INSPECTOR DRAWER (HỒ SƠ AI CHUYÊN GIA)
    ========================================================================== */
+/* ==========================================================================
+   RIGHT INSPECTOR DRAWER (HỒ SƠ AI CHUYÊN GIA - COMPACT)
+   ========================================================================== */
 .right-inspector-panel {
-  width: 420px;
-  max-height: calc(100vh - 220px);
-  padding: 22px;
+  width: 310px;
+  height: 100%;
+  max-height: 100%;
+  padding: 10px 12px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   transition: var(--transition);
 }
 
 .inspector-profile {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding-bottom: 14px;
+  gap: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--border-glass);
 }
 
 .profile-avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: var(--radius-lg);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+  font-size: 20px;
   background: var(--bg-surface-elevated);
-  border: 2px solid var(--cyan-core);
-  box-shadow: 0 0 25px rgba(0, 240, 255, 0.35);
+  border: 1.5px solid var(--cyan-core);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.35);
   flex-shrink: 0;
 }
 
 .profile-meta h2 {
   font-family: var(--font-display);
-  font-size: 19px;
+  font-size: 14px;
   font-weight: 800;
   color: #ffffff;
+  margin: 0;
 }
 
 .profile-meta .role-title {
-  font-size: 13.5px;
+  font-size: 11px;
   color: var(--cyan-bright);
   font-weight: 600;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .profile-meta .dept-badge {
   display: inline-block;
-  font-size: 11px;
+  font-size: 9.5px;
   font-weight: 700;
-  padding: 3px 10px;
+  padding: 1px 7px;
   border-radius: var(--radius-full);
-  margin-top: 6px;
+  margin-top: 3px;
 }
 
 .spec-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 7px;
 }
 
 .spec-card {
   background: rgba(7, 10, 18, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
 }
 
 .spec-header {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
   color: var(--text-dim);
-  margin-bottom: 6px;
+  margin-bottom: 3px;
   letter-spacing: 0.04em;
 }
 
 .spec-text {
-  font-size: 13.5px;
+  font-size: 11.5px;
   color: var(--text-body);
-  line-height: 1.55;
+  line-height: 1.4;
 }
 
 .rubric-tag {
@@ -612,9 +654,9 @@ body {
   background: rgba(245, 158, 11, 0.18);
   border: 1px solid rgba(245, 158, 11, 0.5);
   color: var(--amber-core);
-  font-size: 12px;
+  font-size: 10.5px;
   font-weight: 700;
-  padding: 5px 12px;
+  padding: 3px 8px;
   border-radius: var(--radius-sm);
 }
 
@@ -622,41 +664,41 @@ body {
 .biometrics-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-top: 6px;
+  gap: 6px;
+  margin-top: 4px;
 }
 
 .bio-card {
   background: rgba(15, 23, 42, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-sm);
-  padding: 8px 10px;
+  padding: 5px 8px;
 }
 
 .bio-label {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
 .bio-val {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 700;
-  margin-top: 2px;
+  margin-top: 1px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .heart-pulse {
   display: inline-block;
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #f43f5e;
-  box-shadow: 0 0 8px #f43f5e;
+  box-shadow: 0 0 6px #f43f5e;
   animation: heartPulseAnim 0.85s infinite;
 }
 
@@ -669,96 +711,117 @@ body {
 .inspector-actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .btn-inspector-action {
   background: rgba(0, 240, 255, 0.12);
   border: 1px solid var(--cyan-core);
   color: #ffffff;
-  padding: 9px 14px;
+  padding: 6px 10px;
   border-radius: var(--radius-sm);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: var(--transition);
 }
 
 .btn-inspector-action:hover {
   background: rgba(0, 240, 255, 0.28);
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
 }
 
 /* ==========================================================================
-   BOTTOM AGENT ROSTER CAROUSEL
+   BOTTOM AGENT ROSTER CAROUSEL (ANCHORED & FULLY VISIBLE)
    ========================================================================== */
 .bottom-roster-bar {
-  margin: 0 24px 20px;
-  padding: 12px 22px;
+  margin: 0 16px 8px;
+  padding: 4px 14px;
   display: flex;
   align-items: center;
-  gap: 18px;
-  border-radius: var(--radius-xl);
+  gap: 12px;
+  border-radius: var(--radius-md);
+  height: 48px;
+  min-height: 48px;
+  flex-shrink: 0;
 }
 
 .roster-title-box {
   display: flex;
   flex-direction: column;
-  padding-right: 18px;
+  padding-right: 12px;
   border-right: 1px solid var(--border-glass);
-  min-width: 170px;
+  min-width: 105px;
 }
 
 .roster-title-box .title {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 11.5px;
   font-weight: 800;
   letter-spacing: 0.04em;
   color: var(--cyan-core);
 }
 
 .roster-title-box .subtitle {
-  font-size: 11.5px;
+  font-size: 9px;
   color: var(--text-muted);
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .agent-scroll-track {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: 2px;
   flex: 1;
 }
 
 .agent-chip {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   background: rgba(7, 10, 18, 0.8);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-full);
-  padding: 8px 16px;
+  padding: 3px 10px;
   cursor: pointer;
   white-space: nowrap;
   transition: var(--transition);
+  height: 32px;
 }
 
 .agent-chip:hover, .agent-chip.active {
   background: rgba(0, 240, 255, 0.18);
   border-color: var(--cyan-core);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-  transform: translateY(-2px);
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.3);
+  transform: translateY(-1px);
 }
 
-.agent-chip .chip-avatar {
-  font-size: 18px;
+.agent-chip .avatar-sm {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border: 1px solid;
+}
+
+.agent-chip .chip-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.agent-chip .chip-role {
+  font-size: 9px;
+  color: var(--text-muted);
 }
 
 .agent-chip .chip-name {

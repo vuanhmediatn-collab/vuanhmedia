@@ -980,6 +980,12 @@ class VAMOPSScene3D {
       metalness: 0.95
     });
 
+    const darkMat = new THREE.MeshStandardMaterial({
+      color: 0x0f172a,
+      roughness: 0.4,
+      metalness: 0.9
+    });
+
     // 1. Ergonomic Herman-Miller Style Operator Chair
     const chair = this.createErgonomicChair();
     specialist.add(chair);
