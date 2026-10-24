@@ -5,13 +5,13 @@
 
 const VAMOPS_DATA = {
   station: {
-    name: "VAMOPS ORBITAL COMMAND CENTER",
-    code: "STATION-VAM-01",
-    sector: "Media Operations Space Station",
+    name: "VAMOPS MARS COMMAND BASE ALPHA",
+    code: "ARES-VAM-01 · SAO HOẢ",
+    sector: "Trạm Chỉ Huy Viễn Chinh Sao Hoả (Thung Lũng Valles Marineris)",
     status: "ONLINE",
-    temperature: "24°C",
-    environment: "Tối ưu hóa sáng tạo",
-    version: "2.4 Enterprise High-End",
+    temperature: "-62°C (Khí quyển ngoài) · 22.5°C (Nội thất vòm)",
+    environment: "Khí quyển Trạm: 1.01 atm · O2: 99.4% · Trọng lực: 0.38g",
+    version: "3.5 Mars Expedition High-End",
     stats: {
       totalAgents: 12,
       activeNow: 12,

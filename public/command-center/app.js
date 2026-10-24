@@ -62,11 +62,69 @@ class VAMOPSApp {
     }, 3800);
   }
 
-  // --- AUDIO SYNTHESIZER (WEB AUDIO API) ---
+  // --- AUDIO SYNTHESIZER (WEB AUDIO API & MARS AMBIENT) ---
   initAudio() {
     if (!this.audioCtx) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       this.audioCtx = new AudioContext();
+    }
+  }
+
+  startMarsAmbientSound() {
+    if (!this.soundEnabled || this.marsAmbientRunning) return;
+    try {
+      this.initAudio();
+      if (this.audioCtx.state === "suspended") {
+        this.audioCtx.resume();
+      }
+
+      // Habitat Pressurization & Air Circulation Hum (Filtered Brown Noise)
+      const bufferSize = this.audioCtx.sampleRate * 2;
+      const noiseBuffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        output[i] = (lastOut + 0.02 * white) / 1.02;
+        lastOut = output[i];
+        output[i] *= 3.0;
+      }
+
+      const whiteNoise = this.audioCtx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const filter = this.audioCtx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(140, this.audioCtx.currentTime);
+
+      const gain = this.audioCtx.createGain();
+      gain.gain.setValueAtTime(0.025, this.audioCtx.currentTime);
+
+      whiteNoise.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      whiteNoise.start();
+
+      this.ambientSource = whiteNoise;
+      this.ambientGain = gain;
+      this.marsAmbientRunning = true;
+    } catch (e) {
+      console.warn("Ambient audio error:", e);
+    }
+  }
+
+  stopMarsAmbientSound() {
+    if (this.ambientGain && this.audioCtx) {
+      try {
+        this.ambientGain.gain.linearRampToValueAtTime(0, this.audioCtx.currentTime + 0.3);
+        setTimeout(() => {
+          if (this.ambientSource) {
+            try { this.ambientSource.stop(); } catch (e) {}
+          }
+          this.marsAmbientRunning = false;
+        }, 350);
+      } catch (e) {}
     }
   }
 
@@ -156,9 +214,16 @@ class VAMOPSApp {
     if (soundBtn) {
       soundBtn.addEventListener("click", () => {
         this.soundEnabled = !this.soundEnabled;
-        soundBtn.innerHTML = this.soundEnabled ? `<span>🔊</span> ÂM THANH` : `<span>🔇</span> TẮT TIẾNG`;
+        soundBtn.innerHTML = this.soundEnabled ? `<span>🔊</span> ÂM THANH SAO HOẢ` : `<span>🔇</span> TẮT TIẾNG`;
         soundBtn.classList.toggle("active", this.soundEnabled);
-        this.showToast(this.soundEnabled ? "Đã bật âm thanh Studio" : "Đã tắt âm thanh", this.soundEnabled ? "🔊" : "🔇");
+        if (this.soundEnabled) {
+          this.startMarsAmbientSound();
+          this.playSound("launch");
+          this.showToast("Đã kích hoạt Âm Thanh Khí Quyển Sao Hoả", "🔊");
+        } else {
+          this.stopMarsAmbientSound();
+          this.showToast("Đã tắt âm thanh", "🔇");
+        }
       });
     }
 
@@ -208,13 +273,13 @@ class VAMOPSApp {
         const isMeeting = this.scene3d.isMeetingMode;
         meetingBtn.innerHTML = isMeeting
           ? `<span>🖥️</span> Về Bàn Làm Việc`
-          : `<span>👥</span> Họp Đội Ngũ (War Room)`;
+          : `<span>👥</span> Triệu Tập Họp (War Room)`;
         meetingBtn.classList.toggle("active", isMeeting);
         this.playSound("launch");
         this.showToast(
           isMeeting
-            ? "Triệu tập 12 Robot AI về Bàn Tròn Chiến Lược!"
-            : "Các Robot AI đã trở về bàn làm việc độc lập.",
+            ? "Triệu tập 12 Chuyên Gia Sao Hoả về Bàn Tròn Chiến Lược!"
+            : "Các Chuyên Gia đã trở về bàn làm việc cá nhân.",
           isMeeting ? "👥" : "🖥️"
         );
       });
@@ -335,10 +400,18 @@ class VAMOPSApp {
 
   startSystemClock() {
     const clockEl = document.getElementById("live-clock");
+    const weatherEl = document.getElementById("mars-weather-stat");
     const updateTime = () => {
       const now = new Date();
       const timeStr = now.toTimeString().split(" ")[0];
-      if (clockEl) clockEl.textContent = `${timeStr} (UTC+7)`;
+      const sol = 482;
+      if (clockEl) clockEl.textContent = `SOL ${sol} · ${timeStr} MTC`;
+
+      if (weatherEl) {
+        const temp = (-62.2 + Math.sin(now.getTime() * 0.0001) * 0.8).toFixed(1);
+        const wind = (8.2 + Math.cos(now.getTime() * 0.0002) * 1.4).toFixed(1);
+        weatherEl.textContent = `${temp}°C · Gió ${wind} m/s · Bụi 0.18 Tau`;
+      }
     };
     updateTime();
     setInterval(updateTime, 1000);
@@ -687,6 +760,28 @@ class VAMOPSApp {
 
       <div class="spec-list">
         <div class="spec-card">
+          <div class="spec-header">Chỉ Số Sinh Học Trực Tiếp (Live Biometrics)</div>
+          <div class="biometrics-grid">
+            <div class="bio-card">
+              <div class="bio-label">Nhịp Tim</div>
+              <div class="bio-val" style="color: #f43f5e;"><span class="heart-pulse"></span> 72 BPM</div>
+            </div>
+            <div class="bio-card">
+              <div class="bio-label">Oxy SpO2</div>
+              <div class="bio-val" style="color: #10b981;">99.4%</div>
+            </div>
+            <div class="bio-card">
+              <div class="bio-label">Sóng Não</div>
+              <div class="bio-val" style="color: #38bdf8;">Alpha 98%</div>
+            </div>
+            <div class="bio-card">
+              <div class="bio-label">Vị Trí Trạm</div>
+              <div class="bio-val" style="color: #f59e0b; font-size:11px;">Bàn Sao Hoả #${agent.id.slice(-2)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-card">
           <div class="spec-header">Lõi Mô Hình Tư Duy (AI Engine)</div>
           <div class="spec-text" style="color: var(--cyan-core); font-weight: 700; font-family: var(--font-mono);">
             ${agent.modelEngine}
@@ -704,7 +799,7 @@ class VAMOPSApp {
         </div>
 
         <div class="spec-card">
-          <div class="spec-header">Trạng Thái Hiện Tại</div>
+          <div class="spec-header">Trạng Thái Thao Tác</div>
           <div class="spec-text" style="color: var(--emerald-core); font-weight: 600;">
             ● ${agent.currentAction}
           </div>
@@ -714,8 +809,37 @@ class VAMOPSApp {
           <div class="spec-header">Trọng Số Khảo Thí (Rubric Weight)</div>
           <span class="rubric-tag">${agent.rubricWeight}</span>
         </div>
+
+        <div class="inspector-actions">
+          <button class="btn-inspector-action" id="btn-inspector-chat">
+            <span>💬</span> Trao Đổi Kịch Bản Trực Tiếp
+          </button>
+          <button class="btn-inspector-action" id="btn-inspector-vault">
+            <span>📂</span> Mở Kho Ấn Phẩm Của Chuyên Gia
+          </button>
+        </div>
       </div>
     `;
+
+    const chatBtn = document.getElementById("btn-inspector-chat");
+    if (chatBtn) {
+      chatBtn.addEventListener("click", () => {
+        this.showToast(`Đã mở kết nối trao đổi với ${agent.name}!`, "💬");
+        this.scene3d.showFloatingBubble(agent.id, `Đang kết nối: Sẵn sàng nhận chỉ thị từ Founder Vũ Anh!`, 4000);
+      });
+    }
+
+    const vaultBtn = document.getElementById("btn-inspector-vault");
+    if (vaultBtn) {
+      vaultBtn.addEventListener("click", () => {
+        const vaultModal = document.getElementById("vault-modal");
+        if (vaultModal) {
+          this.renderVaultContent();
+          vaultModal.classList.add("open");
+          this.playSound("click");
+        }
+      });
+    }
 
     this.scene3d.showFloatingBubble(agent.id, agent.currentAction, 3800);
   }
@@ -803,7 +927,7 @@ class VAMOPSApp {
     setStepState(0, "running", "Họp toàn đội");
     this.scene3d.conveneWarRoomMeeting();
     this.selectAgent(VAMOPS_DATA.agents.find((a) => a.id === "agent-cmo"));
-    this.scene3d.showFloatingBubble("agent-cmo", `Triệu tập 12 Robot AI: Triển khai chiến lược "${topic.substring(0, 30)}..."`, 4200);
+    this.scene3d.showFloatingBubble("agent-cmo", `Triệu tập 12 Chuyên Gia Sao Hoả: Triển khai chiến lược "${topic.substring(0, 30)}..."`, 4200);
     this.playSound("step");
     await delay(2800);
     this.scene3d.triggerDataPacket("zone-penthouse", "zone-intelligence", 0x00f0ff);

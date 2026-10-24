@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base href="/command-center/">
   <title>VAMOPS Command Center — Trụ Sở AI Vận Hành Media Đa Nền Tảng 3D</title>
   <meta name="description" content="Trung tâm điều phối đa tác vụ AI Agents chuẩn Chuyên gia Cao Cấp của Vũ Anh Media Ops. Tự động hóa nghiên cứu, sáng tạo kịch bản điện ảnh, thẩm định Rubric và render video 24/7.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,42 +24,45 @@
       <div class="brand-section">
         <div class="brand-logo">V</div>
         <div class="brand-info">
-          <h1>VAMOPS COMMAND CENTER <span class="badge">STATION-VAM-01</span></h1>
-          <p><span class="pulse-dot"></span> 12 ROBOT AI TỰ CHỦ · <a href="https://www.vuanhmedia.com/portfolio" target="_blank" style="color:var(--cyan-core); text-decoration:none; font-weight:700;">vuanhmedia.com/portfolio</a> · <code>/command-center</code></p>
+          <h1>VAMOPS MARS COMMAND BASE ALPHA <span class="badge">ARES-VAM-01 · SAO HOẢ</span></h1>
+          <p><span class="pulse-dot"></span> 12 CHUYÊN GIA SÁNG TẠO SAO HOẢ · THUNG LŨNG VALLES MARINERIS · <a href="https://www.vuanhmedia.com/portfolio" target="_blank" style="color:var(--cyan-core); text-decoration:none; font-weight:700;">vuanhmedia.com/portfolio</a> · <code>/command-center</code></p>
         </div>
       </div>
 
       <div class="station-stats">
         <div class="stat-item">
           <span class="stat-label">Thời Gian Trạm</span>
-          <span class="stat-value highlight-cyan" id="live-clock">--:--:--</span>
+          <span class="stat-value highlight-cyan" id="live-clock">SOL 482 · --:--:--</span>
         </div>
         <div class="stat-item">
-          <span class="stat-label">Môi Trường</span>
-          <span class="stat-value">24°C · Quỹ Đạo VAM</span>
+          <span class="stat-label">Môi Trường Khí Quyển</span>
+          <span class="stat-value highlight-amber" id="mars-weather-stat">-62°C · Bụi 0.18 Tau</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Sinh Thái Trạm</span>
+          <span class="stat-value highlight-green">O2: 99.4% · 1.01 atm</span>
         </div>
         <div class="stat-item">
           <span class="stat-label">Kho Bài Đã Duyệt</span>
           <span class="stat-value highlight-amber" id="stat-vault-count">7</span>
         </div>
-        <div class="stat-item">
-          <span class="stat-label">Chỉ Số Chất Lượng</span>
-          <span class="stat-value highlight-green">94.8 / 100</span>
-        </div>
         <div class="stat-item" id="ai-model-stat-item">
           <span class="stat-label">Lõi Trí Tuệ (AI Core)</span>
-          <span class="stat-value highlight-cyan" id="header-ai-model-label">● DNA Vũ Anh (Native)</span>
+          <span class="stat-value highlight-cyan" id="header-ai-model-label">● DNA Vũ Anh (Mars Core)</span>
         </div>
       </div>
 
       <div class="top-actions">
-        <button class="btn-pill active" data-view-target="overview" id="btn-view-overview">🌐 Toàn Cảnh</button>
+        <button class="btn-pill active" data-view-target="overview" id="btn-view-overview">🪐 Toàn Cảnh Trạm</button>
+        <button class="btn-pill" data-view-target="mars-window" id="btn-view-window">🔭 Cửa Sổ Sao Hoả</button>
+        <button class="btn-pill" data-view-target="rover-cam" id="btn-view-rover">🚜 Xe Rover VAM-01</button>
+        <button class="btn-pill" data-view-target="war-room" id="btn-view-warroom">🌐 Hội Đồng Sao Hoả</button>
         <button class="btn-pill" data-view-target="isometric" id="btn-view-iso">📐 Isometric</button>
         <button class="btn-pill" id="btn-toggle-meeting" style="background: rgba(16, 185, 129, 0.2); border-color: var(--emerald-core); color: var(--emerald-core);">
-          👥 Họp Đội Ngũ (War Room)
+          👥 Triệu Tập Họp (War Room)
         </button>
         <button class="btn-pill" id="btn-auto-rotate">🔄 Xoay Tự Động</button>
-        <button class="btn-pill" id="btn-sound-toggle"><span>🔊</span> ÂM THANH</button>
+        <button class="btn-pill" id="btn-sound-toggle"><span>🔊</span> ÂM THANH SAO HOẢ</button>
         <button class="btn-pill" id="btn-open-ai-settings" style="background: rgba(6, 182, 212, 0.2); border-color: var(--cyan-core); color: var(--cyan-core);">
           ⚙️ Cài Đặt AI & DNA
         </button>
