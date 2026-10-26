@@ -17,8 +17,7 @@ const VAMOPS_DATA = {
       activeNow: 12,
       tasksRunning: 0,
       approvedVault: 7,
-      qualityScoreAvg: "94.8 / 100",
-      renderedToday: 14
+      sessionRuns: 0
     }
   },
 
@@ -31,7 +30,7 @@ const VAMOPS_DATA = {
       coords: { x: 0, z: -1.5 },
       icon: "🏛️",
       description: "Nơi Tổng Điều Phối tiếp nhận chiến dịch và Founder (Vũ Anh) trực tiếp ký duyệt ấn phẩm cuối cùng.",
-      assignedAgents: ["agent-cmo", "agent-gateway"]
+      assignedAgents: ["agent-cmo", "agent-seo"]
     },
     {
       id: "zone-intelligence",
