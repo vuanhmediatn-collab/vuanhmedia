@@ -710,6 +710,7 @@ class VAMOPSApp {
     const health = await window.vamopsAIEngine.checkGatewayHealth();
     this.gatewayHealth = health;
     this.updateAIStatusBadge();
+    this.updateRuntimeModelInspector();
     return health;
   }
 
@@ -1931,6 +1932,7 @@ class VAMOPSApp {
     if (!modelEl || !this.selectedAgent) return;
     modelEl.textContent = this.currentResult?.agentModels?.[this.selectedAgent.id]
       || this.currentResult?.modelInfo?.agentModels?.[this.selectedAgent.id]
+      || this.gatewayHealth?.configuredModels?.[0]
       || "Không xác định";
   }
 
