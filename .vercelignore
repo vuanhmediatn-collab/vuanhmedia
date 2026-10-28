@@ -3,3 +3,10 @@ screenshots*
 motion_recordings*
 *.mp4
 scripts/temp*
+
+# Legacy paid-provider/server prototypes are excluded. The health and campaigns
+# functions below are thin same-origin proxies to the authenticated Supabase
+# workflow gateway and never hold provider credentials.
+api/v1/ai.js
+server/
+tests/

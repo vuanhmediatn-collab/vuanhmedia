@@ -239,6 +239,7 @@ class VAMOPSApp {
     this.loadedCampaigns = [];
     this.activeVaultCampaignId = null;
     this.activeSelectedAngleId = null;
+    this.gatewayHealth = null;
 
     this.init();
   }
@@ -291,13 +292,138 @@ class VAMOPSApp {
     // 7. Update Clock and AI Status
     this.startSystemClock();
     this.updateAIStatusBadge();
-    this.loadVaultData().then(() => {
-      this.syncDashboardFromCampaign(this.currentResult);
-      this.restorePendingBriefIfNeeded();
+    this.initializeAuthenticatedRuntime();
+  }
+
+  async initializeAuthenticatedRuntime() {
+    const session = await window.vamopsAIEngine?.initAuth?.();
+    await this.refreshGatewayStatus();
+    if (!session) {
+      this.updateAuthButton(false);
+      this.openAuthModal("Đăng nhập để bắt đầu tạo và lưu chiến dịch.");
+      this.syncDashboardFromCampaign(null);
+      return;
+    }
+    await this.completeAuthenticatedSession();
+  }
+
+  updateAuthButton(authenticated) {
+    const button = document.getElementById("btn-auth-session");
+    if (!button) return;
+    button.textContent = authenticated ? "👤 Đăng xuất" : "👤 Đăng nhập";
+    button.title = authenticated ? "Đăng xuất khỏi kho chiến dịch hiện tại" : "Đăng nhập để lưu chiến dịch";
+  }
+
+  openAuthModal(message = "") {
+    const modal = document.getElementById("auth-modal");
+    const status = document.getElementById("auth-status");
+    if (status) status.textContent = message;
+    if (modal) modal.classList.add("open");
+  }
+
+  async completeAuthenticatedSession() {
+    document.getElementById("auth-modal")?.classList.remove("open");
+    this.updateAuthButton(true);
+    await this.refreshGatewayStatus();
+    await this.loadVaultData();
+    this.syncDashboardFromCampaign(this.currentResult);
+    this.restorePendingBriefIfNeeded();
+  }
+
+  ensureAuthShell() {
+    const actions = document.querySelector(".top-actions");
+    const vaultButton = document.getElementById("btn-open-vault");
+    if (actions && vaultButton && !document.getElementById("btn-auth-session")) {
+      vaultButton.insertAdjacentHTML("beforebegin", '<button class="btn-pill" id="btn-auth-session" style="border-color:var(--emerald-core);color:var(--emerald-core);" title="Đăng nhập để lưu chiến dịch">👤 Đăng nhập</button>');
+    }
+    if (!document.getElementById("auth-modal")) {
+      document.body.insertAdjacentHTML("beforeend", `
+        <div id="auth-modal" class="modal-backdrop">
+          <div class="modal-window" style="max-width:520px;min-height:auto;">
+            <div class="modal-header"><h2><span>🔐</span> ĐĂNG NHẬP TRUNG TÂM ĐIỀU HÀNH</h2></div>
+            <div class="modal-body" style="padding:24px;">
+              <p style="font-size:13px;line-height:1.65;color:var(--text-muted);margin-bottom:18px;">Mỗi tài khoản có kho chiến dịch riêng. Quyết định Gate 1/Gate 2 được lưu theo người duyệt và thời gian thực tế.</p>
+              <div style="display:grid;gap:14px;">
+                <label class="ai-form-group"><span class="ai-form-label">Email</span><input id="auth-email" class="text-input" type="email" autocomplete="email" placeholder="founder@congty.vn" style="min-height:44px;resize:none;"></label>
+                <label class="ai-form-group"><span class="ai-form-label">Mật khẩu</span><input id="auth-password" class="text-input" type="password" autocomplete="current-password" placeholder="Tối thiểu 6 ký tự" style="min-height:44px;resize:none;"></label>
+                <div id="auth-status" style="min-height:20px;font-size:12px;color:var(--text-muted);"></div>
+              </div>
+            </div>
+            <div class="modal-footer" style="justify-content:flex-end;gap:10px;">
+              <button id="btn-auth-signup" class="btn-pill">Tạo tài khoản</button>
+              <button id="btn-auth-login" class="btn-publish-vault" style="background:var(--emerald-core);color:#02130d;">Đăng nhập</button>
+            </div>
+          </div>
+        </div>`);
+    }
+  }
+
+  bindAuthEvents() {
+    const sessionButton = document.getElementById("btn-auth-session");
+    const loginButton = document.getElementById("btn-auth-login");
+    const signupButton = document.getElementById("btn-auth-signup");
+    const status = document.getElementById("auth-status");
+    const credentials = () => ({
+      email: document.getElementById("auth-email")?.value.trim() || "",
+      password: document.getElementById("auth-password")?.value || ""
+    });
+    const validate = ({ email, password }) => {
+      if (!email.includes("@")) throw new Error("Vui lòng nhập email hợp lệ.");
+      if (password.length < 6) throw new Error("Mật khẩu phải có ít nhất 6 ký tự.");
+    };
+
+    sessionButton?.addEventListener("click", async () => {
+      if (!window.vamopsAIEngine?.isAuthenticated?.()) {
+        this.openAuthModal();
+        return;
+      }
+      await window.vamopsAIEngine.signOut();
+      this.currentResult = null;
+      this.loadedCampaigns = [];
+      this.updateAuthButton(false);
+      this.openAuthModal("Đã đăng xuất. Đăng nhập lại để mở kho chiến dịch.");
+      this.syncDashboardFromCampaign(null);
+    });
+
+    loginButton?.addEventListener("click", async () => {
+      loginButton.disabled = true;
+      try {
+        const input = credentials();
+        validate(input);
+        if (status) status.textContent = "Đang xác thực...";
+        await window.vamopsAIEngine.signIn(input.email, input.password);
+        await this.completeAuthenticatedSession();
+        this.showToast("Đăng nhập thành công. Kho chiến dịch đã sẵn sàng.", "✓");
+      } catch (error) {
+        if (status) status.textContent = `Không thể đăng nhập: ${error.message}`;
+      } finally {
+        loginButton.disabled = false;
+      }
+    });
+
+    signupButton?.addEventListener("click", async () => {
+      signupButton.disabled = true;
+      try {
+        const input = credentials();
+        validate(input);
+        if (status) status.textContent = "Đang tạo tài khoản...";
+        const result = await window.vamopsAIEngine.signUp(input.email, input.password);
+        if (result.session) {
+          await this.completeAuthenticatedSession();
+          this.showToast("Tài khoản đã tạo và đăng nhập thành công.", "✓");
+        } else if (status) {
+          status.textContent = "Tài khoản đã tạo. Vui lòng xác nhận email rồi quay lại đăng nhập.";
+        }
+      } catch (error) {
+        if (status) status.textContent = `Không thể tạo tài khoản: ${error.message}`;
+      } finally {
+        signupButton.disabled = false;
+      }
     });
   }
 
   applyProfessionalWorkflowShell() {
+    this.ensureAuthShell();
     const vaultButton = document.getElementById("btn-open-vault");
     if (vaultButton) {
       vaultButton.title = "Báo cáo, trạng thái và quản lý chiến dịch";
@@ -553,12 +679,18 @@ class VAMOPSApp {
     const headerLabel = document.getElementById("header-ai-model-label");
     if (headerLabel) {
       headerLabel.textContent = badgeLabel;
-      if (window.vamopsAIEngine.isLive()) {
+      const gatewayState = window.vamopsAIEngine.gatewayHealth?.state;
+      if (window.vamopsAIEngine.isLive() && gatewayState === "healthy") {
         headerLabel.classList.remove("highlight-cyan");
         headerLabel.classList.add("highlight-green");
+        headerLabel.style.color = "";
+      } else if (window.vamopsAIEngine.isLive() && gatewayState === "offline") {
+        headerLabel.classList.remove("highlight-cyan", "highlight-green");
+        headerLabel.style.color = "#fb7185";
       } else {
         headerLabel.classList.remove("highlight-green");
         headerLabel.classList.add("highlight-cyan");
+        headerLabel.style.color = "";
       }
     }
 
@@ -568,8 +700,22 @@ class VAMOPSApp {
     }
   }
 
+  async refreshGatewayStatus() {
+    if (!window.vamopsAIEngine || !window.vamopsAIEngine.isLive()) {
+      this.gatewayHealth = { healthy: false, demo: true };
+      this.updateAIStatusBadge();
+      return this.gatewayHealth;
+    }
+    this.updateAIStatusBadge();
+    const health = await window.vamopsAIEngine.checkGatewayHealth();
+    this.gatewayHealth = health;
+    this.updateAIStatusBadge();
+    return health;
+  }
+
   // --- UI BINDINGS ---
   bindDOMEvents() {
+    this.bindAuthEvents();
     // Sound toggle
     const soundBtn = document.getElementById("btn-sound-toggle");
     if (soundBtn) {
@@ -895,31 +1041,48 @@ class VAMOPSApp {
     const config = window.vamopsAIEngine.config;
 
     if (tab === "models") {
+      const configuredModels = Array.isArray(this.gatewayHealth?.configuredModels)
+        ? this.gatewayHealth.configuredModels
+        : [];
+      const configuredSet = new Set(configuredModels);
+      const gatewayOperational = this.gatewayHealth?.healthy === true;
+      const visibleModels = configuredModels.length
+        ? window.vamopsAIEngine.modelsByTier.filter((model) => configuredSet.has(model.id))
+        : window.vamopsAIEngine.modelsByTier.filter((model) => model.id === config.modelTier);
+      const modelOptions = visibleModels.map((model) => {
+        const isConfigured = configuredSet.has(model.id) || (model.id === "qwen2.5:3b" && configuredSet.has("ollama/qwen2.5:3b"));
+        const selected = config.modelTier === model.id ? "selected" : "";
+        const disabled = gatewayOperational && !isConfigured ? "disabled" : "";
+        const state = isConfigured ? "✓ khai báo trên server" : "chưa cấu hình";
+        return `<option value="${model.id}" ${selected} ${disabled}>${model.name} — ${state}</option>`;
+      }).join("");
+      const gatewayNote = gatewayOperational
+        ? `Backend sẵn sàng. Model được khai báo: ${configuredModels.join(", ") || "không có"}.`
+        : `Gateway chưa sẵn sàng. Danh sách này chỉ là catalog hỗ trợ; không model nào được coi là đang chạy.`;
       body.innerHTML = `
         <div style="display:flex; flex-direction:column; gap:16px;">
           <div class="ai-card-info" style="border-left: 3px solid var(--emerald-core); background: rgba(16, 185, 129, 0.08);">
             <strong style="color:var(--emerald-core); font-size:13.5px;">🔐 Kiến Trúc Bảo Mật Zero Client Credentials:</strong><br/>
-            Khóa bí mật API được lưu trữ độc quyền trong biến môi trường máy chủ (<code>GEMINI_API_KEY</code>, <code>OPENAI_API_KEY</code>). Trình duyệt tuyệt đối không lưu hay truyền trực tiếp khóa bí mật, loại bỏ hoàn toàn nguy cơ rò rỉ mã bảo mật (F03 Remediation).
+            Phiên đăng nhập được Supabase Auth xác minh. Bộ máy hiện dùng Rules Engine xác định, không gọi model trả phí, không lưu khóa nhà cung cấp AI trong trình duyệt và ghi nhận chi phí/token bằng 0.
           </div>
 
           <div class="ai-form-grid">
             <div class="ai-form-group">
               <label class="ai-form-label">Chế Độ Vận Hành (Operating Mode)</label>
               <select id="ai-select-mode" class="ai-select">
-                <option value="gateway" ${config.mode === "gateway" ? "selected" : ""}>🛡️ Cổng AI Server Gateway (/api/v1/ai — Bảo Mật Server)</option>
+                <option value="gateway" ${config.mode === "gateway" ? "selected" : ""}>🛡️ Cổng Workflow Zero-Credit (/api/v1/campaigns)</option>
                 <option value="demo" ${config.mode === "demo" ? "selected" : ""}>🧪 Bản Mẫu Demo Fixture (Chạy thử offline · Không tốn token)</option>
               </select>
             </div>
 
             <div class="ai-form-group">
               <label class="ai-form-label">Mô Hình Cấu Hình (CONFIGURED MODEL)</label>
-              <select id="ai-select-tier" class="ai-select">
-                <option value="gemini-2.0-flash" ${config.modelTier === "gemini-2.0-flash" ? "selected" : ""}>⚡ Google Gemini 2.0 Flash (Tốc độ & JSON Schema)</option>
-                <option value="gpt-4o" ${config.modelTier === "gpt-4o" ? "selected" : ""}>🧠 OpenAI GPT-4o (Cân bằng & Sắc sảo)</option>
-                <option value="claude-3.7-sonnet" ${config.modelTier === "claude-3.7-sonnet" ? "selected" : ""}>🌐 Claude 3.7 Sonnet (Tư duy sâu & Chi tiết)</option>
+              <select id="ai-select-tier" class="ai-select" ${gatewayOperational ? "" : "disabled"}>
+                ${modelOptions}
               </select>
               <div style="font-size:11px; color:var(--text-dim); margin-top:4px; line-height:1.4;">
-                ⚠️ Lưu ý: Đây là model được cấu hình cho lượt chạy tiếp theo (CONFIGURED MODEL), không phải model của các chiến dịch đã lưu trong Trung tâm Báo cáo.
+                ${gatewayNote}<br/>
+                Model của từng chiến dịch chỉ lấy từ task run đã lưu, không suy đoán từ cài đặt này.
               </div>
             </div>
           </div>
@@ -1078,6 +1241,7 @@ class VAMOPSApp {
 
     window.vamopsAIEngine.saveConfig(newConfig);
     this.updateAIStatusBadge();
+    this.refreshGatewayStatus();
     this.playSound("success");
     this.showToast("Đã lưu chế độ vận hành: " + window.vamopsAIEngine.getActiveProviderLabel(), "💾");
 
@@ -1091,28 +1255,30 @@ class VAMOPSApp {
       statusBox.style.display = "block";
       statusBox.style.background = "rgba(0, 240, 255, 0.15)";
       statusBox.style.color = "var(--cyan-bright)";
-      statusBox.textContent = "Đang kiểm tra kết nối Cổng AI Gateway (/api/v1/ai)...";
+      statusBox.textContent = "Đang kiểm tra Cổng Workflow Zero-Credit (/api/v1/campaigns)...";
     }
 
     try {
-      const health = await window.vamopsAIEngine.checkGatewayHealth();
+      const health = await this.refreshGatewayStatus();
       if (health.healthy) {
         const configured = health.providersConfigured || {};
-        const activeProviders = Object.entries(configured).filter(([, v]) => v).map(([k]) => k.toUpperCase()).join(", ");
+        const providersFromMap = Object.entries(configured).filter(([, v]) => v).map(([k]) => k.toUpperCase());
+        const activeProviders = (Array.isArray(health.configuredModels) ? health.configuredModels : providersFromMap).join(", ");
         if (statusBox) {
           statusBox.style.background = "rgba(16, 185, 129, 0.2)";
           statusBox.style.color = "var(--emerald-core)";
-          statusBox.textContent = `✅ Cổng Server AI Gateway hoạt động bình thường! Server cấu hình: ${activeProviders || "Môi trường sẵn sàng"}.`;
+          statusBox.textContent = `✅ Cổng Workflow hoạt động bình thường. Bộ máy đang dùng: ${activeProviders || "vamops-zero-credit-v1"}; token/chi phí AI = 0.`;
         }
         this.playSound("success");
-        this.showToast("Cổng AI Server Gateway sẵn sàng!", "✅");
+        this.showToast("Cổng Workflow Zero-Credit sẵn sàng!", "✅");
       } else {
         if (statusBox) {
+          const gatewayReason = String(health.error || `HTTP ${health.status || "không xác định"}`).replace(/[.\s]+$/, "");
           statusBox.style.background = "rgba(245, 158, 11, 0.2)";
           statusBox.style.color = "var(--amber-core)";
-          statusBox.textContent = `ℹ️ Server phản hồi mã HTTP ${health.status || health.error}. Bạn vẫn có thể chạy chế độ Demo Fixture ngoại tuyến an toàn.`;
+          statusBox.textContent = `⚠️ Gateway chưa sẵn sàng: ${gatewayReason}. Hệ thống không coi giao diện tĩnh là API và không gọi Agent.`;
         }
-        this.showToast("Server Gateway chưa khả dụng — Hãy chọn chế độ Demo Fixture.", "ℹ️");
+        this.showToast("Gateway offline — Agent chưa chạy và cổng phê duyệt được khóa.", "⚠️");
       }
     } catch (err) {
       if (statusBox) {
@@ -1410,6 +1576,21 @@ class VAMOPSApp {
       }
       this.openBriefIntake({ topic });
       return;
+    }
+    if (window.vamopsAIEngine?.isLive()) {
+      const health = this.gatewayHealth?.healthy
+        ? this.gatewayHealth
+        : await this.refreshGatewayStatus();
+      if (!health?.healthy) {
+        const reason = String(health?.error || health?.blockers?.join(", ") || "Gateway chưa sẵn sàng").replace(/[.\s]+$/, "");
+        this.showToast(`Không thể chạy Agent: ${reason}. Brief được giữ nguyên, không gọi model.`, "🔒");
+        this.openBriefIntake({
+          topic,
+          initialBrief: briefOverride,
+          campaignId: existingCampaignId || null
+        });
+        return;
+      }
     }
     if (this.isSimulating) return;
     this.isSimulating = true;

@@ -16,10 +16,25 @@ class VAMOPSAIEngine {
   constructor() {
     this.config = this.loadConfig();
     this.gatewayEndpoint = "/api/v1/ai";
+    this.healthEndpoint = "/api/v1/health";
+    this.supabaseUrl = "https://kgpwfohbwcrtbkwowxmv.supabase.co";
+    this.supabasePublishableKey = "sb_publishable_kWtBjuOgqKIhHo2-CacVjw_AjPZ_ouN";
+    this.authClient = null;
+    this.authSession = null;
+    this.gatewayHealth = { state: "unchecked", checkedAt: null };
     this.modelsByTier = [
-      { id: "gemini-2.0-flash", name: "Gemini 2.0 Flash (Khuyên dùng · Nhanh & Chuẩn JSON)", provider: "gemini" },
-      { id: "gpt-4o", name: "GPT-4o (Cân bằng & Sắc sảo)", provider: "openai" },
-      { id: "claude-3.7-sonnet", name: "Claude 3.7 Sonnet (Tư duy sâu & Chi tiết)", provider: "openrouter" }
+      { id: "vamops-zero-credit-v1", name: "VAMOPS Zero-Credit Rules Engine", provider: "deterministic" },
+      { id: "qwen2.5:3b", name: "Qwen 2.5 3B · Ollama tự host (không tốn API token)", provider: "ollama" },
+      { id: "gemini-3-flash-preview", name: "Gemini 3 Flash Preview", provider: "gemini" },
+      { id: "gemini-3.1-flash-lite", name: "Gemini 3.1 Flash Lite", provider: "gemini" },
+      { id: "gemini-3.6-flash", name: "Gemini 3.6 Flash", provider: "gemini" },
+      { id: "gemini-2.0-flash", name: "Gemini 2.0 Flash", provider: "gemini" },
+      { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash", provider: "gemini" },
+      { id: "gpt-4o", name: "OpenAI GPT-4o", provider: "openai" },
+      { id: "gpt-4.1", name: "OpenAI GPT-4.1", provider: "openai" },
+      { id: "claude-3.7-sonnet", name: "Claude 3.7 Sonnet · OpenRouter", provider: "openrouter" },
+      { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet · Anthropic", provider: "anthropic" },
+      { id: "deepseek-r1", name: "DeepSeek R1 · OpenRouter", provider: "openrouter" }
     ];
   }
 
@@ -31,7 +46,7 @@ class VAMOPSAIEngine {
           const parsed = JSON.parse(saved);
           return {
             mode: parsed.mode === "demo" ? "demo" : "gateway",
-            modelTier: parsed.modelTier || "gemini-2.0-flash"
+            modelTier: parsed.modelTier || "vamops-zero-credit-v1"
           };
         }
       } catch (e) {
@@ -40,7 +55,7 @@ class VAMOPSAIEngine {
     }
     return {
       mode: "gateway",
-      modelTier: "gemini-2.0-flash"
+      modelTier: "vamops-zero-credit-v1"
     };
   }
 
@@ -48,7 +63,7 @@ class VAMOPSAIEngine {
     // Strictly sanitize config to never store credentials
     this.config = {
       mode: newConfig.mode === "demo" ? "demo" : "gateway",
-      modelTier: newConfig.modelTier || this.config.modelTier || "gemini-2.0-flash"
+      modelTier: newConfig.modelTier || this.config.modelTier || "vamops-zero-credit-v1"
     };
     if (typeof localStorage !== "undefined") {
       try {
@@ -65,6 +80,12 @@ class VAMOPSAIEngine {
     if (!this.isLive()) {
       return "🧪 Bản Mẫu Demo Fixture (Dữ liệu mẫu tham khảo)";
     }
+    if (this.gatewayHealth.state === "offline") {
+      return "⚠️ VAMOPS Server Gateway — chưa kết nối";
+    }
+    if (this.gatewayHealth.state !== "healthy") {
+      return "○ VAMOPS Server Gateway — chưa xác minh";
+    }
     return `🛡️ VAMOPS Server Gateway (${this.config.modelTier})`;
   }
 
@@ -72,28 +93,103 @@ class VAMOPSAIEngine {
     if (!this.isLive()) {
       return "● DEMO FIXTURE";
     }
-    return "● GATEWAY LIVE";
+    if (this.gatewayHealth.state === "healthy") return "● GATEWAY LIVE";
+    if (this.gatewayHealth.state === "checking") return "◌ ĐANG KIỂM TRA";
+    if (this.gatewayHealth.state === "offline") return "● GATEWAY OFFLINE";
+    return "○ CHƯA XÁC MINH";
+  }
+
+  async readJsonResponse(res, context = "API") {
+    const contentType = String(res.headers?.get?.("content-type") || "").toLowerCase();
+    if (!/(^|[;+\s])application\/(?:[a-z0-9.+-]*\+)?json(?:[;\s]|$)/i.test(contentType)) {
+      const error = new Error(
+        `${context}: máy chủ trả về ${contentType || "kiểu dữ liệu không xác định"} thay vì JSON. ` +
+        "API production chưa được triển khai hoặc đang bị route giao diện ghi đè."
+      );
+      error.code = "INVALID_API_RESPONSE";
+      error.status = res.status;
+      throw error;
+    }
+    try {
+      return await res.json();
+    } catch (cause) {
+      const error = new Error(`${context}: phản hồi JSON không hợp lệ.`);
+      error.code = "MALFORMED_API_JSON";
+      error.status = res.status;
+      error.cause = cause;
+      throw error;
+    }
   }
 
   getRequestHeaders() {
     const headers = { "Content-Type": "application/json" };
-    const token = typeof window !== "undefined" ? window.__VAMOPS_ACCESS_TOKEN__ : null;
+    const token = this.authSession?.access_token || (typeof window !== "undefined" ? window.__VAMOPS_ACCESS_TOKEN__ : null);
     if (token) headers.Authorization = `Bearer ${token}`;
     return headers;
   }
 
+  async initAuth() {
+    if (typeof window === "undefined") return null;
+    try {
+      if (!this.authClient) {
+        const module = await import("https://esm.sh/@supabase/supabase-js@2.112.3");
+        this.authClient = module.createClient(this.supabaseUrl, this.supabasePublishableKey, {
+          auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+        });
+        this.authClient.auth.onAuthStateChange((_event, session) => {
+          this.authSession = session || null;
+          window.__VAMOPS_ACCESS_TOKEN__ = session?.access_token || null;
+          window.dispatchEvent(new CustomEvent("vamops-auth-change", { detail: { authenticated: Boolean(session), user: session?.user || null } }));
+        });
+      }
+      const { data, error } = await this.authClient.auth.getSession();
+      if (error) throw error;
+      this.authSession = data.session || null;
+      window.__VAMOPS_ACCESS_TOKEN__ = data.session?.access_token || null;
+      return this.authSession;
+    } catch (error) {
+      console.warn("Không thể khởi tạo Supabase Auth:", error);
+      this.authSession = null;
+      window.__VAMOPS_ACCESS_TOKEN__ = null;
+      return null;
+    }
+  }
+
+  isAuthenticated() {
+    return Boolean(this.authSession?.access_token);
+  }
+
+  async signIn(email, password) {
+    if (!this.authClient) await this.initAuth();
+    const { data, error } = await this.authClient.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    this.authSession = data.session;
+    window.__VAMOPS_ACCESS_TOKEN__ = data.session?.access_token || null;
+    return data;
+  }
+
+  async signUp(email, password) {
+    if (!this.authClient) await this.initAuth();
+    const { data, error } = await this.authClient.auth.signUp({ email, password });
+    if (error) throw error;
+    this.authSession = data.session || null;
+    window.__VAMOPS_ACCESS_TOKEN__ = data.session?.access_token || null;
+    return data;
+  }
+
+  async signOut() {
+    if (this.authClient) await this.authClient.auth.signOut();
+    this.authSession = null;
+    if (typeof window !== "undefined") window.__VAMOPS_ACCESS_TOKEN__ = null;
+  }
+
   async refreshLocalSession() {
     try {
-      const res = await fetch("/api/v1/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: "{}"
-      });
-      if (!res.ok) return false;
-      const data = await res.json();
-      if (!data.accessToken || typeof window === "undefined") return false;
-      window.__VAMOPS_ACCESS_TOKEN__ = data.accessToken;
+      if (!this.authClient) await this.initAuth();
+      const { data, error } = await this.authClient.auth.refreshSession();
+      if (error || !data.session) return false;
+      this.authSession = data.session;
+      window.__VAMOPS_ACCESS_TOKEN__ = data.session.access_token;
       return true;
     } catch (_) {
       return false;
@@ -128,12 +224,47 @@ class VAMOPSAIEngine {
   }
 
   async checkGatewayHealth() {
+    this.gatewayHealth = { state: "checking", checkedAt: null };
     try {
-      const res = await this.fetchServer(this.gatewayEndpoint, { method: "GET" }, { timeoutMs: 30_000 });
-      if (!res.ok) return { healthy: false, status: res.status };
-      const data = await res.json();
-      return { healthy: true, ...data };
+      const res = await fetch(this.healthEndpoint, {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+        credentials: "same-origin"
+      });
+      if (!res.ok) {
+        this.gatewayHealth = { state: "offline", status: res.status, checkedAt: new Date().toISOString() };
+        return { healthy: false, status: res.status };
+      }
+      const data = await this.readJsonResponse(res, "Cổng AI Gateway");
+      const healthy = data?.status === "ok" && data?.ready === true && typeof data?.service === "string";
+      if (healthy && Array.isArray(data.configuredModels) && data.configuredModels.length > 0 && !data.configuredModels.includes(this.config.modelTier)) {
+        this.saveConfig({ ...this.config, modelTier: data.configuredModels[0] });
+      }
+      this.gatewayHealth = {
+        state: healthy ? "healthy" : "offline",
+        status: res.status,
+        checkedAt: new Date().toISOString(),
+        service: data?.service || null
+      };
+      return healthy
+        ? { healthy: true, ...data }
+        : {
+            healthy: false,
+            reachable: data?.status === "ok",
+            status: res.status,
+            blockers: Array.isArray(data?.blockers) ? data.blockers : [],
+            error: data?.status === "ok"
+              ? `Backend có phản hồi nhưng chưa sẵn sàng: ${(data.blockers || []).join(", ") || "thiếu cấu hình bắt buộc"}.`
+              : "Phản hồi health-check không đúng contract."
+          };
     } catch (e) {
+      this.gatewayHealth = {
+        state: "offline",
+        status: e.status || null,
+        code: e.code || "GATEWAY_CHECK_FAILED",
+        error: e.message,
+        checkedAt: new Date().toISOString()
+      };
       return { healthy: false, error: e.message };
     }
   }
@@ -173,11 +304,11 @@ class VAMOPSAIEngine {
 
     if (!res.ok) {
       let errData = {};
-      try { errData = await res.json(); } catch(e) {}
+      try { errData = await this.readJsonResponse(res, "Orchestrator"); } catch(e) { throw e; }
       throw new Error(errData.message || `Lỗi Orchestrator (HTTP ${res.status})`);
     }
 
-    return await res.json();
+    return await this.readJsonResponse(res, "Orchestrator");
   }
 
   async campaignAction(campaignId, action, payload = {}) {
@@ -187,7 +318,10 @@ class VAMOPSAIEngine {
       body: JSON.stringify({ action, campaignId, ...payload })
     });
     let data = {};
-    try { data = await res.json(); } catch (_) {}
+    try { data = await this.readJsonResponse(res, "Thao tác chiến dịch"); } catch (error) {
+      if (res.ok) throw error;
+      data = { message: error.message };
+    }
     if (!res.ok) {
       const error = new Error(data.message || data.error || `Campaign action failed (HTTP ${res.status})`);
       error.code = data.error;
@@ -225,7 +359,7 @@ class VAMOPSAIEngine {
         method: "GET",
       }, { timeoutMs: 30_000 });
       if (!res.ok) throw new Error(`Không thể tải danh sách chiến dịch (HTTP ${res.status})`);
-      return await res.json();
+      return await this.readJsonResponse(res, "Danh sách chiến dịch");
     } catch (e) { throw e; }
   }
 
@@ -234,7 +368,7 @@ class VAMOPSAIEngine {
       method: "GET",
     }, { timeoutMs: 30_000 });
     if (!res.ok) throw new Error(`Không thể tải chi tiết chiến dịch (HTTP ${res.status})`);
-    return await res.json();
+    return await this.readJsonResponse(res, "Chi tiết chiến dịch");
   }
 
   async deleteCampaign(campaignId) {
@@ -243,7 +377,10 @@ class VAMOPSAIEngine {
       method: "DELETE"
     }, { timeoutMs: 30_000 });
     let data = {};
-    try { data = await res.json(); } catch (_) {}
+    try { data = await this.readJsonResponse(res, "Xoá chiến dịch"); } catch (error) {
+      if (res.ok) throw error;
+      data = { message: error.message };
+    }
     if (!res.ok) throw new Error(data.message || `Không thể xoá chiến dịch (HTTP ${res.status})`);
     return data;
   }
@@ -253,7 +390,10 @@ class VAMOPSAIEngine {
       method: "DELETE"
     }, { timeoutMs: 30_000 });
     let data = {};
-    try { data = await res.json(); } catch (_) {}
+    try { data = await this.readJsonResponse(res, "Xoá kho chiến dịch"); } catch (error) {
+      if (res.ok) throw error;
+      data = { message: error.message };
+    }
     if (!res.ok) throw new Error(data.message || `Không thể xoá toàn bộ chiến dịch (HTTP ${res.status})`);
     return data;
   }
@@ -459,16 +599,16 @@ class VAMOPSAIEngine {
     if (!res.ok) {
       let errData = {};
       try {
-        errData = await res.json();
+        errData = await this.readJsonResponse(res, "AI Gateway");
       } catch (e) {
-        errData = { message: await res.text() };
+        throw e;
       }
 
       // If server keys are missing or provider error, throw explicit error
       throw new Error(errData.message || `Lỗi phản hồi từ AI Gateway (HTTP ${res.status}).`);
     }
 
-    const payload = await res.json();
+    const payload = await this.readJsonResponse(res, "AI Gateway");
     return payload;
   }
 

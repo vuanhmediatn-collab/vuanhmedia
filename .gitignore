@@ -35,3 +35,9 @@ screenshots_rc/
 motion_recordings_v24/
 *.mp4
 .vercel
+
+# Do not accidentally commit the legacy paid-provider/server prototypes.
+# api/v1/health.js and api/v1/campaigns.js are production-safe proxies.
+api/v1/ai.js
+server/
+tests/
